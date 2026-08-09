@@ -232,7 +232,8 @@ function applyScale() {
   const w = window.innerWidth, h = window.innerHeight;
   const sx = Math.floor(w / 320), sy = Math.floor(h / 180);
   const scale = Math.max(1, Math.min(sx, sy));
-  g.style.transform = `scale(${scale})`;
+  g.style.transform = "none";
+  g.style.zoom = scale;
   g.style.width = "320px";
   g.style.height = "180px";
   const wrapper = $("#game-wrapper");
@@ -323,7 +324,7 @@ function titleLoop(ts) {
   }
 
   if (!S.settings.reduceMotion) {
-    S.stationX += 6 * dt / 1000;
+    S.stationX += 10 * dt / 1000;
     if (S.stationX > 340) S.stationX = -50;
     $("#title-station").style.left = S.stationX + "px";
   }
