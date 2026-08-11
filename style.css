@@ -90,13 +90,6 @@ button:focus-visible{outline:2px solid var(--yellow);}
   background-size:640px 180px;
   image-rendering:pixelated;
 } */
-#title-blackhole{
-  width:156px;height:68px;
-  left:158px;top:50px;
-  background:url('./assets/blackhole_large.png') no-repeat;
-  background-size:624px 68px;
-  image-rendering:pixelated;
-}
 #title-station{
   width:42px;height:24px;
   position:absolute;
@@ -287,7 +280,6 @@ body.reduce-motion .scene-sprite.walking{transition:none;}
   width:36px;height:62px;
   image-rendering:auto;
 }
-#dialogue-portrait.char-director{background-image:url('./assets/director_idle_1x.png');background-size:48px 31px;}
 #dialogue-portrait.char-ester{
   background-image:url('./assets/player.png');
   background-size:144px 62px;

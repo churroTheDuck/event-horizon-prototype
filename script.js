@@ -216,7 +216,6 @@ const S = {
   walkFrame: 0,
   playerX: 0,
   // anim
-  bhLargeFrame: 0,
   starsOffset: 0,
   stationX: -50,
   titleAnimStarted: false,
@@ -304,7 +303,7 @@ function initTitle() {
 
 /* ---- TITLE ANIMATION LOOP ---- */
 let lastTime = 0;
-let bhLargeTimer = 0, starsTimer = 0, stationTimer = 0;
+let starsTimer = 0, stationTimer = 0;
 
 function titleLoop(ts) {
   if (S.screen !== "title") return;
@@ -314,13 +313,6 @@ function titleLoop(ts) {
   if (!S.settings.reduceMotion) {
     S.starsOffset -= 4 * dt / 1000;
     $(".title-stars").style.backgroundPosition = `${S.starsOffset}px 0`;
-  }
-
-  bhLargeTimer += dt;
-  if (bhLargeTimer >= 180) {
-    bhLargeTimer -= 180;
-    S.bhLargeFrame = (S.bhLargeFrame + 1) % 4;
-    $("#title-blackhole").style.backgroundPosition = `-${S.bhLargeFrame * 156}px 0`;
   }
 
   if (!S.settings.reduceMotion) {
@@ -704,7 +696,6 @@ function initRestart() {
     S.introIdx = 0;
     S.currentNode = null;
     S.typing = false;
-    S.bhLargeFrame = 0;
     S.starsOffset = 0;
     S.stationX = -50;
     S.idlePaused = false;
