@@ -642,7 +642,7 @@ function showChoicePanel(choices) {
     const btn = document.createElement("button");
     btn.className = "btn btn-purple choice-btn";
     btn.innerHTML = `<span>${c.label}</span>`;
-    btn.tabIndex = 0;
+    btn.tabIndex = -1;
     btn.addEventListener("click", () => {
       panel.classList.add("hidden");
       applyStatBlock(c.stats);
@@ -650,7 +650,6 @@ function showChoicePanel(choices) {
     });
     panel.appendChild(btn);
   });
-  panel.querySelector("button").focus();
 }
 
 /* ---- END SCREEN ---- */
@@ -736,7 +735,7 @@ function initInput() {
     }
     if (S.screen === "scene" && !S.freeRoam && (e.key === " " || e.key === "Enter")) {
       e.preventDefault();
-      if (!$("#choice-panel").classList.contains("hidden")) return;
+      if (!$("#choice-panel").classList.contains("hidden")) return; // choices are mouse-only
       advanceScene();
     }
   });

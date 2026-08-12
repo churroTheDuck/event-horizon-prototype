@@ -353,6 +353,7 @@ body.reduce-motion .scene-sprite.walking{transition:none;}
   background:rgba(40,55,110,0.8);
   border-color:var(--purple);
   color:#fff;
+  outline:none;
 }
 .choice-btn:active{
   background:rgba(60,70,130,0.85);
