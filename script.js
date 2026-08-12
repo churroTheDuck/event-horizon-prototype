@@ -47,7 +47,7 @@ const SCENE_SCRIPT = [
   // pa2_minigame is a control node — the sensory-overload minigame plays, then dialogue resumes at pa2b
   {id:"pa2_minigame", type:"control", action:"sensory_minigame", next:"pa2b"},
 
-  {id:"pa2b", type:"dialogue", speaker:"ESTER", text:"I’ll write the incident report. Jerry, what’s your surname? I’m putting your name down as the person responsible. I don’t want us to be in a lab-turned-suicide chamber. And — this was an accident, correct?", next:"pa3"},
+  {id:"pa2b", type:"dialogue", speaker:"ESTER", text:"I’ll write the incident report. Jerry, what’s your surname? I’m putting your name down as the person responsible. I don’t want us to be in a lab-turned-hazard chamber. And — this was an accident, correct?", next:"pa3"},
   {id:"pa3", type:"dialogue", speaker:"JERRY", text:"Of course it was an accident. That’s what I just said.", next:"pa4"},
   {id:"pa4", type:"inner", text:"Nobody has moved. Sam is looking at the floor.", next:"choice1_inner"},
 
