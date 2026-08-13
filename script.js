@@ -499,6 +499,9 @@ function sceneAnimLoop(ts) {
       S.freeRoam = false;
       moveKeys.left = false;
       moveKeys.right = false;
+      S.walkFrame = 0;
+      walkAnimTimer = 0;
+      $("#scene-sprite-ester").style.backgroundPosition = "0 0";
       runNode("s1");
     }
   }
