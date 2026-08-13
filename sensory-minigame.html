@@ -250,7 +250,6 @@ document.body.classList.toggle("dyslexia-font", new URLSearchParams(location.sea
 
 /* ---- State ---- */
 const S = {
-  screen: "sensory",
   sensoryNoise: 0, sensoryLight: 100,
   sensoryPhase: 0, sensoryDone: false,
   sensoryState: "idle",
@@ -259,7 +258,6 @@ const S = {
   sensoryInterjectActive: false,
   sensoryHasDampeners: false,
   sensoryUiReady: false,
-  sensoryCalmMode: false,
 };
 
 /* ---- Constants ---- */
@@ -311,7 +309,6 @@ function startSensoryGame() {
   S.sensoryInterjectActive = false;
   S.sensoryHasDampeners = false;
   S.sensoryUiReady = false;
-  S.sensoryCalmMode = false;
   sensoryGameActive = false;
   sensoryCurrentFlashDur = 3;
   noiseDodge = 0;
@@ -368,8 +365,7 @@ function startSensoryCalibration() {
   $("#sensory-explain").classList.add("hidden");
 
   sensoryCurrentFlashDur = 1.4;
-  const onsetFlash = S.sensoryCalmMode ? "bgFlashCalm" : "bgFlash";
-  $("#sensory-bg").style.animation = `${onsetFlash} ${sensoryCurrentFlashDur}s infinite`;
+  $("#sensory-bg").style.animation = `bgFlash ${sensoryCurrentFlashDur}s infinite`;
 
   setTimeout(() => { $("#sensory-panel").classList.add("visible"); }, 180);
 
@@ -498,9 +494,7 @@ function sensoryGameLoop(ts) {
   }
 
   if (!S.sensoryInterjectActive) {
-    const baseRate = S.sensoryCalmMode
-      ? (S.sensoryPhase >= 1 ? 2.5 : 4)
-      : (S.sensoryPhase >= 1 ? 5.5 : 9);
+    const baseRate = S.sensoryPhase >= 1 ? 5.5 : 9;
     const rate = S.sensoryHasDampeners ? 0.8 : baseRate;
     const cap  = S.sensoryInterjectShown ? 100 : 80;
     S.sensoryStress = Math.min(cap, S.sensoryStress + rate * dt);
@@ -563,15 +557,6 @@ function applyStressEffects() {
   const screen = $("#screen-sensory");
   const bg     = $("#sensory-bg");
 
-  if (S.sensoryCalmMode) {
-    const d = +(2.5 - (s / 100) * 1.5).toFixed(2);
-    root.style.setProperty("--sx","0px"); root.style.setProperty("--sy","0px");
-    root.style.setProperty("--bx","0px"); root.style.setProperty("--by","0px");
-    screen.style.animation = "none";
-    bg.style.animation = `bgFlashCalm ${d}s infinite`;
-    return;
-  }
-
   const flashMin = hasDamp ? 0.55 : 0.16;
   const flashMax = hasDamp ? 2.2  : 1.40;
   sensoryCurrentFlashDur = +(flashMax - (s / 100) * (flashMax - flashMin)).toFixed(2);
@@ -614,14 +599,6 @@ function sensoryResetShake() {
   }
 }
 
-/* ---- Mode picker ---- */
-function sensorySetMode(calm) {
-  S.sensoryCalmMode = calm;
-  const std = $("#smode-standard"), clm = $("#smode-calm");
-  if (std) std.classList.toggle("selected", !calm);
-  if (clm) clm.classList.toggle("selected", calm);
-}
-
 /* ---- Input ---- */
 function sensoryKeyDown(e) {
   if (["a","A","d","D"," ","ArrowLeft","ArrowRight"].includes(e.key)) e.preventDefault();
@@ -638,7 +615,6 @@ function sensoryKeyDown(e) {
     if (S.sensoryState === "explain" && S.sensoryUiReady) {
       $("#sensory-explain").classList.add("hidden");
       $("#sensory-warning").classList.remove("hidden");
-      sensorySetMode(false);
       S.sensoryState = "warn";
       S.sensoryUiReady = true;
       return;
@@ -720,26 +696,18 @@ function triggerSensoryFail() {
   sensoryGameActive = false;
   clearTimeout(sensoryWarningTimer);
   $("#sensory-interject").classList.add("hidden");
-  if (S.sensoryCalmMode) {
+  const root = document.documentElement;
+  root.style.setProperty("--sx","2px"); root.style.setProperty("--sy","1.1px");
+  root.style.setProperty("--bx","4px"); root.style.setProperty("--by","2.2px");
+  $("#screen-sensory").style.animation = "shake 55ms linear infinite";
+  $("#sensory-bg").style.animation     = "bgFlash .1s infinite, shake-bg 55ms linear infinite";
+  setTimeout(() => {
     sensoryResetShake();
-    $("#sensory-bg").style.animation = "bgFlashCalm 1.4s infinite";
+    $("#sensory-bg").style.animation = "bgFlash 1.4s infinite";
     const el = $("#sensory-status");
     el.textContent = "SENSORY OVERLOAD — SPACE to retry";
     el.className = "warning";
-  } else {
-    const root = document.documentElement;
-    root.style.setProperty("--sx","2px"); root.style.setProperty("--sy","1.1px");
-    root.style.setProperty("--bx","4px"); root.style.setProperty("--by","2.2px");
-    $("#screen-sensory").style.animation = "shake 55ms linear infinite";
-    $("#sensory-bg").style.animation     = "bgFlash .1s infinite, shake-bg 55ms linear infinite";
-    setTimeout(() => {
-      sensoryResetShake();
-      $("#sensory-bg").style.animation = "bgFlash 1.4s infinite";
-      const el = $("#sensory-status");
-      el.textContent = "SENSORY OVERLOAD — SPACE to retry";
-      el.className = "warning";
-    }, 650);
-  }
+  }, 650);
 }
 
 function sensoryRetry() {
@@ -759,8 +727,7 @@ function sensoryRetry() {
   sensoryCurrentLightMin = LIGHT_CENTER - LIGHT_HALF;
   sensoryCurrentLightMax = LIGHT_CENTER + LIGHT_HALF;
   $("#sensory-interject").classList.add("hidden");
-  const flashAnim = S.sensoryCalmMode ? "bgFlashCalm" : "bgFlash";
-  $("#sensory-bg").style.animation = `${flashAnim} ${sensoryCurrentFlashDur}s infinite`;
+  $("#sensory-bg").style.animation = `bgFlash ${sensoryCurrentFlashDur}s infinite`;
   resetSensoryUI();
   sensoryResetShake();
   sensoryStartTime = performance.now();

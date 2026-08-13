@@ -55,8 +55,8 @@ const SCENE_SCRIPT = [
   {id:"choice1_inner", type:"inner", text:"You asked a yes-or-no question. He said yes. But he froze, and his voice went tight. People don’t react like that to answering a question correctly.", next:"choice1"},
 
   {id:"choice1", type:"choice", choices:[
-    {label:"“What’s wrong?”", cost:"SOCIAL +6   CAREER -5   MENTAL -3", stats:{social:6,career:-5,mental:-3}, next:"ba1"},
-    {label:"“There’s six ounces of mercury, and the vent is running. We need this contained as soon as possible!”", cost:"CAREER +6   SOCIAL -5   EMOTIONAL -3", stats:{career:6,social:-5,emotional:-3}, next:"bb1"}
+    {label:"“What’s wrong?”", stats:{social:6,career:-5,mental:-3}, next:"ba1"},
+    {label:"“There’s six ounces of mercury, and the vent is running. We need this contained as soon as possible!”", stats:{career:6,social:-5,emotional:-3}, next:"bb1"}
   ]},
 
   // Branch A — "What's wrong?"
@@ -152,7 +152,7 @@ const SCENE_SCRIPT = [
   {id:"sc2_opt1_m15", type:"dialogue", speaker:"ESTER", text:"Jerry, great job! Thanks for working so hard and helping me quickly fix the engine!", next:"sc2_opt1_m16"},
   {id:"sc2_opt1_m16", type:"dialogue", speaker:"JERRY", text:"I should be thanking you… We wouldn’t have been able to build this without your knowledge and your skill in instructing me so well.", next:"sc2_opt1_end"},
   {id:"sc2_opt1_end", type:"inner", text:"After five minutes, Jerry attached the engine to the spaceship. It turned out to be even stronger than the suction of the black hole, and we managed to maneuver the space station far away. We went to get some dehydrated fruit from a kitchen cabinet, and alongside the packet of fruit, found a supply box.", next:"sc2_opt1_recap"},
-  {id:"sc2_opt1_recap", type:"recap", text:"Jerry and I have become more comfortable working as a team, despite our many differences. Knowing that we both don’t give up easily, I feel I can better understand why he makes decisions, which makes working with him in the future seem less daunting.", next:"end"},
+  {id:"sc2_opt1_recap", type:"recap", text:"Jerry and I have become more comfortable working as a team, despite our many differences. Knowing that we both don’t give up easily, I feel I can better understand why he makes decisions, which makes working with him in the future seem less daunting.", next:"sc3_open"},
 
   /* ---- Option 2: force it / reconcile later ---- */
   {id:"sc2_opt2_1", type:"dialogue", speaker:"JERRY", text:"Geez, I am going to fix it right now. You don’t have to be so harsh. I don’t know how to fix an engine, though.", next:"sc2_opt2_2"},
@@ -185,11 +185,92 @@ const SCENE_SCRIPT = [
   {id:"sc2_opt2_m4", type:"dialogue", speaker:"ESTER", text:"We made it out just in time! Jerry, thank you for coming back… literally and figuratively. I couldn’t have done it without your help.", next:"sc2_opt2_m5"},
   {id:"sc2_opt2_m5", type:"dialogue", speaker:"JERRY", text:"Same with you. Your skills got us here!", next:"sc2_opt2_end"},
   {id:"sc2_opt2_end", type:"inner", text:"I’m glad I managed to reconcile with Jerry. Although we still aren’t friends, it’s a relief to be able to better understand him and his emotions so we can work together.", next:"sc2_opt2_recap"},
-  {id:"sc2_opt2_recap", type:"recap", text:"Jerry and I have become more comfortable with each other, despite our many differences. Now knowing that he is more similar to me than I expected — in the way that we both feel and act strongly about what we heavily value — I feel I can better understand why he makes decisions, which makes working with him in the future seem less daunting.", next:"end"}
+  {id:"sc2_opt2_recap", type:"recap", text:"Jerry and I have become more comfortable with each other, despite our many differences. Now knowing that he is more similar to me than I expected — in the way that we both feel and act strongly about what we heavily value — I feel I can better understand why he makes decisions, which makes working with him in the future seem less daunting.", next:"sc3_open"},
+
+  /* ============================================================
+     SCENE 3 — Day 3: Coordination
+     ============================================================ */
+
+  {id:"sc3_open", type:"dialogue", speaker:"ESTER", text:"Jerry, you haven’t had lunch yet. Where are you?", next:"sc3_log1", showSprites:["ester"]},
+  {id:"sc3_log1", type:"narration", text:"JERRY’S DATA LOG — 14 October 3043, 12:32 in the 24-hour cycle. I’m working in the telemetry data collection lab. Some problems with the data. I can’t wait until we’re out of here… even if that takes another fifty years, just the thought of it being possible makes me more willing to drag myself to work. Kind of.", next:"sc3_ester_lunch", showSprites:["jerry"]},
+  {id:"sc3_ester_lunch", type:"dialogue", speaker:"ESTER", text:"Okay then, I won’t disturb you. Lunch is on the table whenever you’re finished.", next:"sc3_ester_leaves", showSprites:["jerry","ester"]},
+  {id:"sc3_ester_leaves", type:"narration", text:"Ester leaves the room.", next:"sc3_log2"},
+  {id:"sc3_log2", type:"narration", text:"JERRY’S DATA LOG — Photovoltaic data: trying to gauge connection. System 1 and System 3 are not connecting. System 2: four channels responsive, showing normal range of temperatures. Still, those other two systems are a problem. I guess I have to contact astronautics to see if they can do a spacewalk anytime soon.", next:"sc3_phone1", showSprites:["jerry"]},
+  {id:"sc3_phone1", type:"dialogue", speaker:"JERRY", text:"Hello? Hello? If even the phones won’t connect, I swear to this black hole…", next:"sc3_noor1"},
+  {id:"sc3_noor1", type:"dialogue", speaker:"NOOR", text:"Hi, this is Noor from astro. [Crackle] — help you with anything?", next:"sc3_jerry_aside"},
+  {id:"sc3_jerry_aside", type:"dialogue", speaker:"JERRY", text:"At least the radio systems work…", next:"sc3_jerry_intro"},
+  {id:"sc3_jerry_intro", type:"dialogue", speaker:"JERRY", text:"Noor, can you hear me? This is Jerry, from the nuclear physics department. We kind of need to get a spacewalk done on the photovoltaic systems, and probably a dozen other things.", next:"sc3_noor2"},
+  {id:"sc3_noor2", type:"dialogue", speaker:"NOOR", text:"[Laughs] Yep, yep, there were like, a million other people saying the same thing today. You’re in luck, I have the time to pull this off. Send someone over from your department so we can do the—", next:"sc3_jerry_neg"},
+  {id:"sc3_jerry_neg", type:"dialogue", speaker:"JERRY", text:"Negotiations. Ugh.", next:"sc3_noor3"},
+  {id:"sc3_noor3", type:"dialogue", speaker:"NOOR", text:"Can’t be helped, buddy. So. Who should I be expecting?", next:"sc3_jerry_pick"},
+  {id:"sc3_jerry_pick", type:"dialogue", speaker:"JERRY", text:"Mmm… hold the phone for a second. Uh, you’ll get Ester, the rookie.", next:"sc3_noor4"},
+  {id:"sc3_noor4", type:"dialogue", speaker:"NOOR", text:"Great.", next:"sc3_jerry_hangup"},
+  {id:"sc3_jerry_hangup", type:"dialogue", speaker:"JERRY", text:"Alright, I’m hanging up now.", next:"sc3_find_ester"},
+
+  {id:"sc3_find_ester", type:"narration", text:"Jerry heads off to find Ester.", next:"sc3_jerry_call"},
+
+  {id:"sc3_jerry_call", type:"dialogue", speaker:"JERRY", text:"Hey, Ester! Can you come over here for a second?", next:"sc3_ester_whats_up", showSprites:["jerry","ester"]},
+  {id:"sc3_ester_whats_up", type:"dialogue", speaker:"ESTER", text:"Yes, what’s going on?", next:"sc3_jerry_explain1"},
+  {id:"sc3_jerry_explain1", type:"dialogue", speaker:"JERRY", text:"So, do you know where the astronautics launch bay is located? We’re having all sorts of problems with the satellite receptors, since I think the photovoltaic systems have decided to give up.", next:"sc3_jerry_explain2"},
+  {id:"sc3_jerry_explain2", type:"dialogue", speaker:"JERRY", text:"I called Noor, who does some stuff for maintenance, and she’s fine with doing a spacewalk. We just need someone from our department to… er, “coordinate” with the other departments about it.", next:"sc3_ester_q1"},
+  {id:"sc3_ester_q1", type:"dialogue", speaker:"ESTER", text:"Okay… so what does this “coordination” mean? Do you want me to ask them for data? Resources?", next:"sc3_jerry_sorry"},
+  {id:"sc3_jerry_sorry", type:"dialogue", speaker:"JERRY", text:"I’m so sorry, Ester. I know you’re a rookie and all, but we all have to learn the ropes sooner or later.", next:"sc3_choice1"},
+
+  {id:"sc3_choice1", type:"choice", choices:[
+    {label:"Push for an explanation and try to gain clarity before starting the task.", next:"sc3_pushA_1"},
+    {label:"Accept the lack of clarity and figure it out yourself.", next:"sc3_acceptB_1"}
+  ]},
+
+  /* -- pushed for an explanation -- */
+  {id:"sc3_pushA_1", type:"dialogue", speaker:"ESTER", text:"Jerry, I have no idea what you’re trying to say.", next:"sc3_pushA_2"},
+  {id:"sc3_pushA_2", type:"dialogue", speaker:"JERRY", text:"Right. Sorry. So “coordination” mostly means you argue with all the other departments that absolutely hate us and want us to give up our share of the funding money.", next:"sc3_pushA_3"},
+  {id:"sc3_pushA_3", type:"dialogue", speaker:"JERRY", text:"Theoretically, you’re just notifying them that astronautics is going to do the spacewalk, but they’re going to try to argue with you. And what you said about wrestling data out of them is true — you just have to be very, very careful about how you ask it.", next:"sc3_pushA_4"},
+  {id:"sc3_pushA_4", type:"dialogue", speaker:"ESTER", text:"That sounds painful. So, who are we talking to?", next:"sc3_pushA_5"},
+  {id:"sc3_pushA_5", type:"dialogue", speaker:"JERRY", text:"Biology. Oh, and you’re going to talk over the phone, so you just have to hope for someone nice to answer you.", next:"sc3_pushA_6"},
+  {id:"sc3_pushA_6", type:"dialogue", speaker:"ESTER", text:"And what does “someone nice” entail?", next:"sc3_pushA_7"},
+  {id:"sc3_pushA_7", type:"dialogue", speaker:"JERRY", text:"Tadej Wojciechowski and Catherine St James.", next:"sc3_pushA_8"},
+  {id:"sc3_pushA_8", type:"dialogue", speaker:"ESTER", text:"Thanks. Hand me the phone, please. I’ll do my best.", next:"sc3_merge1"},
+
+  /* -- accepted the lack of clarity -- */
+  {id:"sc3_acceptB_1", type:"dialogue", speaker:"ESTER", text:"Okay, in that case, hand me the phone, please. I’ll do my best.", next:"sc3_merge1"},
+
+  {id:"sc3_merge1", type:"dialogue", speaker:"JERRY", text:"Okay then, I’ll go get the data we have organized so Noor has something to work with. Wave at me if there’s something bad going on.", next:"sc3_inner1"},
+  {id:"sc3_inner1", type:"inner", text:"I’d gotten familiar with most of my own department, what kind of people they are, and how I should navigate around them. But then — suddenly having to reach out to all these other people, people who seemed to be even more hostile than I’d been used to? I did get kind of mad at Jerry, but what he said about me needing to get accustomed was correct. I dialed Biology. First thing I asked: “Hello, I’m Ester from the Nuclear Physics department. Who am I talking to?” The answer was not one of the two names Jerry mentioned.", next:"sc3_judith1", showSprites:["ester"]},
+
+  {id:"sc3_judith1", type:"dialogue", speaker:"JUDITH", text:"I’m Judith. What is it?", next:"sc3_ester_explain"},
+  {id:"sc3_ester_explain", type:"dialogue", speaker:"ESTER", text:"We are conducting a spacewalk to make alterations to the telemetry systems, specifically the photovoltaic devices that are experiencing significant difficulties. Our department needs your help to determine any potential issues our associate in astronautics may face.", next:"sc3_judith2"},
+  {id:"sc3_judith2", type:"dialogue", speaker:"JUDITH", text:"[Sighs] Ester, huh? Heard that the nuclear folks got someone new. And that you got into some kind of problem in your first shadowing session…", next:"sc3_ester_explain2"},
+  {id:"sc3_ester_explain2", type:"dialogue", speaker:"ESTER", text:"Yes, a device broke and we had to seal off the room because of a mercury leak, but we got that under control. Why do you ask?", next:"sc3_judith3"},
+  {id:"sc3_judith3", type:"dialogue", speaker:"JUDITH", text:"Doesn’t matter. Why would you need data?", next:"sc3_ester_explain3"},
+  {id:"sc3_ester_explain3", type:"dialogue", speaker:"ESTER", text:"As the biology department, you would have all the information about the health condition of the astronauts in past spacewalks, correct? And you would be responsible for monitoring them during their spacewalk too?", next:"sc3_judith4"},
+  {id:"sc3_judith4", type:"dialogue", speaker:"JUDITH", text:"You have no idea what you’re doing, kid. Hand the phone to Jerry.", next:"sc3_choice2"},
+
+  {id:"sc3_choice2", type:"choice", choices:[
+    {label:"Make your case with Judith and prioritize proving yourself to Jerry.", next:"sc3_case_1"},
+    {label:"Gesture to Jerry to get his help and prioritize getting the data.", next:"sc3_gesture_1"}
+  ]},
+
+  /* -- Choice 1: make your case -- */
+  {id:"sc3_case_1", type:"dialogue", speaker:"ESTER", text:"Judith, I would appreciate it if you took me seriously for a moment. I’m not great at talking to other people; it’s why I’m here in the first place. But — I think you already know what you, as the biology department, are supposed to do during a spacewalk. What did you even mean, “why would you need data”? What’s the point of negotiating over resources? What if one day you need something we collected, just as we need your data now — then what do you do? It’s not like you’ve been trained to interpret our data yourselves.", next:"sc3_case_2"},
+  {id:"sc3_case_2", type:"dialogue", speaker:"JUDITH", text:"Alright. Alright. I guess it would be kind of hard to argue past you. [Laughs] But genuinely: not a single cent of funding can go to waste. Why would we even give that much to nuclear? Consider the costs — a small fortune to construct a tiny device, and then no purpose to even use it for. First of all, making a nuclear reactor on this ship is pointless; we have our energy needs met. Second: it’s a walking disaster in the making.", next:"sc3_case_3"},
+  {id:"sc3_case_3", type:"dialogue", speaker:"ESTER", text:"And who from our department told you that we were making a nuclear reactor?", next:"sc3_case_4"},
+  {id:"sc3_case_4", type:"dialogue", speaker:"JUDITH", text:"Well…", next:"sc3_case_5"},
+  {id:"sc3_case_5", type:"dialogue", speaker:"ESTER", text:"As I said: our departments are useless if we don’t have data from other departments. That is why I haven’t hung up on you yet. And nuclear physics doesn’t automatically mean that we go straight to building a full-size reactor. Furthermore, as for that “walking disaster” bit — would it not be more of an issue if you created a synthetic illness and killed us all?", next:"sc3_case_6"},
+  {id:"sc3_case_6", type:"dialogue", speaker:"JUDITH", text:"Look, why in the world would you automatically think we’re trying to create a— Oh. Okay. [Sighs] Alright then, I’ll give you the data you need.", next:"sc3_case_narration"},
+  {id:"sc3_case_narration", type:"narration", text:"Ester hangs up. Jerry walks over, grinning.", next:"sc3_case_jerry", showSprites:["jerry","ester"]},
+  {id:"sc3_case_jerry", type:"dialogue", speaker:"JERRY", text:"I heard your conversation. Nice job! I’ll wait on the mail inbox. Noor will be delighted…", next:"sc3_case_recap"},
+  {id:"sc3_case_recap", type:"recap", text:"Jerry and the biology department now respect your knowledge and tenacity.", next:"end"},
+
+  /* -- Choice 2: gesture to Jerry -- */
+  {id:"sc3_gesture_1", type:"inner", text:"No clue what to do with all this. At least I had managed, for a little bit. I waved frantically at Jerry — on the other side of the room, fiddling with his telemetry devices and cursing under his breath. His eyes went wide, and he immediately abandoned it to take the phone out of my hand.", next:"sc3_gesture_2", showSprites:["jerry","ester"]},
+  {id:"sc3_gesture_2", type:"dialogue", speaker:"JERRY", text:"Judith! You’ve barely even met Ester, the hell are you yelling at her for? All we are asking for is just a little bit of your precious, precious data, and machines to see if our astronaut is still freaking breathing or not… What do you mean we don’t deserve to get the telemetry systems fixed? I’m going to—", next:"sc3_gesture_3"},
+  {id:"sc3_gesture_3", type:"inner", text:"He said a number of things I’ve never heard used in such a . . . creative manner before.", next:"sc3_gesture_4"},
+  {id:"sc3_gesture_4", type:"narration", text:"They went back and forth like that for a while, each end defending their department’s honor like it was the last line of appeal from being flung into the black hole itself. It ended with Jerry slamming the receiver down. He put his head in his hands, sighed deeply, and then teetered toward the door.", next:"sc3_gesture_5"},
+  {id:"sc3_gesture_5", type:"dialogue", speaker:"JERRY", text:"Sorry you had to hear that. Fix up the rest of the measurements, please — I’m going to find Tadej. I swear, I can get absolutely nowhere with those idiots in Bio without him in the room to mediate…", next:"sc3_gesture_recap"},
+  {id:"sc3_gesture_recap", type:"recap", text:"Jerry fully accepted you into the “nuclear” team in your grand struggles against technology, governance, and the other departments — though you still have to steer clear of Biology.", next:"end"}
 ];
 
 const REFLECTION_TEXT = "END OF SCENARIO";
-const REFLECTION_SUB = "";
 
 /* ---- NODE MAP ---- */
 const NODE_MAP = {};
@@ -200,13 +281,11 @@ const S = {
   stats: {social:60, career:60, emotional:60, mental:60},
   screen: "title",
   introIdx: 0,
-  introTyping: false,
-  introFullText: "",
   currentNode: null,
   typing: false,
   fullText: "",
   transitioning: false,
-  settings: {dyslexia:true, textSize:"medium", reduceMotion:false, textSpeed:"normal"},
+  settings: {dyslexia:true, textSpeed:"normal"},
   settingsOpen: false,
   // scene
   sceneScrollX: 0,
@@ -218,7 +297,6 @@ const S = {
   // anim
   starsOffset: 0,
   stationX: -50,
-  titleAnimStarted: false,
 };
 
 /* ---- DOM ---- */
@@ -263,9 +341,7 @@ function showScreen(name) {
 
 /* ---- TYPEWRITER ---- */
 function charsPerSec() {
-  const sp = S.settings.textSpeed;
-  if (sp === "slow") return 25;
-  if (sp === "instant") return 99999;
+  if (S.settings.textSpeed === "instant") return 99999;
   return 40;
 }
 
@@ -296,30 +372,47 @@ function completeType(el) {
 /* ---- TITLE SCREEN ---- */
 function initTitle() {
   $("#btn-start").addEventListener("click", e => { e.stopPropagation(); startIntro(); });
+  $("#btn-dev-scene3").addEventListener("click", e => { e.stopPropagation(); devJumpToScene3(); }); // TEMP DEV — remove before shipping
   setTimeout(() => {
     $("#title-text").classList.add("visible");
   }, 100);
 }
 
+// TEMP DEV — jumps straight into Scene 3 for testing, skipping the intro and Scenes 1–2. Remove before shipping.
+function devJumpToScene3() {
+  showScreen("scene");
+  S.freeRoam = false;
+  moveKeys.left = false;
+  moveKeys.right = false;
+  S.sceneScrollX = 0;
+  $("#scene-world").style.left = "0px";
+  $("#scene-sprite-sam").style.left = SAM_LAB_X + "px";
+  $("#scene-sprite-ester").style.left = "150px";
+  $("#scene-sprite-ester").classList.remove("facing-left");
+  $("#scene-sprite-jerry").style.left = "190px";
+  $("#scene-sprite-jerry").classList.remove("facing-left");
+  sceneIdleBounceTimer = 0;
+  walkAnimTimer = 0;
+  S.walkFrame = 0;
+  sceneAnimTs = performance.now();
+  requestAnimationFrame(sceneAnimLoop);
+  runNode("sc3_open");
+}
+
 /* ---- TITLE ANIMATION LOOP ---- */
 let lastTime = 0;
-let starsTimer = 0, stationTimer = 0;
 
 function titleLoop(ts) {
   if (S.screen !== "title") return;
   const dt = Math.min(ts - lastTime, 50);
   lastTime = ts;
 
-  if (!S.settings.reduceMotion) {
-    S.starsOffset -= 4 * dt / 1000;
-    $(".title-stars").style.backgroundPosition = `${S.starsOffset}px 0`;
-  }
+  S.starsOffset -= 4 * dt / 1000;
+  $(".title-stars").style.backgroundPosition = `${S.starsOffset}px 0`;
 
-  if (!S.settings.reduceMotion) {
-    S.stationX += 10 * dt / 1000;
-    if (S.stationX > 340) S.stationX = -50;
-    $("#title-station").style.left = S.stationX + "px";
-  }
+  S.stationX += 10 * dt / 1000;
+  if (S.stationX > 340) S.stationX = -50;
+  $("#title-station").style.left = S.stationX + "px";
 
   requestAnimationFrame(titleLoop);
 }
@@ -413,11 +506,6 @@ function jerryEnter(nextNodeId) {
     runNode(nextNodeId);
   };
 
-  if (S.settings.reduceMotion) {
-    jerry.style.left = JERRY_JOIN_X + "px";
-    arrive();
-    return;
-  }
   void jerry.offsetWidth; // flush the start position before transitioning
   jerry.classList.add("walking");
   jerry.style.left = JERRY_JOIN_X + "px";
@@ -480,14 +568,10 @@ function sceneAnimLoop(ts) {
       S.sceneScrollX = Math.max(0, Math.min(CAM_MAX_SCROLL, S.playerX - VIEWPORT_WIDTH / 2));
       $("#scene-world").style.left = -S.sceneScrollX + "px";
 
-      if (S.settings.reduceMotion) {
-        S.walkFrame = 0;
-      } else {
-        walkAnimTimer += dt;
-        while (walkAnimTimer >= WALK_FRAME_MS) {
-          walkAnimTimer -= WALK_FRAME_MS;
-          S.walkFrame = (S.walkFrame + 1) % 4;
-        }
+      walkAnimTimer += dt;
+      while (walkAnimTimer >= WALK_FRAME_MS) {
+        walkAnimTimer -= WALK_FRAME_MS;
+        S.walkFrame = (S.walkFrame + 1) % 4;
       }
       $("#scene-sprite-ester").style.backgroundPosition = `-${S.walkFrame * 36}px 0`;
     } else if (S.walkFrame !== 0) {
@@ -506,7 +590,7 @@ function sceneAnimLoop(ts) {
     }
   }
 
-  if (!S.idlePaused && !S.settings.reduceMotion) {
+  if (!S.idlePaused) {
     sceneIdleBounceTimer += dt;
     if (sceneIdleBounceTimer >= 520) {
       sceneIdleBounceTimer -= 520;
@@ -641,7 +725,7 @@ function showChoicePanel(choices) {
   panel.innerHTML = "";
   panel.classList.remove("hidden");
 
-  choices.forEach((c, i) => {
+  choices.forEach(c => {
     const btn = document.createElement("button");
     btn.className = "btn btn-purple choice-btn";
     btn.innerHTML = `<span>${c.label}</span>`;

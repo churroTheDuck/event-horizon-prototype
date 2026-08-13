@@ -2,9 +2,8 @@
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 
 :root{
-  --navy:#060a1a;--blue:#12244a;--purple:#6a5cf0;
-  --yellow:#34e6cf;--lyellow:#c8fff2;--gray:#c7ccd6;
-  --px:1;
+  --navy:#060a1a;--purple:#6a5cf0;
+  --yellow:#34e6cf;--lyellow:#c8fff2;
   --sx:0px;--sy:0px;--bx:0px;--by:0px;
 }
 
@@ -21,11 +20,6 @@ html,body{
 body.dyslexia-font,body.dyslexia-font *{
   font-family:'OpenDyslexic',Arial,sans-serif!important;
 }
-body.text-small #game{--text-body:5px;}
-body.text-large #game{--text-body:8px;}
-
-canvas{image-rendering:pixelated;image-rendering:crisp-edges;}
-
 /* === GAME WRAPPER — integer scaling === */
 #game-wrapper{
   display:flex;align-items:center;justify-content:center;
@@ -42,9 +36,6 @@ canvas{image-rendering:pixelated;image-rendering:crisp-edges;}
 /* === FOCUS === */
 :focus-visible{outline:1px solid var(--yellow);outline-offset:0px;}
 button:focus-visible{outline:2px solid var(--yellow);}
-
-/* === PIXEL ART === */
-.pixelart,[data-pixelart]{image-rendering:pixelated;image-rendering:crisp-edges;}
 
 /* === BUTTONS === */
 .btn{
@@ -77,7 +68,6 @@ button:focus-visible{outline:2px solid var(--yellow);}
 }
 .hidden{display:none!important;}
 
-/* === GEAR === */
 /* === TITLE === */
 .title-layer{position:absolute;inset:0;}
 .title-bg{
@@ -225,7 +215,6 @@ button:focus-visible{outline:2px solid var(--yellow);}
   top:148px;
 }
 .scene-sprite.walking{transition:left 1.3s linear;}
-body.reduce-motion .scene-sprite.walking{transition:none;}
 .scene-sprite.facing-left{transform:scaleX(-1);} /* art faces right natively; mirror when walking left */
 #scene-sprite-sam{
   width:36px;height:62px;
@@ -358,12 +347,6 @@ body.reduce-motion .scene-sprite.walking{transition:none;}
 .choice-btn:active{
   background:rgba(60,70,130,0.85);
 }
-.choice-btn .cost{
-  font-family:'Arial',monospace;
-  font-size:3px;
-  margin-top:1px;
-  opacity:.8;
-}
 
 /* === END === */
 #screen-end{background:var(--navy);}
@@ -411,19 +394,7 @@ body.reduce-motion .scene-sprite.walking{transition:none;}
   transition:opacity 1s ease;
 }
 #end-reflection.visible{opacity:1;}
-#end-reflection .lived-exp{
-  display:block;margin-top:4px;
-  font-size:4px;
-  font-family:'Arial',monospace;
-  color:var(--yellow);
-  opacity:.7;
-}
 .end-buttons{
   display:flex;gap:6px;
 }
-
-body.reduce-motion .title-stars{background-position:0 0!important;}
-body.reduce-motion #title-text{transition:none;opacity:1;}
-body.reduce-motion .end-bar-fill{transition:none;}
-body.reduce-motion #end-reflection{transition:none;}
 
