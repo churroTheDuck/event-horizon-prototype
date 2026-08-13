@@ -55,8 +55,8 @@ const SCENE_SCRIPT = [
   {id:"choice1_inner", type:"inner", text:"You asked a yes-or-no question. He said yes. But he froze, and his voice went tight. People don’t react like that to answering a question correctly.", next:"choice1"},
 
   {id:"choice1", type:"choice", choices:[
-    {label:"“What’s wrong?”", stats:{social:6,career:-5,mental:-3}, next:"ba1"},
-    {label:"“There’s six ounces of mercury, and the vent is running. We need this contained as soon as possible!”", stats:{career:6,social:-5,emotional:-3}, next:"bb1"}
+    {label:"“What’s wrong?”", next:"ba1"},
+    {label:"“There’s six ounces of mercury, and the vent is running. We need this contained as soon as possible!”", next:"bb1"}
   ]},
 
   // Branch A — "What's wrong?"
@@ -66,7 +66,7 @@ const SCENE_SCRIPT = [
   {id:"ba4", type:"dialogue", speaker:"ESTER", text:"Your sleeve got caught on the device. That’s the truth. The incident form has a field labelled “person responsible” and it doesn’t have a field for anything else.", next:"ba5"},
   {id:"ba5", type:"dialogue", speaker:"JERRY", text:"We could have sorted out whose name goes where later. It’s the way you said it. “What’s your surname, I’m putting you down as responsible.” You’ve barely even been here for a week. It’s like you were reading out a prison sentence! God!", next:"ba6"},
   {id:"ba6", type:"inner", text:"Oh. He was angry about the form. I stare down at the liquid from the machine, pooling on the floor, then back at him. Jerry was as clearly frustrated as he could have possibly been; he was fidgeting uncomfortably.", next:"ba7"},
-  {id:"ba7", type:"dialogue", speaker:"ESTER", text:"I wasn’t trying to sentence you. I say things in the order I think of them, and when I saw the mercury, that was the only thing I could think about.", next:"ba8", applyStats:{social:4,emotional:3,career:-2}},
+  {id:"ba7", type:"dialogue", speaker:"ESTER", text:"I wasn’t trying to sentence you. I say things in the order I think of them, and when I saw the mercury, that was the only thing I could think about.", next:"ba8"},
   {id:"ba8", type:"dialogue", speaker:"JERRY", text:"I guess that makes sense. I shouldn’t have lost my temper. Sorry.", next:"ba9"},
   {id:"ba9", type:"dialogue", speaker:"ESTER", text:"I’m sorry, too. But—again about the mercury, can we all get this cleaned up together? Quickly!", next:"ba10"},
   {id:"ba10", type:"dialogue", speaker:"JERRY", text:"OK, OK. Sam! Done with the door? Come here!", next:"ba11"},
@@ -321,7 +321,6 @@ SCENE_SCRIPT.forEach(n => { if(n.id) NODE_MAP[n.id] = n; });
 
 /* ---- STATE ---- */
 const S = {
-  stats: {social:60, career:60, emotional:60, mental:60},
   screen: "title",
   introIdx: 0,
   currentNode: null,
@@ -365,14 +364,6 @@ function applyScale() {
   g.style.transformOrigin = "center center";
 }
 window.addEventListener("resize", applyScale);
-
-/* ---- STATS ---- */
-function applyStatBlock(obj) {
-  if (!obj) return;
-  Object.entries(obj).forEach(([k, v]) => {
-    S.stats[k] = Math.max(0, Math.min(100, S.stats[k] + v));
-  });
-}
 
 /* ---- SCREEN MGR ---- */
 function showScreen(name) {
@@ -660,8 +651,6 @@ function runNode(nodeId) {
   if (!node) { showEnd(); return; }
   S.currentNode = node;
 
-  if (node.applyStats) applyStatBlock(node.applyStats);
-
   if (node.showSprites) {
     $("#scene-sprite-sam").classList.toggle("hidden", !node.showSprites.includes("sam"));
     $("#scene-sprite-jerry").classList.toggle("hidden", !node.showSprites.includes("jerry"));
@@ -775,7 +764,6 @@ function showChoicePanel(choices) {
     btn.tabIndex = -1;
     btn.addEventListener("click", () => {
       panel.classList.add("hidden");
-      applyStatBlock(c.stats);
       runNode(c.next);
     });
     panel.appendChild(btn);
@@ -789,39 +777,18 @@ function showEnd() {
   $("#dialogue-row").classList.add("hidden");
   S.idlePaused = false;
 
-  const barsDiv = $("#end-bars");
-  barsDiv.innerHTML = "";
-  const labels = {social:"SOCIAL", career:"CAREER", emotional:"EMOTIONAL", mental:"MENTAL"};
-  Object.entries(labels).forEach(([k, label]) => {
-    const col = document.createElement("div");
-    col.className = "end-bar";
-    col.innerHTML = `
-      <div class="end-bar-val">${S.stats[k]}</div>
-      <div class="end-bar-track"><div class="end-bar-fill" data-stat="${k}"></div></div>
-      <div class="end-bar-label">${label}</div>`;
-    barsDiv.appendChild(col);
-  });
-
-  setTimeout(() => {
-    $$(".end-bar-fill").forEach(f => {
-      const stat = f.dataset.stat;
-      f.style.height = (S.stats[stat] / 100 * 60) + "px";
-    });
-  }, 100);
-
   setTimeout(() => {
     const ref = $("#end-reflection");
     ref.textContent = REFLECTION_TEXT;
     ref.classList.remove("hidden");
     ref.classList.add("visible");
     $("#end-buttons").classList.remove("hidden");
-  }, 1800);
+  }, 300);
 }
 
 /* ---- RESTART ---- */
 function initRestart() {
   $("#btn-restart").addEventListener("click", () => {
-    S.stats = {social:60, career:60, emotional:60, mental:60};
     S.introIdx = 0;
     S.currentNode = null;
     S.typing = false;

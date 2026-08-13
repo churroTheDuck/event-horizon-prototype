@@ -355,34 +355,6 @@ button:focus-visible{outline:2px solid var(--yellow);}
   display:flex;flex-direction:column;align-items:center;gap:8px;
   width:280px;
 }
-#end-bars{
-  display:flex;gap:10px;
-  justify-content:center;
-}
-.end-bar{
-  display:flex;flex-direction:column;align-items:center;gap:2px;
-}
-.end-bar-label{
-  font-family:'Arial',monospace;
-  font-size:3px;color:var(--yellow);
-}
-.end-bar-track{
-  width:8px;height:60px;
-  background:var(--purple);
-  border:1px solid var(--navy);
-  position:relative;
-  overflow:hidden;
-}
-.end-bar-fill{
-  position:absolute;bottom:0;left:0;right:0;
-  background:var(--yellow);
-  height:0;
-  transition:height 1.2s ease;
-}
-.end-bar-val{
-  font-family:'Arial',monospace;
-  font-size:4px;color:var(--lyellow);
-}
 #end-reflection{
   color:var(--lyellow);
   font-size:var(--text-body);
