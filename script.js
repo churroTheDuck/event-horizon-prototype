@@ -520,6 +520,7 @@ const S = {
   freeRoam: false,
   walkFrame: 0,
   playerX: 0,
+  unlockedScene: 1, // highest scene number the player is allowed to start from the scene-select hub
   // anim
   starsOffset: 0,
   stationX: -50,
@@ -554,7 +555,7 @@ function showScreen(name) {
   $$(".screen").forEach(s => s.classList.remove("active"));
   $(`#screen-${name}`).classList.add("active");
   S.screen = name;
-  $("#btn-pause").classList.toggle("hidden", name !== "intro" && name !== "scene");
+  $("#btn-pause").classList.toggle("hidden", name !== "intro" && name !== "scene" && name !== "scenes");
 }
 
 /* ---- TYPEWRITER ---- */
@@ -692,7 +693,8 @@ function advanceIntro() {
   if (S.typing) { completeType(el); return; }
   S.introIdx++;
   if (S.introIdx >= INTRO_CARDS.length) {
-    startScene();
+    S.unlockedScene = 1;
+    showSceneSelect();
   } else {
     showIntroCard();
   }
@@ -983,6 +985,93 @@ function advanceScene() {
   }
 }
 
+/* ---- SCENE SELECT ---- */
+// Puts characters at their correct starting spot for a scene entered from
+// the hub, rather than relying on wherever they happened to be left.
+function resetSceneStage({ sam, jerry, ester, cameraX }) {
+  S.freeRoam = false;
+  moveKeys.left = false;
+  moveKeys.right = false;
+  S.walkFrame = 0;
+  walkAnimTimer = 0;
+  sceneIdleBounceTimer = 0;
+  S.sceneScrollX = Math.max(0, Math.min(CAM_MAX_SCROLL, cameraX - VIEWPORT_WIDTH / 2));
+  $("#scene-world").style.left = -S.sceneScrollX + "px";
+  if (sam) {
+    $("#scene-sprite-sam").style.left = sam.x + "px";
+    $("#scene-sprite-sam").classList.toggle("facing-left", !!sam.facingLeft);
+  }
+  if (jerry) {
+    $("#scene-sprite-jerry").style.left = jerry.x + "px";
+    $("#scene-sprite-jerry").classList.toggle("facing-left", !!jerry.facingLeft);
+  }
+  if (ester) {
+    S.playerX = ester.x;
+    $("#scene-sprite-ester").style.left = ester.x + "px";
+    $("#scene-sprite-ester").classList.toggle("facing-left", !!ester.facingLeft);
+  }
+}
+
+// Each playable scene's entry node and a start() that stages the scene
+// (camera + character positions) before running that node. Scene 1 handles
+// its own staging via startScene(), since it opens on a free-roam walk
+// rather than a fixed starting pose.
+const SCENES = [
+  { num:1, entry:"s1", start() { startScene(); } },
+  { num:2, entry:"sc2_open_inner", start() {
+    showScreen("scene");
+    resetSceneStage({ sam:{x:SAM_LAB_X}, jerry:{x:JERRY_JOIN_X}, ester:{x:SAM_LAB_X - 30}, cameraX:SAM_LAB_X });
+    sceneAnimTs = performance.now();
+    requestAnimationFrame(sceneAnimLoop);
+    runNode("sc2_open_inner");
+  }},
+  { num:3, entry:"sc3_open", start() {
+    showScreen("scene");
+    resetSceneStage({ ester:{x:SAM_LAB_X - 30}, cameraX:SAM_LAB_X });
+    sceneAnimTs = performance.now();
+    requestAnimationFrame(sceneAnimLoop);
+    runNode("sc3_open");
+  }},
+  { num:4, entry:"sc4_open_inner1", start() {
+    showScreen("scene");
+    resetSceneStage({ jerry:{x:SAM_LAB_X - 30}, ester:{x:SAM_LAB_X - 60}, cameraX:SAM_LAB_X });
+    sceneAnimTs = performance.now();
+    requestAnimationFrame(sceneAnimLoop);
+    runNode("sc4_open_inner1");
+  }},
+  { num:5, entry:"sc5_open", start() {
+    showScreen("scene");
+    resetSceneStage({ cameraX:160 }); // nobody's on screen yet — sc5_cut_aerospace places Ester/Jerry itself
+    sceneAnimTs = performance.now();
+    requestAnimationFrame(sceneAnimLoop);
+    runNode("sc5_open");
+  }},
+];
+
+const ENTRY_TO_SCENE_NUM = {};
+SCENES.forEach(s => { ENTRY_TO_SCENE_NUM[s.entry] = s.num; });
+
+function showSceneSelect() {
+  showScreen("scenes");
+  const list = $("#scenes-list");
+  list.innerHTML = "";
+  SCENES.forEach(s => {
+    const btn = document.createElement("button");
+    btn.className = "btn btn-purple scene-btn";
+    btn.textContent = "SCENE " + s.num;
+    if (s.num < S.unlockedScene) {
+      btn.classList.add("completed");
+      btn.disabled = true;
+    } else if (s.num === S.unlockedScene) {
+      btn.addEventListener("click", () => s.start());
+    } else {
+      btn.classList.add("locked");
+      btn.disabled = true;
+    }
+    list.appendChild(btn);
+  });
+}
+
 /* ---- RECAP (scene-ending summary beats, styled like the intro cards) ---- */
 function runRecapNode(node) {
   S.idlePaused = true;
@@ -995,7 +1084,13 @@ function advanceRecap() {
   const el = $("#recap-text");
   if (S.typing) { completeType(el); return; }
   const node = S.currentNode;
-  if (node.next) {
+  const nextSceneNum = ENTRY_TO_SCENE_NUM[node.next];
+  if (nextSceneNum) {
+    // Recap ends a scene and leads into the next one — route through the
+    // hub instead of continuing straight in, unlocking that scene there.
+    S.unlockedScene = Math.max(S.unlockedScene, nextSceneNum);
+    showSceneSelect();
+  } else if (node.next) {
     showScreen("scene");
     sceneAnimTs = performance.now();
     requestAnimationFrame(sceneAnimLoop);
@@ -1050,6 +1145,7 @@ function initRestart() {
     S.starsOffset = 0;
     S.stationX = -50;
     S.idlePaused = false;
+    S.unlockedScene = 1;
     $("#choice-panel").classList.add("hidden");
     $("#dialogue-row").classList.add("hidden");
     $("#end-reflection").classList.remove("visible");

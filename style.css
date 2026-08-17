@@ -195,6 +195,39 @@ button:focus-visible{outline:2px solid var(--yellow);}
 }
 #screen-recap.active{display:flex;}
 
+/* === SCENE SELECT (hub between scenes) === */
+#screen-scenes{
+  background:var(--navy);
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+}
+#screen-scenes.active{display:flex;}
+.scenes-title{
+  font-family:'Arial',monospace;
+  font-size:7px;
+  color:var(--lyellow);
+  letter-spacing:1px;
+  text-align:center;
+}
+#scenes-list{
+  display:flex;flex-direction:column;align-items:center;gap:4px;
+  max-height:140px;overflow-y:auto;
+  padding:2px;
+}
+.scene-btn{width:100px;text-align:center;}
+.scene-btn.completed{
+  background:transparent;color:var(--lyellow);
+  border:1px solid var(--purple);
+  opacity:.6;pointer-events:none;cursor:default;
+}
+.scene-btn.locked{
+  background:transparent;color:#8b90a0;
+  border:1px solid rgba(106,92,240,0.3);
+  opacity:.4;pointer-events:none;cursor:default;
+}
+
 /* === SCENE === */
 #screen-scene.active{display:block;}
 #scene-world{
