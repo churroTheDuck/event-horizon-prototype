@@ -513,6 +513,7 @@ const S = {
   transitioning: false,
   settings: {dyslexia:true, textSpeed:"normal"},
   settingsOpen: false,
+  instructionsOpen: false,
   // scene
   sceneScrollX: 0,
   idleBounce: 0,
@@ -591,70 +592,9 @@ function completeType(el) {
 /* ---- TITLE SCREEN ---- */
 function initTitle() {
   $("#btn-start").addEventListener("click", e => { e.stopPropagation(); startIntro(); });
-  $("#btn-dev-scene3").addEventListener("click", e => { e.stopPropagation(); devJumpToScene3(); }); // TEMP DEV — remove before shipping
-  $("#btn-dev-scene4").addEventListener("click", e => { e.stopPropagation(); devJumpToScene4(); }); // TEMP DEV — remove before shipping
-  $("#btn-dev-scene5").addEventListener("click", e => { e.stopPropagation(); devJumpToScene5(); }); // TEMP DEV — remove before shipping
   setTimeout(() => {
     $("#title-text").classList.add("visible");
   }, 100);
-}
-
-// TEMP DEV — jumps straight into Scene 3 for testing, skipping the intro and Scenes 1–2. Remove before shipping.
-function devJumpToScene3() {
-  showScreen("scene");
-  S.freeRoam = false;
-  moveKeys.left = false;
-  moveKeys.right = false;
-  S.sceneScrollX = 0;
-  $("#scene-world").style.left = "0px";
-  $("#scene-sprite-sam").style.left = SAM_LAB_X + "px";
-  $("#scene-sprite-ester").style.left = "150px";
-  $("#scene-sprite-ester").classList.remove("facing-left");
-  $("#scene-sprite-jerry").style.left = "190px";
-  $("#scene-sprite-jerry").classList.remove("facing-left");
-  sceneIdleBounceTimer = 0;
-  walkAnimTimer = 0;
-  S.walkFrame = 0;
-  sceneAnimTs = performance.now();
-  requestAnimationFrame(sceneAnimLoop);
-  runNode("sc3_open");
-}
-
-// TEMP DEV — jumps straight into Scene 4 for testing, skipping the intro and Scenes 1–3. Remove before shipping.
-function devJumpToScene4() {
-  showScreen("scene");
-  S.freeRoam = false;
-  moveKeys.left = false;
-  moveKeys.right = false;
-  S.sceneScrollX = 0;
-  S.playerX = 150; // kept in sync with the sprite position below, so the Scene 4 walk-to-aerospace segment (which continues from S.playerX) doesn't teleport her
-  $("#scene-world").style.left = "0px";
-  $("#scene-sprite-ester").style.left = "150px";
-  $("#scene-sprite-ester").classList.remove("facing-left");
-  $("#scene-sprite-jerry").style.left = "190px";
-  $("#scene-sprite-jerry").classList.remove("facing-left");
-  sceneIdleBounceTimer = 0;
-  walkAnimTimer = 0;
-  S.walkFrame = 0;
-  sceneAnimTs = performance.now();
-  requestAnimationFrame(sceneAnimLoop);
-  runNode("sc4_open_inner1");
-}
-
-// TEMP DEV — jumps straight into Scene 5 for testing, skipping the intro and Scenes 1–4. Remove before shipping.
-function devJumpToScene5() {
-  showScreen("scene");
-  S.freeRoam = false;
-  moveKeys.left = false;
-  moveKeys.right = false;
-  S.sceneScrollX = 0;
-  $("#scene-world").style.left = "0px";
-  sceneIdleBounceTimer = 0;
-  walkAnimTimer = 0;
-  S.walkFrame = 0;
-  sceneAnimTs = performance.now();
-  requestAnimationFrame(sceneAnimLoop);
-  runNode("sc5_open");
 }
 
 /* ---- TITLE ANIMATION LOOP ---- */
@@ -836,7 +776,7 @@ function sceneAnimLoop(ts) {
   const dt = ts - sceneAnimTs;
   sceneAnimTs = ts;
 
-  if (S.freeRoam && !S.settingsOpen) {
+  if (S.freeRoam && !S.settingsOpen && !S.instructionsOpen) {
     let dx = 0;
     if (moveKeys.left) dx -= 1;
     if (moveKeys.right) dx += 1;
@@ -1160,13 +1100,13 @@ function initRestart() {
 /* ---- GLOBAL INPUT ---- */
 function initInput() {
   document.addEventListener("click", e => {
-    if (S.settingsOpen) return;
+    if (S.settingsOpen || S.instructionsOpen) return;
     if (S.screen === "intro") advanceIntro();
     if (S.screen === "recap") advanceRecap();
   });
   document.addEventListener("keydown", e => {
-    if (S.settingsOpen) {
-      if (e.key === "Escape") closeSettings();
+    if (S.settingsOpen || S.instructionsOpen) {
+      if (e.key === "Escape") { closeSettings(); closeInstructions(); }
       return;
     }
     if (S.screen === "intro" && (e.key === " " || e.key === "Enter")) {
@@ -1192,7 +1132,7 @@ function initInput() {
     if (e.key === "ArrowRight" || e.key === "d" || e.key === "D") moveKeys.right = false;
   });
   $("#dialogue-row").addEventListener("click", () => {
-    if (S.settingsOpen) return;
+    if (S.settingsOpen || S.instructionsOpen) return;
     if (S.screen === "scene") advanceScene();
   });
 }
@@ -1229,6 +1169,17 @@ function closeSettings() {
   $("#settings-overlay").classList.add("hidden");
 }
 
+function openInstructions() {
+  closeSettings(); // instructions can be opened from inside the settings panel — don't stack both overlays
+  S.instructionsOpen = true;
+  $("#instructions-overlay").classList.remove("hidden");
+}
+
+function closeInstructions() {
+  S.instructionsOpen = false;
+  $("#instructions-overlay").classList.add("hidden");
+}
+
 function initSettings() {
   loadSettings();
   applySettingsToDOM();
@@ -1236,6 +1187,9 @@ function initSettings() {
   $("#btn-settings").addEventListener("click", openSettings);
   $("#btn-pause").addEventListener("click", openSettings);
   $("#btn-settings-close").addEventListener("click", closeSettings);
+  $("#btn-instructions").addEventListener("click", openInstructions);
+  $("#btn-settings-instructions").addEventListener("click", openInstructions);
+  $("#btn-instructions-close").addEventListener("click", closeInstructions);
 
   $("#chk-dyslexia").addEventListener("change", e => {
     S.settings.dyslexia = e.target.checked;

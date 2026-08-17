@@ -32,10 +32,7 @@
         <div class="title-buttons">
           <button class="btn btn-purple" id="btn-start" tabindex="0">START</button>
           <button class="btn btn-purple" id="btn-settings" tabindex="0">SETTINGS</button>
-          <!-- TEMP DEV BUTTONS — remove before shipping -->
-          <button class="btn btn-purple" id="btn-dev-scene3" tabindex="0">DEV: SCENE 3</button>
-          <button class="btn btn-purple" id="btn-dev-scene4" tabindex="0">DEV: SCENE 4</button>
-          <button class="btn btn-purple" id="btn-dev-scene5" tabindex="0">DEV: SCENE 5</button>
+          <button class="btn btn-purple" id="btn-instructions" tabindex="0">HOW TO PLAY</button>
         </div>
       </div>
     </div>
@@ -110,7 +107,20 @@
           <input type="checkbox" id="chk-instant-text">
           <span>Low motion</span>
         </label>
+        <button class="btn btn-purple" id="btn-settings-instructions">HOW TO PLAY</button>
         <button class="btn btn-purple" id="btn-settings-close">CLOSE</button>
+      </div>
+    </div>
+
+    <!-- INSTRUCTIONS OVERLAY -->
+    <div id="instructions-overlay" class="overlay hidden">
+      <div id="instructions-panel">
+        <div class="settings-title">HOW TO PLAY</div>
+        <div class="instructions-row"><span class="instructions-keys">← → / A D</span><span>Move</span></div>
+        <div class="instructions-row"><span class="instructions-keys">SPACE / ENTER</span><span>Advance text (or click)</span></div>
+        <div class="instructions-row"><span class="instructions-keys">CLICK</span><span>Choose an option</span></div>
+        <div class="instructions-row"><span class="instructions-keys">II</span><span>Pause / settings</span></div>
+        <button class="btn btn-purple" id="btn-instructions-close">CLOSE</button>
       </div>
     </div>
 

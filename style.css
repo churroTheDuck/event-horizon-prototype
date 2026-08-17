@@ -155,7 +155,39 @@ button:focus-visible{outline:2px solid var(--yellow);}
   cursor:pointer;
   flex-shrink:0;
 }
+#btn-settings-instructions{
+  align-self:center;
+}
 #btn-settings-close{
+  align-self:center;
+  margin-top:4px;
+}
+
+/* === INSTRUCTIONS OVERLAY === */
+#instructions-overlay{
+  background:rgba(0,0,0,.6);
+  z-index:100;
+}
+#instructions-panel{
+  background:var(--navy);
+  border:1px solid var(--purple);
+  padding:10px 12px;
+  width:220px;
+  display:flex;flex-direction:column;
+  gap:7px;
+}
+.instructions-row{
+  display:flex;align-items:center;gap:6px;
+  font-family:'Arial',monospace;
+  font-size:5px;
+  color:var(--lyellow);
+}
+.instructions-keys{
+  flex-shrink:0;
+  width:78px;
+  color:var(--yellow);
+}
+#btn-instructions-close{
   align-self:center;
   margin-top:4px;
 }
