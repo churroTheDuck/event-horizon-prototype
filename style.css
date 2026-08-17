@@ -17,7 +17,7 @@ html,body{
   src:url('./OpenDyslexic-Bold.otf') format('opentype');
   font-display:swap;
 }
-body.dyslexia-font,body.dyslexia-font *{
+body.dyslexia-font,body.dyslexia-font *,body.dyslexia-font *::before,body.dyslexia-font *::after{
   font-family:'OpenDyslexic',Arial,sans-serif!important;
 }
 /* === GAME WRAPPER — integer scaling === */
