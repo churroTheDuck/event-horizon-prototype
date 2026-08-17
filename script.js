@@ -662,6 +662,14 @@ const JERRY_WALK_MS = 1300;
 const WALK_FRAME_MS = 130; // ms per leg-cycle frame while Ester is moving
 const moveKeys = { left: false, right: false };
 
+// Until the aerospace-engineering area (Scene 4) is revealed, don't let the
+// camera scroll past the lab's west wall — otherwise that still-empty,
+// not-yet-revealed area shows as dead space on the left of the screen.
+function minSceneScroll() {
+  const aerospaceRevealed = !$("#aerospace-placeholder").classList.contains("hidden");
+  return aerospaceRevealed ? 0 : LAB_MIN_X;
+}
+
 // Generic free-roam config — which bounds/target/next-node the current
 // walk segment uses. Defaults match the Scene 1 walk to Sam; other scenes
 // override these via startFreeRoam() before setting S.freeRoam = true.
@@ -677,7 +685,7 @@ function startFreeRoam(startX, minX, maxX, targetX, nextNode, facingRight) {
   freeRoamTargetX = targetX;
   freeRoamNextNode = nextNode;
   S.freeRoam = true;
-  S.sceneScrollX = Math.max(0, Math.min(CAM_MAX_SCROLL, S.playerX - VIEWPORT_WIDTH / 2));
+  S.sceneScrollX = Math.max(minSceneScroll(), Math.min(CAM_MAX_SCROLL, S.playerX - VIEWPORT_WIDTH / 2));
   $("#scene-world").style.left = -S.sceneScrollX + "px";
   $("#scene-sprite-ester").style.left = S.playerX + "px";
   if (facingRight != null) $("#scene-sprite-ester").classList.toggle("facing-left", !facingRight); // art faces right natively
@@ -784,7 +792,7 @@ function sceneAnimLoop(ts) {
       S.playerX = Math.max(freeRoamMinX, Math.min(freeRoamMaxX, S.playerX + dx * PLAYER_MOVE_SPEED * dt / 1000));
       $("#scene-sprite-ester").style.left = S.playerX + "px";
       $("#scene-sprite-ester").classList.toggle("facing-left", dx < 0); // art faces right natively
-      S.sceneScrollX = Math.max(0, Math.min(CAM_MAX_SCROLL, S.playerX - VIEWPORT_WIDTH / 2));
+      S.sceneScrollX = Math.max(minSceneScroll(), Math.min(CAM_MAX_SCROLL, S.playerX - VIEWPORT_WIDTH / 2));
       $("#scene-world").style.left = -S.sceneScrollX + "px";
 
       walkAnimTimer += dt;
@@ -935,7 +943,7 @@ function resetSceneStage({ sam, jerry, ester, cameraX }) {
   S.walkFrame = 0;
   walkAnimTimer = 0;
   sceneIdleBounceTimer = 0;
-  S.sceneScrollX = Math.max(0, Math.min(CAM_MAX_SCROLL, cameraX - VIEWPORT_WIDTH / 2));
+  S.sceneScrollX = Math.max(minSceneScroll(), Math.min(CAM_MAX_SCROLL, cameraX - VIEWPORT_WIDTH / 2));
   $("#scene-world").style.left = -S.sceneScrollX + "px";
   if (sam) {
     $("#scene-sprite-sam").style.left = sam.x + "px";
