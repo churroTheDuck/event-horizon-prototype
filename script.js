@@ -402,7 +402,99 @@ const SCENE_SCRIPT = [
   {id:"sc4_cameron_noffense", type:"dialogue", speaker:"CAMERON", text:"Oh, no, no. I won’t take offense. My own people all tell me to shut up in much less polite terms than that!", next:"sc4_cameron_plausible"},
   {id:"sc4_cameron_plausible", type:"dialogue", speaker:"CAMERON", text:"And your idea seems pretty plausible, by the way, just needs the numbers to be filled out. Then I’ll do a proper analysis and get back to you.", next:"sc4_cameron_telecom"},
   {id:"sc4_cameron_telecom", type:"dialogue", speaker:"CAMERON", text:"And that reminds me. I need to get back to the telecom. Sorry for keeping you!", next:"sc4_recap"},
-  {id:"sc4_recap", type:"recap", text:"Cameron is well intentioned enough and very competent. It seems you’ve gotten yourself a new ally.", next:"end"}
+  {id:"sc4_recap", type:"recap", text:"Cameron is well intentioned enough and very competent. It seems you’ve gotten yourself a new ally.", next:"sc5_open"},
+
+  /* ============================================================
+     SCENE 5 — Interdepartmental Call
+     ============================================================ */
+
+  {id:"sc5_open", type:"narration", text:"A still shot of the black hole, its light flickering in the distance. Noor floats in the corner of the frame, tethered just outside the station.", next:"sc5_noor1", showSprites:[]},
+  {id:"sc5_noor1", type:"dialogue", speaker:"NOOR", text:"I’m near the bay window in Bio. Can you tell me the biometrics you got?", next:"sc5_judith1"},
+  {id:"sc5_judith1", type:"dialogue", speaker:"JUDITH", text:"Yeah. All stable for now. You’ve got 64 minutes left.", next:"sc5_noor2"},
+  {id:"sc5_noor2", type:"dialogue", speaker:"NOOR", text:"Nice, nice. I can see the black hole up close, and the I-329 settlement. Faintly. I-329 Central Tower is still burning bright.", next:"sc5_judith2"},
+  {id:"sc5_judith2", type:"dialogue", speaker:"JUDITH", text:"Noor, I know.", next:"sc5_noor3"},
+  {id:"sc5_noor3", type:"dialogue", speaker:"NOOR", text:"Just wanted to say!", next:"sc5_judith3"},
+  {id:"sc5_judith3", type:"dialogue", speaker:"JUDITH", text:"Mhm. . . passing off to Nuclear now.", next:"sc5_cut_aerospace"},
+
+  {id:"sc5_cut_aerospace", type:"narration", text:"The call patches through to the aerospace engineering department, where Ester, Cameron, and Jerry are gathered around the telecom.", next:"sc5_jerry1", showSprites:["jerry","ester"], positions:{jerry:200, ester:170}},
+
+  {id:"sc5_jerry1", type:"dialogue", speaker:"JERRY", text:"Hi Noor, this is Jerry. How far away from the radio receivers are you? I’d really love it if you don’t get sick out there because Judith keeps complaining in your ear.", next:"sc5_judith4"},
+  {id:"sc5_judith4", type:"dialogue", speaker:"JUDITH", text:"Shut up, Jerry.", next:"sc5_jerry2"},
+  {id:"sc5_jerry2", type:"dialogue", speaker:"JERRY", text:"I’m in the Aerospace Engineering department working on that pod they bring up to you a lot.", next:"sc5_noor4"},
+  {id:"sc5_noor4", type:"dialogue", speaker:"NOOR", text:"Really? I hear so much about it! It would save us so much time out here. And I wouldn’t have to worry so much about getting fried by radioactive rays!", next:"sc5_ester1"},
+
+  {id:"sc5_ester1", type:"dialogue", speaker:"ESTER", text:"Is that Judith?", next:"sc5_jerry3"},
+  {id:"sc5_jerry3", type:"dialogue", speaker:"JERRY", text:"[Sighs] Yeah.", next:"sc5_cameron1"},
+  {id:"sc5_cameron1", type:"dialogue", speaker:"CAMERON", text:"What happened to Katherine and Tadej?", next:"sc5_jerry4"},
+  {id:"sc5_jerry4", type:"dialogue", speaker:"JERRY", text:"Missing in action.", next:"sc5_ester2"},
+  {id:"sc5_ester2", type:"dialogue", speaker:"ESTER", text:"I’ve never heard that used before.", next:"sc5_jerry5"},
+  {id:"sc5_jerry5", type:"dialogue", speaker:"JERRY", text:"It means that I have no clue where they are.", next:"sc5_ester3"},
+  {id:"sc5_ester3", type:"dialogue", speaker:"ESTER", text:"Thank you.", next:"sc5_cameron2"},
+  {id:"sc5_cameron2", type:"dialogue", speaker:"CAMERON", text:"I really don’t know where they’ve been for a while now.", next:"sc5_cameron3"},
+  {id:"sc5_cameron3", type:"dialogue", speaker:"CAMERON", text:"One of my engineers wanted to try growing fig trees in the agriculture wings, but couldn’t get a hold of either of them! Did we send them out for supplies?", next:"sc5_jerry6"},
+  {id:"sc5_jerry6", type:"dialogue", speaker:"JERRY", text:"Well. Cam, I think that’s the kind of thing you would know.", next:"sc5_cameron4"},
+  {id:"sc5_cameron4", type:"dialogue", speaker:"CAMERON", text:"Maybe? I really don’t know, though. I feel like none of us have sent out a group to I-239 in a long time, and furthermore we don’t really have the money to — Zin was even thinking of scrapping her project so we’d have funds to rebuild a part of the agricultural section.", next:"sc5_jerry7"},
+  {id:"sc5_jerry7", type:"dialogue", speaker:"JERRY", text:"Nuclear doesn’t have a lot of stuff to sell. So our main project is basically your project too.", next:"sc5_jerry8"},
+  {id:"sc5_jerry8", type:"dialogue", speaker:"JERRY", text:"Oh, yes, and our department head’s been handling politics for so long I haven’t seen him for a very long time.", next:"sc5_judith5"},
+  {id:"sc5_judith5", type:"dialogue", speaker:"JUDITH", text:"Your department head is useless if he can’t get you guys some kind of funding after two months.", next:"sc5_jerry9"},
+  {id:"sc5_jerry9", type:"dialogue", speaker:"JERRY", text:"What do you want? We’re trying to discuss within-department right now.", next:"sc5_jerry10"},
+  {id:"sc5_jerry10", type:"dialogue", speaker:"JERRY", text:"Does Noor need the coordinates for the photovoltaic systems?", next:"sc5_noor5"},
+  {id:"sc5_noor5", type:"dialogue", speaker:"NOOR", text:"No, it’s not that, I’m already there. I just need to tell you guys about the state of the damage.", next:"sc5_jerry11"},
+  {id:"sc5_jerry11", type:"dialogue", speaker:"JERRY", text:"[Sighs] Alright, how bad is it?", next:"sc5_noor6"},
+  {id:"sc5_noor6", type:"dialogue", speaker:"NOOR", text:"Bad! Something’s knocked into the second receptor. It’s absolutely unsightly. How pricey is replacement?", next:"sc5_jerry12"},
+  {id:"sc5_jerry12", type:"dialogue", speaker:"JERRY", text:"Do you remember, Ester? It doesn’t sound good at all.", next:"sc5_ester4"},
+  {id:"sc5_ester4", type:"dialogue", speaker:"ESTER", text:"From what I remember in school, our receptor had a moderately important replacement and it took 600k in credits.", next:"sc5_ester5"},
+  {id:"sc5_ester5", type:"dialogue", speaker:"ESTER", text:"It was for all three receptors, though.", next:"sc5_jerry13"},
+  {id:"sc5_jerry13", type:"dialogue", speaker:"JERRY", text:"Somewhere near one million then.", next:"sc5_ester6"},
+  {id:"sc5_ester6", type:"dialogue", speaker:"ESTER", text:"Sorry, but I have to ask about our head — looking for funding for two months? Now that I think about it, I really haven’t seen him around. I think I surreptitiously made you the stand-in head, Jerry.", next:"sc5_jerry14"},
+  {id:"sc5_jerry14", type:"dialogue", speaker:"JERRY", text:"I’m flattered. But I’m not, and Lamartine is really having some trouble.", next:"sc5_jerry15"},
+  {id:"sc5_jerry15", type:"dialogue", speaker:"JERRY", text:"He’s going back and forth between the Intergalactic Scientific Association and the president of our own organization. Neither of them is budging very much for Nuclear, since we’re just kind of an add-on to engineering.", next:"sc5_judith6"},
+  {id:"sc5_judith6", type:"dialogue", speaker:"JUDITH", text:"Jerry, focus. Noor’s still operating on your receptor. Give her some instructions. She has 15 minutes left up there!", next:"sc5_noor7"},
+  {id:"sc5_noor7", type:"dialogue", speaker:"NOOR", text:"Don’t need that, Judith. I have most of it figured out myself.", next:"sc5_noor8"},
+  {id:"sc5_noor8", type:"dialogue", speaker:"NOOR", text:"Right now the most I can really do is to give a full report of the damage. I’ve replaced a few rusty parts and re-oriented the device, in case that helps.", next:"sc5_jerry16"},
+  {id:"sc5_jerry16", type:"dialogue", speaker:"JERRY", text:"Thanks. How bad is the damage?", next:"sc5_noor9"},
+  {id:"sc5_noor9", type:"dialogue", speaker:"NOOR", text:"Um, since it got hit head-on, there’s a large segment a foot or so that’s kind of bent out of shape? The wiring underneath is tangled. Not sure if that was related to the collision.", next:"sc5_ester7"},
+  {id:"sc5_ester7", type:"dialogue", speaker:"ESTER", text:"That should be fixable. Is nothing there missing?", next:"sc5_noor10"},
+  {id:"sc5_noor10", type:"dialogue", speaker:"NOOR", text:"From what I see, nothing’s been severed!", next:"sc5_judith7"},
+  {id:"sc5_judith7", type:"dialogue", speaker:"JUDITH", text:"Thirteen minutes.", next:"sc5_ester8"},
+  {id:"sc5_ester8", type:"dialogue", speaker:"ESTER", text:"Judith, please — give us some space to think. Noor will get back within ten minutes.", next:"sc5_ester9"},
+  {id:"sc5_ester9", type:"dialogue", speaker:"ESTER", text:"Noor, have you taken photos?", next:"sc5_noor11"},
+  {id:"sc5_noor11", type:"dialogue", speaker:"NOOR", text:"Yes, I’ll send them to Engineering when I get back.", next:"sc5_ester10"},
+  {id:"sc5_ester10", type:"dialogue", speaker:"ESTER", text:"That pod the Aerospace Engineering department made is mostly in operation. We have some operational robots we can take out to run tests with.", next:"sc5_ester11"},
+  {id:"sc5_ester11", type:"dialogue", speaker:"ESTER", text:"We’ll need your help to design it; Bio too, if they want to.", next:"sc5_judith8"},
+  {id:"sc5_judith8", type:"dialogue", speaker:"JUDITH", text:"Well. I mean, I can’t necessarily refuse.", next:"sc5_jerry17"},
+  {id:"sc5_jerry17", type:"dialogue", speaker:"JERRY", text:"Ok, and if you don’t refuse, you will agree to send in Tadej and Kat.", next:"sc5_judith9"},
+  {id:"sc5_judith9", type:"dialogue", speaker:"JUDITH", text:"Tadej and Katherine will do most of the negotiating. Remember, I’m still involved in a lot of the actual work, despite what you think of the quality of it.", next:"sc5_judith10"},
+  {id:"sc5_judith10", type:"dialogue", speaker:"JUDITH", text:"Noor, are you on the way back yet?", next:"sc5_noor12"},
+  {id:"sc5_noor12", type:"dialogue", speaker:"NOOR", text:"Yes. Will take roughly six minutes to make the return.", next:"sc5_judith11"},
+  {id:"sc5_judith11", type:"dialogue", speaker:"JUDITH", text:"That’s good.", next:"sc5_ester12"},
+  {id:"sc5_ester12", type:"dialogue", speaker:"ESTER", text:"Judith, if you’re going to be doing a lot of the work — as you yourself say it — I think it will be quite necessary for you to figure out negotiations too.", next:"sc5_ester13"},
+  {id:"sc5_ester13", type:"dialogue", speaker:"ESTER", text:"The project will progress more quickly if you don’t have to have an intermediary bargain for every choice you want to go through with.", next:"sc5_ester14"},
+  {id:"sc5_ester14", type:"dialogue", speaker:"ESTER", text:"And. . . it might be good if you and Jerry figured out how to have a civil conversation. Were you two like this as soon as you met each other?", next:"sc5_judith12"},
+  {id:"sc5_judith12", type:"dialogue", speaker:"JUDITH", text:"No. I thought I’d get along with him.", next:"sc5_jerry18"},
+  {id:"sc5_jerry18", type:"dialogue", speaker:"JERRY", text:"Yes, and we could have. Then she decided to snipe my project proposal in order to curry favor with her department chair.", next:"sc5_judith13"},
+  {id:"sc5_judith13", type:"dialogue", speaker:"JUDITH", text:"I tried apologizing. I even tried to get you back some of it later!", next:"sc5_jerry19"},
+  {id:"sc5_jerry19", type:"dialogue", speaker:"JERRY", text:"Yeah, about 25% of what we originally had. Why do you think that accident in Ester’s training session happened in the first place?", next:"sc5_judith14"},
+  {id:"sc5_judith14", type:"dialogue", speaker:"JUDITH", text:"Isn’t it because you caught your sleeve on the—", next:"sc5_jerry20"},
+  {id:"sc5_jerry20", type:"dialogue", speaker:"JERRY", text:"Yes, but devices like that don’t explode on impact! If we had gotten something from a vendor on I-239 who wasn’t pawning off random devices they’d gotten thirdhand, we’d have one more operating machine than we do right now—", next:"sc5_ester15"},
+  {id:"sc5_ester15", type:"dialogue", speaker:"ESTER", text:"Stop it. Do Biology and Engineering hate each other or is it just you two dragging on this entire ordeal?", next:"sc5_judith15"},
+  {id:"sc5_judith15", type:"dialogue", speaker:"JUDITH", text:"We still hate each other. Cause of funding.", next:"sc5_ester16"},
+  {id:"sc5_ester16", type:"dialogue", speaker:"ESTER", text:"Then figure it out! There’s this project you have to collaborate on, at least two members of Biology don’t want us to be thrown out, and I think we’ll work at least semi-efficiently even if it’s just for this one thing!", next:"sc5_judith16"},
+  {id:"sc5_judith16", type:"dialogue", speaker:"JUDITH", text:"I can try, I guess. But Jerry has to. And he has to forget about that stupid funding thing.", next:"sc5_judith17"},
+  {id:"sc5_judith17", type:"dialogue", speaker:"JUDITH", text:"I was apologizing for a week straight.", next:"sc5_ester17"},
+  {id:"sc5_ester17", type:"dialogue", speaker:"ESTER", text:"Not possible. Even if you were just a hotheaded rookie, just. . . agh, pretend you’ve never met each other. All of the departments are getting funding cuts. And we still have to borrow each other’s data and devices.", next:"sc5_judith18"},
+  {id:"sc5_judith18", type:"dialogue", speaker:"JUDITH", text:"Fine.", next:"sc5_jerry21"},
+  {id:"sc5_jerry21", type:"dialogue", speaker:"JERRY", text:"[Sighs] Ok, Ester. That’s reasonable.", next:"sc5_noor13"},
+  {id:"sc5_noor13", type:"dialogue", speaker:"NOOR", text:"Guys. Anyone there? I’m back onboard.", next:"sc5_cameron5"},
+  {id:"sc5_cameron5", type:"dialogue", speaker:"CAMERON", text:"I connected to that monitoring network while Jerry and Judith were arguing. Nice that you guys figured it out, but I’d really like to confirm all Noor’s vitals right now.", next:"sc5_noor14"},
+  {id:"sc5_noor14", type:"dialogue", speaker:"NOOR", text:"Well?", next:"sc5_cameron6"},
+  {id:"sc5_cameron6", type:"dialogue", speaker:"CAMERON", text:"All good. Go to the medical wing for the checkup as usual, then engineering and biology are having an impromptu meeting to go over everything.", next:"sc5_cameron7"},
+  {id:"sc5_cameron7", type:"dialogue", speaker:"CAMERON", text:"Thanks Noor!", next:"sc5_noor15"},
+  {id:"sc5_noor15", type:"dialogue", speaker:"NOOR", text:"As to you. I’m disconnecting now. . .", next:"sc5_cameron8"},
+  {id:"sc5_cameron8", type:"dialogue", speaker:"CAMERON", text:"And you two. Jerry. Judith. Lamartine is going to be disappointed in you if you don’t get it together.", next:"sc5_cameron9"},
+  {id:"sc5_cameron9", type:"dialogue", speaker:"CAMERON", text:"Good on you for mediating it, Ester. I’m drafting a formal proposal as soon as this call ends, and then I’m talking to the Bio head about this.", next:"sc5_cameron10"},
+  {id:"sc5_cameron10", type:"dialogue", speaker:"CAMERON", text:"Disconnecting. Bye, Judith.", next:"sc5_recap"},
+  {id:"sc5_recap", type:"recap", text:"The first interdepartmental research project in quite a long time is about to begin: you — the collected engineering departments — and Biology. You have successfully brokered a temporary peace, but will it stay long enough to complete the project?", next:"end"}
 ];
 
 const REFLECTION_TEXT = "END OF SCENARIO";
@@ -500,6 +592,7 @@ function initTitle() {
   $("#btn-start").addEventListener("click", e => { e.stopPropagation(); startIntro(); });
   $("#btn-dev-scene3").addEventListener("click", e => { e.stopPropagation(); devJumpToScene3(); }); // TEMP DEV — remove before shipping
   $("#btn-dev-scene4").addEventListener("click", e => { e.stopPropagation(); devJumpToScene4(); }); // TEMP DEV — remove before shipping
+  $("#btn-dev-scene5").addEventListener("click", e => { e.stopPropagation(); devJumpToScene5(); }); // TEMP DEV — remove before shipping
   setTimeout(() => {
     $("#title-text").classList.add("visible");
   }, 100);
@@ -545,6 +638,22 @@ function devJumpToScene4() {
   sceneAnimTs = performance.now();
   requestAnimationFrame(sceneAnimLoop);
   runNode("sc4_open_inner1");
+}
+
+// TEMP DEV — jumps straight into Scene 5 for testing, skipping the intro and Scenes 1–4. Remove before shipping.
+function devJumpToScene5() {
+  showScreen("scene");
+  S.freeRoam = false;
+  moveKeys.left = false;
+  moveKeys.right = false;
+  S.sceneScrollX = 0;
+  $("#scene-world").style.left = "0px";
+  sceneIdleBounceTimer = 0;
+  walkAnimTimer = 0;
+  S.walkFrame = 0;
+  sceneAnimTs = performance.now();
+  requestAnimationFrame(sceneAnimLoop);
+  runNode("sc5_open");
 }
 
 /* ---- TITLE ANIMATION LOOP ---- */
@@ -795,6 +904,12 @@ function runNode(nodeId) {
   // rooms for areas without art yet), so they can't peek into view via the
   // camera before the story actually reaches them.
   if (node.reveal) node.reveal.forEach(id => $("#" + id).classList.remove("hidden"));
+
+  // Snaps a sprite to a world-space x position for scene cuts, e.g. a
+  // character appearing somewhere new off-screen rather than walking in.
+  if (node.positions) Object.entries(node.positions).forEach(([charName, x]) => {
+    $("#scene-sprite-" + charName).style.left = x + "px";
+  });
 
   if (node.type === "control") {
     if (node.action === "jerry_enter") { jerryEnter(node.next); return; }
