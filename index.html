@@ -32,8 +32,9 @@
         <div class="title-buttons">
           <button class="btn btn-purple" id="btn-start" tabindex="0">START</button>
           <button class="btn btn-purple" id="btn-settings" tabindex="0">SETTINGS</button>
-          <!-- TEMP DEV BUTTON — remove before shipping -->
+          <!-- TEMP DEV BUTTONS — remove before shipping -->
           <button class="btn btn-purple" id="btn-dev-scene3" tabindex="0">DEV: SCENE 3</button>
+          <button class="btn btn-purple" id="btn-dev-scene4" tabindex="0">DEV: SCENE 4</button>
         </div>
       </div>
     </div>
@@ -55,6 +56,9 @@
     <!-- SCREEN: SCENE -->
     <div id="screen-scene" class="screen">
       <div id="scene-world">
+        <!-- Placeholder for the aerospace engineering department (Scene 4) — no art yet, west of the lab.
+             Hidden until Scene 4 reveals it, so it can't peek into view during earlier scenes' camera pans. -->
+        <div id="aerospace-placeholder" class="hidden">AEROSPACE ENGINEERING<br>(placeholder art)</div>
         <img id="scene-bg" src="./assets/background.png" alt="">
         <div id="scene-sprite-sam" class="scene-sprite facing-left" data-char="sam"></div>
         <div id="scene-sprite-jerry" class="scene-sprite hidden" data-char="jerry"></div>

@@ -302,7 +302,7 @@ const SCENE_SCRIPT = [
   {id:"sc3_case_6", type:"dialogue", speaker:"JUDITH", text:"Look, why in the world would you automatically think we’re trying to create a— Oh. Okay. [Sighs] Alright then, I’ll give you the data you need.", next:"sc3_case_narration"},
   {id:"sc3_case_narration", type:"narration", text:"Ester hangs up. Jerry walks over, grinning.", next:"sc3_case_jerry", showSprites:["jerry","ester"]},
   {id:"sc3_case_jerry", type:"dialogue", speaker:"JERRY", text:"I heard your conversation. Nice job! I’ll wait on the mail inbox. Noor will be delighted…", next:"sc3_case_recap"},
-  {id:"sc3_case_recap", type:"recap", text:"Jerry and the biology department now respect your knowledge and tenacity.", next:"end"},
+  {id:"sc3_case_recap", type:"recap", text:"Jerry and the biology department now respect your knowledge and tenacity.", next:"sc4_open_inner1"},
 
   /* -- Choice 2: gesture to Jerry -- */
   {id:"sc3_gesture_1", type:"inner", text:"No clue what to do with all this. At least I had managed, for a little bit. I waved frantically at Jerry — on the other side of the room, fiddling with his telemetry devices and cursing under his breath. His eyes went wide, and he immediately abandoned it to take the phone out of my hand.", next:"sc3_gesture_2", showSprites:["jerry","ester"]},
@@ -310,7 +310,99 @@ const SCENE_SCRIPT = [
   {id:"sc3_gesture_3", type:"inner", text:"He said a number of things I’ve never heard used in such a . . . creative manner before.", next:"sc3_gesture_4"},
   {id:"sc3_gesture_4", type:"narration", text:"They went back and forth like that for a while, each end defending their department’s honor like it was the last line of appeal from being flung into the black hole itself. It ended with Jerry slamming the receiver down. He put his head in his hands, sighed deeply, and then teetered toward the door.", next:"sc3_gesture_5"},
   {id:"sc3_gesture_5", type:"dialogue", speaker:"JERRY", text:"Sorry you had to hear that. Fix up the rest of the measurements, please — I’m going to find Tadej. I swear, I can get absolutely nowhere with those idiots in Bio without him in the room to mediate…", next:"sc3_gesture_recap"},
-  {id:"sc3_gesture_recap", type:"recap", text:"Jerry fully accepted you into the “nuclear” team in your grand struggles against technology, governance, and the other departments — though you still have to steer clear of Biology.", next:"end"}
+  {id:"sc3_gesture_recap", type:"recap", text:"Jerry fully accepted you into the “nuclear” team in your grand struggles against technology, governance, and the other departments — though you still have to steer clear of Biology.", next:"sc4_open_inner1"},
+
+  /* ============================================================
+     SCENE 4 — Night Shift: Aerospace Engineering
+     ============================================================ */
+
+  {id:"sc4_open_inner1", type:"inner", text:"It’s a nice “night” out. That’s what Jerry calls this, anyways. We usually work in shifts here — once every two weeks or so, it’s someone’s turn to work the graveyard shift. Basically just being a supervisor for the “night” crew so everything’s smooth when everyone’s sleeping.", next:"sc4_open_inner2", showSprites:["jerry","ester"]},
+  {id:"sc4_open_inner2", type:"inner", text:"I’m pretty sure nobody likes night shifts. Except for me. It’s quiet out, and I can think.", next:"sc4_ester_jerry1"},
+  {id:"sc4_ester_jerry1", type:"dialogue", speaker:"ESTER", text:"Jerry, I’m working tonight. I think we had a request from the aerospace engineering department to help them with a design. I’ll send a message to everyone that I’ll be there in case they need something.", next:"sc4_jerry_night"},
+  {id:"sc4_jerry_night", type:"dialogue", speaker:"JERRY", text:"Alright. Goodnight, Ester.", next:"sc4_ester_night"},
+  {id:"sc4_ester_night", type:"dialogue", speaker:"ESTER", text:"Goodnight.", next:"sc4_walk_to_aerospace"},
+
+  // free_roam control node — the player walks Ester left, out of the lab and into the aerospace department
+  {id:"sc4_walk_to_aerospace", type:"control", action:"free_roam", minX:20, maxX:720, targetX:160, next:"sc4_arrive_aerospace", showSprites:["ester"], reveal:["aerospace-placeholder"]},
+
+  {id:"sc4_arrive_aerospace", type:"narration", text:"The aerospace engineering department is cluttered and full of half-finished projects, with a few enthusiastic scientists staying up late to add finishing touches to their work.", next:"sc4_ester_intro1"},
+  {id:"sc4_ester_intro1", type:"dialogue", speaker:"ESTER", text:"Um, hello. I’m Ester, a recent addition to the nuclear engineering department. It’s nice to meet you. Seeing as we’re all engineers, I hope we can cooperate well together.", next:"sc4_cameron1"},
+  {id:"sc4_cameron1", type:"dialogue", speaker:"CAMERON", text:"Hello Ester, I’m Cameron! I hope we can cooperate too. Graveyard shift tonight?", next:"sc4_inner_graveyard"},
+  {id:"sc4_inner_graveyard", type:"inner", text:"“Graveyard shift” is a funny way to put it, but Jerry likes this phrase.", next:"sc4_ester_yes"},
+  {id:"sc4_ester_yes", type:"dialogue", speaker:"ESTER", text:"Yes. I’m looking forward to it.", next:"sc4_cameron2"},
+  {id:"sc4_cameron2", type:"dialogue", speaker:"CAMERON", text:"[Laughs] Ugh, I wish I was. My aerospace people are really good in that they don’t complain about the stuff they do. They love it!", next:"sc4_zinnia_offscreen"},
+  {id:"sc4_zinnia_offscreen", type:"narration", text:"An aerospace engineer, working on a strangely lopsided-looking design, calls out from offscreen.", next:"sc4_zinnia1"},
+  {id:"sc4_zinnia1", type:"dialogue", speaker:"ZINNIA", text:"Sir yes sir!", next:"sc4_cameron3"},
+  {id:"sc4_cameron3", type:"dialogue", speaker:"CAMERON", text:"Come on! Stop calling me that, it makes me sound like your landlord. Well, I don’t like working late at night much. I like sleeping.", next:"sc4_inner_perturbed1"},
+  {id:"sc4_inner_perturbed1", type:"inner", text:"I felt vaguely perturbed by this statement. Did they not want to work with me right now?", next:"sc4_inner_perturbed2"},
+  {id:"sc4_inner_perturbed2", type:"inner", text:"It’s something my roommate used to say in university when she wanted me to turn the lights off. And then got mad at me when I told her to just go to sleep.", next:"sc4_ester_sleep"},
+  {id:"sc4_ester_sleep", type:"dialogue", speaker:"ESTER", text:"We all love sleeping. It’s nice to get some quiet time to work, though. You can go ahead and take a nap while I take a look at the energy systems on that pod you requested Nuclear for. Are the workrooms dark enough for that?", next:"sc4_cameron4"},
+  {id:"sc4_cameron4", type:"dialogue", speaker:"CAMERON", text:"What? No way I’m leaving you alone to do all the heavy lifting out here. You have supervising duty too! What if the electricians suddenly get into an argument over the coffee machine? And then they barge in fighting while you’re busy doing some welding or something? And I was asleep in the side room?", next:"sc4_cameron5"},
+  {id:"sc4_cameron5", type:"dialogue", speaker:"CAMERON", text:"Oh — hold on a second. Zinnia! Go to bed already!", next:"sc4_zinnia2"},
+  {id:"sc4_zinnia2", type:"dialogue", speaker:"ZINNIA", text:"Ok, ok. Good luck with the Nuclear kid, boss. Night.", next:"sc4_cameron6"},
+  {id:"sc4_cameron6", type:"dialogue", speaker:"CAMERON", text:"Goodnight, Zin.", next:"sc4_cameron7"},
+  {id:"sc4_cameron7", type:"dialogue", speaker:"CAMERON", text:"Anyways, I think it’ll be fine. You can work on that and ask me any questions you have about the design. I will be sitting by the telecom.", next:"sc4_ester_zoned"},
+  {id:"sc4_ester_zoned", type:"dialogue", speaker:"ESTER", text:"Er — well, great. Don’t mind me if I look like I’ve zoned out. I know it may sound like an excuse, but I’m probably trying to figure a problem out.", next:"sc4_cameron8"},
+  {id:"sc4_cameron8", type:"dialogue", speaker:"CAMERON", text:"Happens to all of us.", next:"sc4_ester_suppose"},
+  {id:"sc4_ester_suppose", type:"dialogue", speaker:"ESTER", text:"I suppose so?", next:"sc4_inner_bigdeal1"},
+  {id:"sc4_inner_bigdeal1", type:"inner", text:"To be honest, I have no idea what to say or feel. Obviously this person is a big deal. Head of aerospace engineering? Even nominally, to the degree that people call you “sir” and “boss”?", next:"sc4_inner_bigdeal2"},
+  {id:"sc4_inner_bigdeal2", type:"inner", text:"A spaceship is no place to take aerospace engineering jokingly. The prestigious research organizations have nightmarish rumors following the names of their aerospace engineering captains.", next:"sc4_cameron9"},
+  {id:"sc4_cameron9", type:"dialogue", speaker:"CAMERON", text:"[Yawns] I suppose so too. The project’s up there. Yell down at me if you have anything urgent.", next:"sc4_ester_thanks"},
+  {id:"sc4_ester_thanks", type:"dialogue", speaker:"ESTER", text:"Thank you.", next:"sc4_bigprojects1"},
+
+  {id:"sc4_bigprojects1", type:"narration", text:"Ester heads to the corner of the room where the “big projects” are kept — a spacious, clean, warehouse-like area, its walls covered in little notes and posters from the engineers.", next:"sc4_bigprojects2"},
+  {id:"sc4_bigprojects2", type:"narration", text:"The project she’s meant to work on is split into several components. Most are half-covered by canvas sheets, but one — the heating unit — is left open, the whole section partitioned off with tape.", next:"sc4_inner_beautiful"},
+  {id:"sc4_inner_beautiful", type:"inner", text:"A beautiful device, alright. I would have lobbied hard to get these sorts of parts for projects, from university up to now. Still—", next:"sc4_ester_honest"},
+  {id:"sc4_ester_honest", type:"dialogue", speaker:"ESTER", text:"Cameron, I’m going to be honest: I have no idea who you put on this. They don’t really know how safety for commercial heating units works.", next:"sc4_cameron10"},
+  {id:"sc4_cameron10", type:"dialogue", speaker:"CAMERON", text:"You can say that again. I even noticed it was like they were trying to fit a jet propulsion unit into a little box. And the welding — I don’t even want to look at it!", next:"sc4_ester_notawful"},
+  {id:"sc4_ester_notawful", type:"dialogue", speaker:"ESTER", text:"It’s not too awful from a heating standpoint. Heating units are stuff secondary school children make without killing everyone in the room.", next:"sc4_cameron11"},
+  {id:"sc4_cameron11", type:"dialogue", speaker:"CAMERON", text:"Well, yes. I was mostly joking. But the welding is pretty bad.", next:"sc4_inner_joking"},
+  {id:"sc4_inner_joking", type:"inner", text:"“I was joking.” Three worst words to hear. What kind of tone was that said with? Annoyed? Amused? For now, I’ll assume it’s said with annoyance and try to keep them happy with me. . . my department really can’t handle a funding cut at this time.", next:"sc4_ester_reweld"},
+  {id:"sc4_ester_reweld", type:"dialogue", speaker:"ESTER", text:"Yes, I’ll re-weld everything right away.", next:"sc4_ester_pitch"},
+  {id:"sc4_ester_pitch", type:"dialogue", speaker:"ESTER", text:"But first, what do you think of a small radioisotope heating unit? I’m looking for adaptations to make it safer for human use. It needs to fit the Universal Nuclear Occupational Safety Requirements. It could work for a long time, so long as we remember to sequester it into a failsafe area, and then pipe the heat into the main unit. . .", next:"sc4_ester_idea"},
+  {id:"sc4_ester_idea", type:"dialogue", speaker:"ESTER", text:"Oh! I have an idea. Give me a moment.", next:"sc4_cameron12"},
+  {id:"sc4_cameron12", type:"dialogue", speaker:"CAMERON", text:"Take all the time you need. You’re pretty passionate! Shame you’re not in my department.", next:"sc4_inner_notaero"},
+  {id:"sc4_inner_notaero", type:"inner", text:"Well, yes, I’m not in the aerospace engineering department because I’m not an aerospace engineer. I don’t think it’s smart to say that though.", next:"sc4_ester_blueprint"},
+  {id:"sc4_ester_blueprint", type:"dialogue", speaker:"ESTER", text:"I’m getting a blueprint right now. It’s something you guys can take a look over and decide whether you want to keep it or not tomorrow.", next:"sc4_cameron13"},
+  {id:"sc4_cameron13", type:"dialogue", speaker:"CAMERON", text:"No need. I’ll just pull up some tests right now and run your idea through once the design’s done.", next:"sc4_cameron14"},
+  {id:"sc4_cameron14", type:"dialogue", speaker:"CAMERON", text:"Oh, and don’t worry about the telecom! It may seem like I’m trying to get away from the angry phone calls, but I can hear it if it goes off.", next:"sc4_ester_gotit"},
+  {id:"sc4_ester_gotit", type:"dialogue", speaker:"ESTER", text:"Um, yeah. Got it.", next:"sc4_tablet"},
+  {id:"sc4_tablet", type:"narration", text:"Cameron pulls up a tablet — some kind of fancy computer replacement, space tech maybe — and sets it up near Ester.", next:"sc4_cameron15"},
+  {id:"sc4_cameron15", type:"dialogue", speaker:"CAMERON", text:"It’ll only take a second. . . aaand, I’ve locked it down. Send me your design as soon as you’re done.", next:"sc4_ester_sorry_design"},
+  {id:"sc4_ester_sorry_design", type:"dialogue", speaker:"ESTER", text:"Sorry if the design’s not very good. It could look a bit rushed. And the numbers may not make sense. Sorry.", next:"sc4_cameron16"},
+  {id:"sc4_cameron16", type:"dialogue", speaker:"CAMERON", text:"It’s alright! Don’t sweat it. It looks nicely planned out! I like the addition of those fuel rod adjustments you made.", next:"sc4_cameron17"},
+  {id:"sc4_cameron17", type:"dialogue", speaker:"CAMERON", text:"Small things like that add up, should give a much better human interactive design.", next:"sc4_inner_terrifying"},
+  {id:"sc4_inner_terrifying", type:"inner", text:"They took my design and put all the details into that testing program after just a single glance at the blueprint. Terrifying.", next:"sc4_cameron18"},
+  {id:"sc4_cameron18", type:"dialogue", speaker:"CAMERON", text:"So, Ester, why’re you in here with us?", next:"sc4_ester_prison"},
+  {id:"sc4_ester_prison", type:"dialogue", speaker:"ESTER", text:"Sounds like we’re in prison.", next:"sc4_cameron19"},
+  {id:"sc4_cameron19", type:"dialogue", speaker:"CAMERON", text:"Well, it seemed like that at the start. But you get lots of opportunities to prove yourself.", next:"sc4_cameron20"},
+  {id:"sc4_cameron20", type:"dialogue", speaker:"CAMERON", text:"What happened back at home to end up in this garbage dump?", next:"sc4_inner_hardtopic"},
+  {id:"sc4_inner_hardtopic", type:"inner", text:"This is the most difficult conversation topic, the ultimate chip on everyone’s shoulders. The one thing you don’t just bring up — at least, the number one thing I’d rather keep close to my chest.", next:"sc4_answer_choice"},
+
+  {id:"sc4_answer_choice", type:"choice", choices:[
+    {label:"Keep it vague and downplay it.", next:"sc4_resp_ll"},
+    {label:"Be casual but explain what happened.", next:"sc4_resp_hl"},
+    {label:"Give a formal, guarded answer.", next:"sc4_resp_lh"},
+    {label:"Give a full, honest explanation.", next:"sc4_resp_hh"}
+  ]},
+
+  {id:"sc4_resp_ll", type:"dialogue", speaker:"ESTER", text:"Nothing too bad. Just. . . could’ve done better in university, I guess. It was hard to keep up with all the politicking going on, and I wasn’t feeling my best when the internship applications rolled around.", next:"sc4_cameron_reflect"},
+  {id:"sc4_resp_hl", type:"dialogue", speaker:"ESTER", text:"Everyone there didn’t understand what I was saying, ever. And then my entire department started hating me, especially my advisor — and then I found out I got kicked out. For this field, nuclear, that is, it’s really important to keep things safe. I think I complained too much.", next:"sc4_cameron_reflect"},
+  {id:"sc4_resp_lh", type:"dialogue", speaker:"ESTER", text:"University was difficult, and I had a lot of complicated events going on in my personal life when internships were due. This place just seemed like the best conclusion for where my life was at.", next:"sc4_cameron_reflect"},
+  {id:"sc4_resp_hh", type:"dialogue", speaker:"ESTER", text:"There were a lot of misunderstandings going on in my department. I gained a bad reputation for being uncooperative and stuck-up, but really there were some genuinely concerning choices being made for a field as dangerous as mine. My advisor complained about my so-called “work quality” enough to get me moved out to this place. I think he just decided he was sick of dealing with me.", next:"sc4_cameron_reflect"},
+
+  {id:"sc4_cameron_reflect", type:"dialogue", speaker:"CAMERON", text:"I see. Sorry, I probably shouldn’t have asked that question. I’ll tell you what happened to me in exchange for making you say that.", next:"sc4_cameron_story1"},
+  {id:"sc4_cameron_story1", type:"dialogue", speaker:"CAMERON", text:"I got accused of cheating in my dissertation — not sure who it came from, but somehow I had managed to come up with the exact same design as some dusty old concept in the back of the library.", next:"sc4_cameron_story2"},
+  {id:"sc4_cameron_story2", type:"dialogue", speaker:"CAMERON", text:"It was a big deal. I made a long defense of myself and everything, but still chose to leave after that. And that’s why I’m here!", next:"sc4_ester_thanks_telling"},
+  {id:"sc4_ester_thanks_telling", type:"dialogue", speaker:"ESTER", text:"Oh — well, um, thanks for telling me that. I appreciate the consideration.", next:"sc4_cameron_noproblem"},
+  {id:"sc4_cameron_noproblem", type:"dialogue", speaker:"CAMERON", text:"No problem.", next:"sc4_cameron_uncomfortable1"},
+  {id:"sc4_cameron_uncomfortable1", type:"dialogue", speaker:"CAMERON", text:"Although. . . are you uncomfortable with me making you talk so much? Please be honest. I can tell you like your work.", next:"sc4_cameron_uncomfortable2"},
+  {id:"sc4_cameron_uncomfortable2", type:"dialogue", speaker:"CAMERON", text:"I realize I’m probably distracting you from it. I have a bad habit of running my mouth a lot! And — you seem a little nervous?", next:"sc4_ester_focus"},
+  {id:"sc4_ester_focus", type:"dialogue", speaker:"ESTER", text:"Please don’t take offense, but I’d like to focus a little better. Thanks for doing the tests for my projects though.", next:"sc4_cameron_noffense"},
+  {id:"sc4_cameron_noffense", type:"dialogue", speaker:"CAMERON", text:"Oh, no, no. I won’t take offense. My own people all tell me to shut up in much less polite terms than that!", next:"sc4_cameron_plausible"},
+  {id:"sc4_cameron_plausible", type:"dialogue", speaker:"CAMERON", text:"And your idea seems pretty plausible, by the way, just needs the numbers to be filled out. Then I’ll do a proper analysis and get back to you.", next:"sc4_cameron_telecom"},
+  {id:"sc4_cameron_telecom", type:"dialogue", speaker:"CAMERON", text:"And that reminds me. I need to get back to the telecom. Sorry for keeping you!", next:"sc4_recap"},
+  {id:"sc4_recap", type:"recap", text:"Cameron is well intentioned enough and very competent. It seems you’ve gotten yourself a new ally.", next:"end"}
 ];
 
 const REFLECTION_TEXT = "END OF SCENARIO";
@@ -407,6 +499,7 @@ function completeType(el) {
 function initTitle() {
   $("#btn-start").addEventListener("click", e => { e.stopPropagation(); startIntro(); });
   $("#btn-dev-scene3").addEventListener("click", e => { e.stopPropagation(); devJumpToScene3(); }); // TEMP DEV — remove before shipping
+  $("#btn-dev-scene4").addEventListener("click", e => { e.stopPropagation(); devJumpToScene4(); }); // TEMP DEV — remove before shipping
   setTimeout(() => {
     $("#title-text").classList.add("visible");
   }, 100);
@@ -431,6 +524,27 @@ function devJumpToScene3() {
   sceneAnimTs = performance.now();
   requestAnimationFrame(sceneAnimLoop);
   runNode("sc3_open");
+}
+
+// TEMP DEV — jumps straight into Scene 4 for testing, skipping the intro and Scenes 1–3. Remove before shipping.
+function devJumpToScene4() {
+  showScreen("scene");
+  S.freeRoam = false;
+  moveKeys.left = false;
+  moveKeys.right = false;
+  S.sceneScrollX = 0;
+  S.playerX = 150; // kept in sync with the sprite position below, so the Scene 4 walk-to-aerospace segment (which continues from S.playerX) doesn't teleport her
+  $("#scene-world").style.left = "0px";
+  $("#scene-sprite-ester").style.left = "150px";
+  $("#scene-sprite-ester").classList.remove("facing-left");
+  $("#scene-sprite-jerry").style.left = "190px";
+  $("#scene-sprite-jerry").classList.remove("facing-left");
+  sceneIdleBounceTimer = 0;
+  walkAnimTimer = 0;
+  S.walkFrame = 0;
+  sceneAnimTs = performance.now();
+  requestAnimationFrame(sceneAnimLoop);
+  runNode("sc4_open_inner1");
 }
 
 /* ---- TITLE ANIMATION LOOP ---- */
@@ -479,15 +593,17 @@ function advanceIntro() {
 let sceneIdleBounceTimer = 0;
 let walkAnimTimer = 0;
 
-// Free-roam bounds within the lab.
+// Free-roam bounds within the lab. World x 0–320 is the aerospace-engineering
+// placeholder area added for Scene 4, west of the lab; everything lab-related
+// below is shifted +320 to make room for it.
 const VIEWPORT_WIDTH = 320;
-const WORLD_WIDTH = 640;
+const WORLD_WIDTH = 960;
 const CAM_MAX_SCROLL = WORLD_WIDTH - VIEWPORT_WIDTH;
-const LAB_MIN_X = 12;
-const LAB_MAX_X = 400;
-const SAM_LAB_X = 380; // Sam waits further into the lab, out of the starting frame
-const PLAYER_START_X = 30;
-const PROXIMITY_DIST = 45; // how close Ester must get to Sam to start s1
+const LAB_MIN_X = 332;
+const LAB_MAX_X = 720;
+const SAM_LAB_X = 700; // Sam waits further into the lab, out of the starting frame
+const PLAYER_START_X = 350;
+const PROXIMITY_DIST = 45; // how close Ester must get to a target to trigger the next node
 const PLAYER_MOVE_SPEED = 60; // px/sec
 const JERRY_ENTER_X = SAM_LAB_X + 140; // where Jerry starts, further down the room
 const JERRY_JOIN_X = SAM_LAB_X + 40; // where Jerry ends up, beside Sam and Ester
@@ -495,23 +611,41 @@ const JERRY_WALK_MS = 1300;
 const WALK_FRAME_MS = 130; // ms per leg-cycle frame while Ester is moving
 const moveKeys = { left: false, right: false };
 
+// Generic free-roam config — which bounds/target/next-node the current
+// walk segment uses. Defaults match the Scene 1 walk to Sam; other scenes
+// override these via startFreeRoam() before setting S.freeRoam = true.
+let freeRoamMinX = LAB_MIN_X, freeRoamMaxX = LAB_MAX_X, freeRoamTargetX = SAM_LAB_X, freeRoamNextNode = "s1";
+
+function startFreeRoam(startX, minX, maxX, targetX, nextNode, facingRight) {
+  // startX/facingRight are optional — omit them to have Ester continue
+  // walking from wherever she currently stands and however she's already
+  // facing, instead of snapping to a fixed spot/direction.
+  if (startX != null) S.playerX = startX;
+  freeRoamMinX = minX;
+  freeRoamMaxX = maxX;
+  freeRoamTargetX = targetX;
+  freeRoamNextNode = nextNode;
+  S.freeRoam = true;
+  S.sceneScrollX = Math.max(0, Math.min(CAM_MAX_SCROLL, S.playerX - VIEWPORT_WIDTH / 2));
+  $("#scene-world").style.left = -S.sceneScrollX + "px";
+  $("#scene-sprite-ester").style.left = S.playerX + "px";
+  if (facingRight != null) $("#scene-sprite-ester").classList.toggle("facing-left", !facingRight); // art faces right natively
+  walkAnimTimer = 0;
+  S.walkFrame = 0;
+  moveKeys.left = false;
+  moveKeys.right = false;
+}
+
 function startScene() {
   showScreen("scene");
 
   // Opening: camera follows Ester from the left edge of the lab. Sam
   // waits further in, out of frame, until she walks over to him.
-  S.playerX = PLAYER_START_X;
-  S.sceneScrollX = Math.max(0, Math.min(CAM_MAX_SCROLL, S.playerX - VIEWPORT_WIDTH / 2));
-  S.freeRoam = true;
+  startFreeRoam(PLAYER_START_X, LAB_MIN_X, LAB_MAX_X, SAM_LAB_X, "s1", true);
   $("#scene-sprite-sam").style.left = SAM_LAB_X + "px";
-  $("#scene-sprite-ester").style.left = S.playerX + "px";
-  $("#scene-sprite-ester").classList.remove("facing-left"); // she starts walking right, toward Sam
   $("#scene-sprite-jerry").classList.add("hidden");
-  $("#scene-world").style.left = -S.sceneScrollX + "px";
 
   sceneIdleBounceTimer = 0;
-  walkAnimTimer = 0;
-  S.walkFrame = 0;
   sceneAnimTs = performance.now();
   requestAnimationFrame(sceneAnimLoop);
 }
@@ -596,7 +730,7 @@ function sceneAnimLoop(ts) {
     if (moveKeys.left) dx -= 1;
     if (moveKeys.right) dx += 1;
     if (dx !== 0) {
-      S.playerX = Math.max(LAB_MIN_X, Math.min(LAB_MAX_X, S.playerX + dx * PLAYER_MOVE_SPEED * dt / 1000));
+      S.playerX = Math.max(freeRoamMinX, Math.min(freeRoamMaxX, S.playerX + dx * PLAYER_MOVE_SPEED * dt / 1000));
       $("#scene-sprite-ester").style.left = S.playerX + "px";
       $("#scene-sprite-ester").classList.toggle("facing-left", dx < 0); // art faces right natively
       S.sceneScrollX = Math.max(0, Math.min(CAM_MAX_SCROLL, S.playerX - VIEWPORT_WIDTH / 2));
@@ -613,14 +747,14 @@ function sceneAnimLoop(ts) {
       walkAnimTimer = 0;
       $("#scene-sprite-ester").style.backgroundPosition = "0 0";
     }
-    if (Math.abs(S.playerX - SAM_LAB_X) <= PROXIMITY_DIST) {
+    if (Math.abs(S.playerX - freeRoamTargetX) <= PROXIMITY_DIST) {
       S.freeRoam = false;
       moveKeys.left = false;
       moveKeys.right = false;
       S.walkFrame = 0;
       walkAnimTimer = 0;
       $("#scene-sprite-ester").style.backgroundPosition = "0 0";
-      runNode("s1");
+      runNode(freeRoamNextNode);
     }
   }
 
@@ -657,9 +791,15 @@ function runNode(nodeId) {
     $("#scene-sprite-ester").classList.toggle("hidden", !node.showSprites.includes("ester"));
   }
 
+  // Reveals background elements that are hidden by default (e.g. placeholder
+  // rooms for areas without art yet), so they can't peek into view via the
+  // camera before the story actually reaches them.
+  if (node.reveal) node.reveal.forEach(id => $("#" + id).classList.remove("hidden"));
+
   if (node.type === "control") {
     if (node.action === "jerry_enter") { jerryEnter(node.next); return; }
     if (node.action === "sensory_minigame") { startSensoryMinigame(node.next); return; }
+    if (node.action === "free_roam") { startFreeRoam(node.startX, node.minX, node.maxX, node.targetX, node.next, node.facingRight); return; }
   }
 
   // Choices
