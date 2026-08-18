@@ -10,7 +10,7 @@
 html,body{
   width:100%;height:100%;overflow:hidden;
   background:#ffffff;
-  font-family:'Arial',monospace;
+  font-family:'Karla',Arial,sans-serif;
 }
 @font-face{
   font-family:'OpenDyslexic';
@@ -18,7 +18,7 @@ html,body{
   font-display:swap;
 }
 body.dyslexia-font,body.dyslexia-font *,body.dyslexia-font *::before,body.dyslexia-font *::after{
-  font-family:'OpenDyslexic',Arial,sans-serif!important;
+  font-family:'OpenDyslexic','Karla',Arial,sans-serif!important;
 }
 /* === GAME WRAPPER — integer scaling === */
 #game-wrapper{
@@ -39,7 +39,7 @@ button:focus-visible{outline:2px solid var(--yellow);}
 
 /* === BUTTONS === */
 .btn{
-  font-family:'Arial',monospace;
+  font-family:'Karla',Arial,sans-serif;
   font-size:4px;
   border:none;cursor:pointer;
   padding:3px 6px;
@@ -97,13 +97,13 @@ button:focus-visible{outline:2px solid var(--yellow);}
 #title-text{opacity:0;transition:opacity 0.8s ease;}
 #title-text.visible{opacity:1;}
 .title-main{
-  font-family:'Arial',monospace;
+  font-family:'Karla',Arial,sans-serif;
   font-size:12px;line-height:1.5;
   color:var(--lyellow);
   text-shadow:1px 1px 0 var(--navy);
 }
 .title-sub{
-  font-family:'Arial',monospace;
+  font-family:'Karla',Arial,sans-serif;
   font-size:4px;
   color:var(--yellow);
   margin-top:6px;
@@ -136,7 +136,7 @@ button:focus-visible{outline:2px solid var(--yellow);}
   gap:7px;
 }
 .settings-title{
-  font-family:'Arial',monospace;
+  font-family:'Karla',Arial,sans-serif;
   font-size:6px;
   color:var(--lyellow);
   text-align:center;
@@ -144,7 +144,7 @@ button:focus-visible{outline:2px solid var(--yellow);}
 }
 .settings-row{
   display:flex;align-items:center;gap:5px;
-  font-family:'Arial',monospace;
+  font-family:'Karla',Arial,sans-serif;
   font-size:5px;
   color:var(--yellow);
   cursor:pointer;
@@ -178,7 +178,7 @@ button:focus-visible{outline:2px solid var(--yellow);}
 }
 .instructions-row{
   display:flex;align-items:center;gap:6px;
-  font-family:'Arial',monospace;
+  font-family:'Karla',Arial,sans-serif;
   font-size:5px;
   color:var(--lyellow);
 }
@@ -212,7 +212,7 @@ button:focus-visible{outline:2px solid var(--yellow);}
 }
 .intro-counter{
   position:absolute;bottom:6px;right:8px;
-  font-family:'Arial',monospace;
+  font-family:'Karla',Arial,sans-serif;
   font-size:4px;
   color:var(--lyellow);
 }
@@ -237,7 +237,7 @@ button:focus-visible{outline:2px solid var(--yellow);}
 }
 #screen-scenes.active{display:flex;}
 .scenes-title{
-  font-family:'Arial',monospace;
+  font-family:'Karla',Arial,sans-serif;
   font-size:7px;
   color:var(--lyellow);
   letter-spacing:1px;
@@ -280,7 +280,7 @@ button:focus-visible{outline:2px solid var(--yellow);}
   background:rgba(106,92,240,0.12);
   display:flex;align-items:center;justify-content:center;
   text-align:center;padding:10px;
-  font-family:'Arial',monospace;font-size:5px;line-height:1.6;
+  font-family:'Karla',Arial,sans-serif;font-size:5px;line-height:1.6;
   color:var(--yellow);opacity:.85;
 }
 .scene-sprite{
@@ -372,7 +372,7 @@ button:focus-visible{outline:2px solid var(--yellow);}
 #dialogue-box.type-inner{background:rgba(65, 66, 69, 0.5);color:var(--navy);font-style:italic;}
 #dialogue-box.type-narration{background:rgba(65, 66, 69, 0.5);color:var(--yellow);border:1px solid var(--purple);}
 #dialogue-speaker{
-  font-family:'Arial',monospace;
+  font-family:'Karla',Arial,sans-serif;
   font-size:calc(var(--text-body) + 1px);
   color:var(--lyellow);
   text-shadow:1px 1px 0 var(--navy);
@@ -389,7 +389,7 @@ button:focus-visible{outline:2px solid var(--yellow);}
 }
 #choice-panel::before{
   content:'Choose an option:';
-  font-family:'Arial',monospace;
+  font-family:'Karla',Arial,sans-serif;
   font-size:3.5px;
   color:var(--yellow);
   letter-spacing:0.5px;

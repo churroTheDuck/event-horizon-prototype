@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Sensory Overload Mini-Game</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Karla:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 :root{
@@ -11,14 +13,14 @@
   --navy:#10067a;--purple:#6b05ab;
   --sx:0px;--sy:0px;--bx:0px;--by:0px;
 }
-html,body{width:100%;height:100%;overflow:hidden;background:#000;font-family:'Arial',monospace;}
+html,body{width:100%;height:100%;overflow:hidden;background:#000;font-family:'Karla',Arial,sans-serif;}
 @font-face{
   font-family:'OpenDyslexic';
   src:url('./OpenDyslexic-Bold.otf') format('opentype');
   font-display:swap;
 }
 body.dyslexia-font,body.dyslexia-font *{
-  font-family:'OpenDyslexic',Arial,sans-serif!important;
+  font-family:'OpenDyslexic','Karla',Arial,sans-serif!important;
 }
 
 #game-wrapper{display:flex;align-items:center;justify-content:center;width:100%;height:100%;}
@@ -64,9 +66,9 @@ body.dyslexia-font,body.dyslexia-font *{
   opacity:1;transition:opacity .3s;
 }
 .soverlay-box.hidden{opacity:0;pointer-events:none;display:flex!important;}
-.soverlay-header{font-family:'Arial',monospace;font-size:8px;color:var(--yellow);letter-spacing:1px;text-align:center;}
-.soverlay-body{font-family:'Arial',monospace;font-size:7px;color:#ddd;line-height:1.5;white-space:pre-wrap;}
-.soverlay-hint{font-family:'Arial',monospace;font-size:6px;color:var(--yellow);display:flex;align-items:center;justify-content:center;gap:5px;opacity:0;transition:opacity .4s;}
+.soverlay-header{font-family:'Karla',Arial,sans-serif;font-size:8px;color:var(--yellow);letter-spacing:1px;text-align:center;}
+.soverlay-body{font-family:'Karla',Arial,sans-serif;font-size:7px;color:#ddd;line-height:1.5;white-space:pre-wrap;}
+.soverlay-hint{font-family:'Karla',Arial,sans-serif;font-size:6px;color:var(--yellow);display:flex;align-items:center;justify-content:center;gap:5px;opacity:0;transition:opacity .4s;}
 .soverlay-hint.visible{opacity:1;}
 
 /* Warning overlay */
@@ -84,7 +86,7 @@ body.dyslexia-font,body.dyslexia-font *{
 .skg-diagram{display:flex;flex-direction:column;gap:2px;}
 .skg-diagram+.skg-diagram{border-top:1px solid rgba(255,196,33,.12);padding-top:2px;}
 .skg-diag-inner{border:1px solid rgba(255,196,33,.6);padding:2px 4px;display:flex;flex-direction:column;gap:1px;}
-.skg-diag-name{font-family:'Arial',monospace;font-size:4px;color:var(--purple);}
+.skg-diag-name{font-family:'Karla',Arial,sans-serif;font-size:4px;color:var(--purple);}
 .skg-diag-track{position:relative;width:100%;height:6px;background:var(--purple);}
 .skg-diag-zone{position:absolute;height:100%;width:32%;left:36%;background:rgba(0,180,0,.25);border-left:1px solid #0a0;border-right:1px solid #0a0;}
 .skg-zone-hit{background:rgba(0,200,0,.45);border-color:#4d4;}
@@ -97,20 +99,20 @@ body.dyslexia-font,body.dyslexia-font *{
 }
 .skg-handle-slide{animation:slideIntoZone 2.8s ease-in-out infinite;}
 .skg-caption{display:flex;align-items:center;gap:3px;flex-wrap:wrap;}
-.skg-caption-text{font-family:'Arial',monospace;font-size:5px;color:rgba(255,255,255,.7);}
+.skg-caption-text{font-family:'Karla',Arial,sans-serif;font-size:5px;color:rgba(255,255,255,.7);}
 .skey{
   width:13px;height:13px;
   border:1px solid rgba(255,196,33,.65);
   background:rgba(255,196,33,.08);
   box-shadow:0 1px 0 rgba(255,196,33,.35);
-  font-family:'Arial',monospace;font-size:7px;color:var(--yellow);
+  font-family:'Karla',Arial,sans-serif;font-size:7px;color:var(--yellow);
   display:flex;align-items:center;justify-content:center;
   border-radius:1px;
 }
 .skey-space{width:80px;height:10px;font-size:6px;}
 .skey-dim{opacity:0.28;}
-.skg-or{font-family:'Arial',monospace;font-size:6px;color:rgba(255,255,255,.4);flex-shrink:0;}
-.skg-label{font-family:'Arial',monospace;font-size:6px;color:rgba(255,255,255,.65);}
+.skg-or{font-family:'Karla',Arial,sans-serif;font-size:6px;color:rgba(255,255,255,.4);flex-shrink:0;}
+.skg-label{font-family:'Karla',Arial,sans-serif;font-size:6px;color:rgba(255,255,255,.65);}
 
 /* Interject */
 #sensory-interject{z-index:50;top:44%;transform:translate(-50%,0);transition:box-shadow .8s ease,border-color .8s ease;}
@@ -130,13 +132,13 @@ body.dyslexia-font,body.dyslexia-font *{
   opacity:0;transition:opacity .45s;pointer-events:none;
 }
 #sensory-panel.visible{opacity:1;pointer-events:auto;}
-#sensory-header{font-family:'Arial',monospace;font-size:9px;color:var(--yellow);}
-#sensory-db{font-family:'Arial',monospace;font-size:15px;color:var(--lyellow);}
+#sensory-header{font-family:'Karla',Arial,sans-serif;font-size:9px;color:var(--yellow);}
+#sensory-db{font-family:'Karla',Arial,sans-serif;font-size:15px;color:var(--lyellow);}
 #sensory-instructions{font-size:6px;color:var(--yellow);text-align:center;max-width:240px;line-height:1.5;}
 
 /* Stress bar */
 #stress-row{width:100%;display:flex;flex-direction:column;gap:3px;padding:3px 4px;}
-#stress-label{font-family:'Arial',monospace;font-size:6px;color:#f55;display:flex;justify-content:space-between;}
+#stress-label{font-family:'Karla',Arial,sans-serif;font-size:6px;color:#f55;display:flex;justify-content:space-between;}
 #stress-track{width:200px;height:9px;background:rgba(100,0,0,.4);border:1px solid #600;align-self:center;overflow:hidden;}
 #stress-fill{height:100%;width:0%;background:linear-gradient(90deg,#4c4 0%,#fa0 50%,#f44 100%);background-size:200px 100%;}
 
@@ -147,12 +149,12 @@ body.dyslexia-font,body.dyslexia-font *{
 .sensory-control.locked .ctrl-label,.sensory-control.locked .ctrl-val{color:#4c4;}
 .sensory-control.in-range .ctrl-label{color:#4c4;}
 .sensory-control.in-range .ctrl-handle{background:#4c4;}
-.ctrl-label{font-family:'Arial',monospace;font-size:6px;color:var(--purple);}
+.ctrl-label{font-family:'Karla',Arial,sans-serif;font-size:6px;color:var(--purple);}
 .ctrl-track{position:relative;width:200px;height:8px;background:var(--purple);align-self:center;}
 .ctrl-zone{position:absolute;height:100%;background:rgba(0,180,0,.25);border-left:1px solid #0a0;border-right:1px solid #0a0;transition:left .1s linear,width .1s linear;}
 .ctrl-handle{position:absolute;width:6px;height:12px;top:-2px;background:var(--yellow);}
-.ctrl-val{font-family:'Arial',monospace;font-size:6px;color:var(--lyellow);text-align:right;width:200px;align-self:center;}
-#sensory-status{font-family:'Arial',monospace;font-size:7px;color:#4c4;min-height:8px;text-align:center;}
+.ctrl-val{font-family:'Karla',Arial,sans-serif;font-size:6px;color:var(--lyellow);text-align:right;width:200px;align-self:center;}
+#sensory-status{font-family:'Karla',Arial,sans-serif;font-size:7px;color:#4c4;min-height:8px;text-align:center;}
 #sensory-status.warning{color:#f55;}
 </style>
 </head>
