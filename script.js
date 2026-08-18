@@ -511,13 +511,11 @@ const S = {
   typing: false,
   fullText: "",
   transitioning: false,
-  settings: {dyslexia:true, textSpeed:"normal"},
+  settings: {dyslexia:true, textSpeed:"normal", reduceFlashing:false, largeText:false},
   settingsOpen: false,
   instructionsOpen: false,
   // scene
   sceneScrollX: 0,
-  idleBounce: 0,
-  idlePaused: false,
   freeRoam: false,
   walkFrame: 0,
   playerX: 0,
@@ -641,7 +639,6 @@ function advanceIntro() {
 }
 
 /* ---- SCENE ---- */
-let sceneIdleBounceTimer = 0;
 let walkAnimTimer = 0;
 
 // Free-roam bounds within the lab. World x 0–320 is the aerospace-engineering
@@ -704,7 +701,6 @@ function startScene() {
   $("#scene-sprite-sam").style.left = SAM_LAB_X + "px";
   $("#scene-sprite-jerry").classList.add("hidden");
 
-  sceneIdleBounceTimer = 0;
   sceneAnimTs = performance.now();
   requestAnimationFrame(sceneAnimLoop);
 }
@@ -771,7 +767,8 @@ function startSensoryMinigame(nextNodeId) {
   $("#dialogue-row").classList.add("hidden");
   const frame = $("#minigame-frame");
   const dyslexia = S.settings.dyslexia ? "1" : "0";
-  frame.src = "./sensory-minigame.html?t=" + Date.now() + "&dyslexia=" + dyslexia; // force a fresh load every time
+  const reducedFx = S.settings.reduceFlashing ? "1" : "0";
+  frame.src = "./sensory-minigame.html?t=" + Date.now() + "&dyslexia=" + dyslexia + "&reducedFx=" + reducedFx; // force a fresh load every time
   showScreen("minigame");
   window.removeEventListener("message", sensoryMinigameMessage);
   window.addEventListener("message", sensoryMinigameMessage);
@@ -817,29 +814,6 @@ function sceneAnimLoop(ts) {
     }
   }
 
-  if (!S.idlePaused) {
-    sceneIdleBounceTimer += dt;
-    if (sceneIdleBounceTimer >= 520) {
-      sceneIdleBounceTimer -= 520;
-      S.idleBounce = 1 - S.idleBounce;
-      const frameX = S.idleBounce * 24;
-      $$(".scene-sprite").forEach(sp => {
-        if (sp.dataset.char === "ester" || sp.dataset.char === "sam" || sp.dataset.char === "jerry" || sp.dataset.char === "cameron") return;
-        if (sp.classList.contains("hidden")) return;
-        sp.style.backgroundPosition = `-${frameX}px 0`;
-      });
-      // Bounce the dialogue portrait, but only for characters without their own
-      // art (a plain 2-frame idle wobble) — characters with a real 4-frame
-      // sheet keep a static neutral-pose portrait instead, same as the walking
-      // sprite in the scene.
-      const portrait = $("#dialogue-portrait");
-      const hasOwnPortraitArt = ["char-ester", "char-sam", "char-jerry", "char-cameron", "char-judith", "char-noor"].some(c => portrait.classList.contains(c));
-      if (!portrait.classList.contains("hidden") && !hasOwnPortraitArt) {
-        portrait.style.backgroundPosition = `-${frameX}px 0`;
-      }
-    }
-  }
-
   requestAnimationFrame(sceneAnimLoop);
 }
 
@@ -877,8 +851,6 @@ function runNode(nodeId) {
 
   // Scene-ending recap beats — presented like the intro cards, full-screen and on their own
   if (node.type === "recap") { runRecapNode(node); return; }
-
-  S.idlePaused = node.type === "inner";
 
   const row = $("#dialogue-row");
   row.classList.remove("hidden");
@@ -947,7 +919,6 @@ function resetSceneStage({ sam, jerry, ester, cameraX }) {
   moveKeys.right = false;
   S.walkFrame = 0;
   walkAnimTimer = 0;
-  sceneIdleBounceTimer = 0;
   S.sceneScrollX = Math.max(minSceneScroll(), Math.min(CAM_MAX_SCROLL, cameraX - VIEWPORT_WIDTH / 2));
   $("#scene-world").style.left = -S.sceneScrollX + "px";
   if (sam) {
@@ -1027,7 +998,6 @@ function showSceneSelect() {
 
 /* ---- RECAP (scene-ending summary beats, styled like the intro cards) ---- */
 function runRecapNode(node) {
-  S.idlePaused = true;
   $("#dialogue-row").classList.add("hidden");
   showScreen("recap");
   typeText($("#recap-text"), node.text);
@@ -1078,7 +1048,6 @@ function showEnd() {
   if (S.screen === "end") return;
   showScreen("end");
   $("#dialogue-row").classList.add("hidden");
-  S.idlePaused = false;
 
   setTimeout(() => {
     const ref = $("#end-reflection");
@@ -1097,7 +1066,6 @@ function initRestart() {
     S.typing = false;
     S.starsOffset = 0;
     S.stationX = -50;
-    S.idlePaused = false;
     S.unlockedScene = 1;
     $("#choice-panel").classList.add("hidden");
     $("#dialogue-row").classList.add("hidden");
@@ -1168,8 +1136,11 @@ function saveSettings() {
 
 function applySettingsToDOM() {
   document.body.classList.toggle("dyslexia-font", S.settings.dyslexia);
+  document.body.classList.toggle("large-text", S.settings.largeText);
   $("#chk-dyslexia").checked = S.settings.dyslexia;
   $("#chk-instant-text").checked = S.settings.textSpeed === "instant";
+  $("#chk-large-text").checked = S.settings.largeText;
+  $("#chk-reduce-flashing").checked = S.settings.reduceFlashing;
 }
 
 function openSettings() {
@@ -1212,6 +1183,17 @@ function initSettings() {
 
   $("#chk-instant-text").addEventListener("change", e => {
     S.settings.textSpeed = e.target.checked ? "instant" : "normal";
+    saveSettings();
+  });
+
+  $("#chk-large-text").addEventListener("change", e => {
+    S.settings.largeText = e.target.checked;
+    document.body.classList.toggle("large-text", S.settings.largeText);
+    saveSettings();
+  });
+
+  $("#chk-reduce-flashing").addEventListener("change", e => {
+    S.settings.reduceFlashing = e.target.checked;
     saveSettings();
   });
 }

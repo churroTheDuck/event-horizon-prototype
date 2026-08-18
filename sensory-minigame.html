@@ -249,6 +249,7 @@ body.dyslexia-font,body.dyslexia-font *{
 const $ = s => document.querySelector(s);
 
 document.body.classList.toggle("dyslexia-font", new URLSearchParams(location.search).get("dyslexia") === "1");
+const REDUCED_FX = new URLSearchParams(location.search).get("reducedFx") === "1"; // caps flash speed and disables screen shake
 
 /* ---- State ---- */
 const S = {
@@ -366,8 +367,8 @@ function startSensoryCalibration() {
   S.sensoryUiReady = false;
   $("#sensory-explain").classList.add("hidden");
 
-  sensoryCurrentFlashDur = 1.4;
-  $("#sensory-bg").style.animation = `bgFlash ${sensoryCurrentFlashDur}s infinite`;
+  sensoryCurrentFlashDur = REDUCED_FX ? 2.4 : 1.4;
+  $("#sensory-bg").style.animation = `${REDUCED_FX ? "bgFlashCalm" : "bgFlash"} ${sensoryCurrentFlashDur}s infinite`;
 
   setTimeout(() => { $("#sensory-panel").classList.add("visible"); }, 180);
 
@@ -559,15 +560,15 @@ function applyStressEffects() {
   const screen = $("#screen-sensory");
   const bg     = $("#sensory-bg");
 
-  const flashMin = hasDamp ? 0.55 : 0.16;
-  const flashMax = hasDamp ? 2.2  : 1.40;
+  const flashMin = REDUCED_FX ? 1.4 : (hasDamp ? 0.55 : 0.16);
+  const flashMax = REDUCED_FX ? 3.2 : (hasDamp ? 2.2  : 1.40);
   sensoryCurrentFlashDur = +(flashMax - (s / 100) * (flashMax - flashMin)).toFixed(2);
 
   const threshold = hasDamp ? 42 : 20;
-  const maxPx     = hasDamp ? 1.8 : 4.5;
-  const anim      = hasDamp ? "bgFlashCalm" : "bgFlash";
+  const maxPx     = REDUCED_FX ? 0 : (hasDamp ? 1.8 : 4.5); // 0 disables screen shake entirely
+  const anim      = (REDUCED_FX || hasDamp) ? "bgFlashCalm" : "bgFlash";
 
-  if (s < threshold) {
+  if (s < threshold || maxPx === 0) {
     root.style.setProperty("--sx","0px"); root.style.setProperty("--sy","0px");
     root.style.setProperty("--bx","0px"); root.style.setProperty("--by","0px");
     screen.style.animation = "none";
@@ -698,6 +699,17 @@ function triggerSensoryFail() {
   sensoryGameActive = false;
   clearTimeout(sensoryWarningTimer);
   $("#sensory-interject").classList.add("hidden");
+  const el = $("#sensory-status");
+
+  if (REDUCED_FX) {
+    // Skip the rapid shake/flash burst entirely — go straight to a slow, static-shake-free flash.
+    sensoryResetShake();
+    $("#sensory-bg").style.animation = "bgFlashCalm 2.4s infinite";
+    el.textContent = "SENSORY OVERLOAD — SPACE to retry";
+    el.className = "warning";
+    return;
+  }
+
   const root = document.documentElement;
   root.style.setProperty("--sx","2px"); root.style.setProperty("--sy","1.1px");
   root.style.setProperty("--bx","4px"); root.style.setProperty("--by","2.2px");
@@ -706,7 +718,6 @@ function triggerSensoryFail() {
   setTimeout(() => {
     sensoryResetShake();
     $("#sensory-bg").style.animation = "bgFlash 1.4s infinite";
-    const el = $("#sensory-status");
     el.textContent = "SENSORY OVERLOAD — SPACE to retry";
     el.className = "warning";
   }, 650);
@@ -723,13 +734,13 @@ function sensoryRetry() {
   breathTargetIdx = 0;
   breathHoldActive = false;
   noiseDodge = 0;
-  sensoryCurrentFlashDur = 1.4;
+  sensoryCurrentFlashDur = REDUCED_FX ? 2.4 : 1.4;
   sensoryCurrentNoiseMin = NOISE_CENTER - NOISE_HALF;
   sensoryCurrentNoiseMax = NOISE_CENTER + NOISE_HALF;
   sensoryCurrentLightMin = LIGHT_CENTER - LIGHT_HALF;
   sensoryCurrentLightMax = LIGHT_CENTER + LIGHT_HALF;
   $("#sensory-interject").classList.add("hidden");
-  $("#sensory-bg").style.animation = `bgFlash ${sensoryCurrentFlashDur}s infinite`;
+  $("#sensory-bg").style.animation = `${REDUCED_FX ? "bgFlashCalm" : "bgFlash"} ${sensoryCurrentFlashDur}s infinite`;
   resetSensoryUI();
   sensoryResetShake();
   sensoryStartTime = performance.now();

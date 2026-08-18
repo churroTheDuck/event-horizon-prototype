@@ -20,6 +20,7 @@ html,body{
 body.dyslexia-font,body.dyslexia-font *,body.dyslexia-font *::before,body.dyslexia-font *::after{
   font-family:'OpenDyslexic','Karla',Arial,sans-serif!important;
 }
+body.large-text #game{--text-body:8px;}
 /* === GAME WRAPPER — integer scaling === */
 #game-wrapper{
   display:flex;align-items:center;justify-content:center;
@@ -130,10 +131,11 @@ button:focus-visible{outline:2px solid var(--yellow);}
 #settings-panel{
   background:var(--navy);
   border:1px solid var(--purple);
-  padding:10px 12px;
+  padding:8px 12px;
   width:200px;
+  max-height:168px;overflow-y:auto;
   display:flex;flex-direction:column;
-  gap:7px;
+  gap:5px;
 }
 .settings-title{
   font-family:'Karla',Arial,sans-serif;
