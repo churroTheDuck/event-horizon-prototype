@@ -307,6 +307,14 @@ button:focus-visible{outline:2px solid var(--yellow);}
   top:117px; /* overrides .scene-sprite's top:148px — keeps feet on the same floor line (148+31) at the doubled height, matching Sam/Ester */
   margin-left:-9px; /* half the added width, so he grows symmetrically around the same left-edge anchor */
 }
+#scene-sprite-cameron{
+  width:36px;height:62px;
+  background:url('./assets/cameron.png') no-repeat;
+  background-size:144px 62px; /* 4-frame sheet, 36px per frame — frame 0 (neutral pose) shown, since Cameron never walks on screen */
+  image-rendering:auto;
+  top:117px; /* keeps feet on the same floor line as Sam/Jerry/Ester */
+  margin-left:-9px;
+}
 #scene-sprite-ester{
   width:36px;height:62px;
   background:url('./assets/player.png') no-repeat;
@@ -346,6 +354,24 @@ button:focus-visible{outline:2px solid var(--yellow);}
 }
 #dialogue-portrait.char-ester{
   background-image:url('./assets/player.png');
+  background-size:144px 62px;
+  width:36px;height:62px;
+  image-rendering:auto;
+}
+#dialogue-portrait.char-cameron{
+  background-image:url('./assets/cameron.png');
+  background-size:144px 62px; /* 4-frame sheet, 36px per frame — frame 0 (neutral pose) shown */
+  width:36px;height:62px;
+  image-rendering:auto;
+}
+#dialogue-portrait.char-judith{
+  background-image:url('./assets/judith.png');
+  background-size:144px 62px;
+  width:36px;height:62px;
+  image-rendering:auto;
+}
+#dialogue-portrait.char-noor{
+  background-image:url('./assets/noor.png');
   background-size:144px 62px;
   width:36px;height:62px;
   image-rendering:auto;

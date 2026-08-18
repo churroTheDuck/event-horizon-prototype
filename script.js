@@ -325,7 +325,7 @@ const SCENE_SCRIPT = [
   // free_roam control node — the player walks Ester left, out of the lab and into the aerospace department
   {id:"sc4_walk_to_aerospace", type:"control", action:"free_roam", minX:20, maxX:720, targetX:160, next:"sc4_arrive_aerospace", showSprites:["ester"], reveal:["aerospace-placeholder"]},
 
-  {id:"sc4_arrive_aerospace", type:"narration", text:"The aerospace engineering department is cluttered and full of half-finished projects, with a few enthusiastic scientists staying up late to add finishing touches to their work.", next:"sc4_ester_intro1"},
+  {id:"sc4_arrive_aerospace", type:"narration", text:"The aerospace engineering department is cluttered and full of half-finished projects, with a few enthusiastic scientists staying up late to add finishing touches to their work.", next:"sc4_ester_intro1", showSprites:["ester","cameron"], positions:{cameron:200}},
   {id:"sc4_ester_intro1", type:"dialogue", speaker:"ESTER", text:"Um, hello. I’m Ester, a recent addition to the nuclear engineering department. It’s nice to meet you. Seeing as we’re all engineers, I hope we can cooperate well together.", next:"sc4_cameron1"},
   {id:"sc4_cameron1", type:"dialogue", speaker:"CAMERON", text:"Hello Ester, I’m Cameron! I hope we can cooperate too. Graveyard shift tonight?", next:"sc4_inner_graveyard"},
   {id:"sc4_inner_graveyard", type:"inner", text:"“Graveyard shift” is a funny way to put it, but Jerry likes this phrase.", next:"sc4_ester_yes"},
@@ -416,7 +416,7 @@ const SCENE_SCRIPT = [
   {id:"sc5_noor3", type:"dialogue", speaker:"NOOR", text:"Just wanted to say!", next:"sc5_judith3"},
   {id:"sc5_judith3", type:"dialogue", speaker:"JUDITH", text:"Mhm. . . passing off to Nuclear now.", next:"sc5_cut_aerospace"},
 
-  {id:"sc5_cut_aerospace", type:"narration", text:"The call patches through to the aerospace engineering department, where Ester, Cameron, and Jerry are gathered around the telecom.", next:"sc5_jerry1", showSprites:["jerry","ester"], positions:{jerry:200, ester:170}},
+  {id:"sc5_cut_aerospace", type:"narration", text:"The call patches through to the aerospace engineering department, where Ester, Cameron, and Jerry are gathered around the telecom.", next:"sc5_jerry1", showSprites:["jerry","ester","cameron"], positions:{jerry:200, ester:170, cameron:230}},
 
   {id:"sc5_jerry1", type:"dialogue", speaker:"JERRY", text:"Hi Noor, this is Jerry. How far away from the radio receivers are you? I’d really love it if you don’t get sick out there because Judith keeps complaining in your ear.", next:"sc5_judith4"},
   {id:"sc5_judith4", type:"dialogue", speaker:"JUDITH", text:"Shut up, Jerry.", next:"sc5_jerry2"},
@@ -824,13 +824,17 @@ function sceneAnimLoop(ts) {
       S.idleBounce = 1 - S.idleBounce;
       const frameX = S.idleBounce * 24;
       $$(".scene-sprite").forEach(sp => {
-        if (sp.dataset.char === "ester" || sp.dataset.char === "sam" || sp.dataset.char === "jerry") return;
+        if (sp.dataset.char === "ester" || sp.dataset.char === "sam" || sp.dataset.char === "jerry" || sp.dataset.char === "cameron") return;
         if (sp.classList.contains("hidden")) return;
         sp.style.backgroundPosition = `-${frameX}px 0`;
       });
-      // Bounce the dialogue portrait (if it's an NPC, not Ester, Sam, or Jerry)
+      // Bounce the dialogue portrait, but only for characters without their own
+      // art (a plain 2-frame idle wobble) — characters with a real 4-frame
+      // sheet keep a static neutral-pose portrait instead, same as the walking
+      // sprite in the scene.
       const portrait = $("#dialogue-portrait");
-      if (!portrait.classList.contains("hidden") && !portrait.classList.contains("char-ester") && !portrait.classList.contains("char-sam") && !portrait.classList.contains("char-jerry")) {
+      const hasOwnPortraitArt = ["char-ester", "char-sam", "char-jerry", "char-cameron", "char-judith", "char-noor"].some(c => portrait.classList.contains(c));
+      if (!portrait.classList.contains("hidden") && !hasOwnPortraitArt) {
         portrait.style.backgroundPosition = `-${frameX}px 0`;
       }
     }
@@ -848,6 +852,7 @@ function runNode(nodeId) {
     $("#scene-sprite-sam").classList.toggle("hidden", !node.showSprites.includes("sam"));
     $("#scene-sprite-jerry").classList.toggle("hidden", !node.showSprites.includes("jerry"));
     $("#scene-sprite-ester").classList.toggle("hidden", !node.showSprites.includes("ester"));
+    $("#scene-sprite-cameron").classList.toggle("hidden", !node.showSprites.includes("cameron"));
   }
 
   // Reveals background elements that are hidden by default (e.g. placeholder
