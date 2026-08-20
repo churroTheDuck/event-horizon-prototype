@@ -274,11 +274,34 @@ button:focus-visible{outline:2px solid var(--yellow);}
 #characters-list{
   display:flex;flex-direction:column;align-items:center;gap:4px;
 }
-.character-btn{width:140px;text-align:center;}
+.character-btn{
+  width:160px;text-align:left;
+  display:flex;align-items:center;gap:6px;
+  padding:3px 8px 3px 3px;
+}
 .character-btn.locked{
   background:transparent;color:#8b90a0;
   border:1px solid rgba(106,92,240,0.3);
   opacity:.4;pointer-events:none;cursor:default;
+}
+.character-portrait{
+  width:36px;height:62px;flex-shrink:0;
+  background-repeat:no-repeat;
+  background-size:144px 62px; /* 4-frame sheet, 36px per frame — frame 0 (neutral pose) shown */
+  image-rendering:auto; /* source is high-res art, not pixel art — smooth-downscale instead of nearest-neighbor */
+}
+.character-portrait.char-ester{background-image:url('./assets/player.png');}
+.character-portrait.char-astro{background-image:url('./assets/astro.png');}
+.character-portrait.char-nina{background-image:url('./assets/nina.png');}
+.character-info{
+  display:flex;flex-direction:column;gap:1px;
+  min-width:0;
+}
+.character-name{font-size:4px;}
+.character-job{
+  font-size:3px;
+  opacity:.8;
+  font-weight:normal;
 }
 
 /* === SCENE === */
