@@ -916,6 +916,7 @@ function startFreeRoam(startX, minX, maxX, targetX, nextNode, facingRight) {
 
 function startScene() {
   showScreen("scene");
+  $("#scene-sprite-ester").style.backgroundImage = "url('./assets/player.png')";
 
   // Opening: camera follows Ester from the left edge of the lab. Sam
   // waits further in, out of frame, until she walks over to him.
@@ -928,10 +929,12 @@ function startScene() {
 }
 
 // Astro's route is a standalone opening scene (his own take on the mercury/
-// terminal-hazard opening), reusing the same sprite slot/art as Ester's
-// walk-to-Sam intro since he has no art of his own yet.
+// terminal-hazard opening). Only one player character is ever on screen at
+// once, so all three routes share the #scene-sprite-ester DOM element/free-roam
+// logic — this just swaps in Astro's own art before the scene starts.
 function startAstroScene() {
   showScreen("scene");
+  $("#scene-sprite-ester").style.backgroundImage = "url('./assets/astro.png')";
   startFreeRoam(PLAYER_START_X, LAB_MIN_X, LAB_MAX_X, SAM_LAB_X, "astro_inner1", true);
   $("#scene-sprite-sam").style.left = SAM_LAB_X + "px";
   $("#scene-sprite-jerry").classList.add("hidden");
@@ -940,10 +943,11 @@ function startAstroScene() {
   requestAnimationFrame(sceneAnimLoop);
 }
 
-// Nina's route, same structure as Astro's — a standalone opening scene, also
-// reusing the shared sprite slot/art since she has no art of her own yet.
+// Nina's route, same structure as Astro's — a standalone opening scene,
+// swapping in her own art on the shared player sprite slot.
 function startNinaScene() {
   showScreen("scene");
+  $("#scene-sprite-ester").style.backgroundImage = "url('./assets/nina.png')";
   startFreeRoam(PLAYER_START_X, LAB_MIN_X, LAB_MAX_X, SAM_LAB_X, "nina_inner1", true);
   $("#scene-sprite-sam").style.left = SAM_LAB_X + "px";
   $("#scene-sprite-jerry").classList.add("hidden");

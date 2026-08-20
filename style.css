@@ -380,13 +380,13 @@ button:focus-visible{outline:2px solid var(--yellow);}
   image-rendering:auto;
 }
 #dialogue-portrait.char-astro{
-  background-image:url('./assets/player.png'); /* placeholder — Astro has no art of his own yet */
-  background-size:144px 62px;
+  background-image:url('./assets/astro.png');
+  background-size:144px 62px; /* 4-frame sheet, 36px per frame — frame 0 (neutral pose) shown */
   width:36px;height:62px;
   image-rendering:auto;
 }
 #dialogue-portrait.char-nina{
-  background-image:url('./assets/player.png'); /* placeholder — Nina has no art of her own yet */
+  background-image:url('./assets/nina.png');
   background-size:144px 62px;
   width:36px;height:62px;
   image-rendering:auto;
