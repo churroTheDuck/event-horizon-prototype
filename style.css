@@ -262,6 +262,25 @@ button:focus-visible{outline:2px solid var(--yellow);}
   opacity:.4;pointer-events:none;cursor:default;
 }
 
+/* === CHARACTER SELECT === */
+#screen-characters{
+  background:var(--navy);
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+}
+#screen-characters.active{display:flex;}
+#characters-list{
+  display:flex;flex-direction:column;align-items:center;gap:4px;
+}
+.character-btn{width:140px;text-align:center;}
+.character-btn.locked{
+  background:transparent;color:#8b90a0;
+  border:1px solid rgba(106,92,240,0.3);
+  opacity:.4;pointer-events:none;cursor:default;
+}
+
 /* === SCENE === */
 #screen-scene.active{display:block;}
 #scene-world{
@@ -356,6 +375,18 @@ button:focus-visible{outline:2px solid var(--yellow);}
 }
 #dialogue-portrait.char-ester{
   background-image:url('./assets/player.png');
+  background-size:144px 62px;
+  width:36px;height:62px;
+  image-rendering:auto;
+}
+#dialogue-portrait.char-astro{
+  background-image:url('./assets/player.png'); /* placeholder — Astro has no art of his own yet */
+  background-size:144px 62px;
+  width:36px;height:62px;
+  image-rendering:auto;
+}
+#dialogue-portrait.char-nina{
+  background-image:url('./assets/player.png'); /* placeholder — Nina has no art of her own yet */
   background-size:144px 62px;
   width:36px;height:62px;
   image-rendering:auto;

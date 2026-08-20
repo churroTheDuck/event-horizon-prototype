@@ -269,11 +269,20 @@ const SENSORY_STEP    = 6;
 const NOISE_CENTER = 65, NOISE_HALF = 15, NOISE_SWING = 24, NOISE_FREQ = 0.50;
 const LIGHT_CENTER = 50, LIGHT_HALF = 10, LIGHT_SWING = 20, LIGHT_FREQ = 0.44;
 
-const SENSORY_EXPLAIN_TEXT =
-  "A device containing elemental mercury has overturned near the ventilation intake. " +
-  "The atmospheric alarm triggered automatically.\n\n" +
-  "Noise and light readings are approaching hazardous levels. " +
-  "The environmental systems need manual calibration before conditions become unmanageable.";
+const SENSORY_SCENARIO = new URLSearchParams(location.search).get("scenario") || "mercury";
+const SENSORY_EXPLAIN_TEXTS = {
+  mercury:
+    "A device containing elemental mercury has overturned near the ventilation intake. " +
+    "The atmospheric alarm triggered automatically.\n\n" +
+    "Noise and light readings are approaching hazardous levels. " +
+    "The environmental systems need manual calibration before conditions become unmanageable.",
+  cell:
+    "A galvanic cell has short-circuited after its salt bridge shattered near the ventilation intake. " +
+    "The atmospheric alarm triggered automatically.\n\n" +
+    "Noise and light readings are approaching hazardous levels. " +
+    "The environmental systems need manual calibration before conditions become unmanageable.",
+};
+const SENSORY_EXPLAIN_TEXT = SENSORY_EXPLAIN_TEXTS[SENSORY_SCENARIO] || SENSORY_EXPLAIN_TEXTS.mercury;
 
 const SENSORY_INTERJECT_TEXT =
   "The alarm is deafening.\n\n" +

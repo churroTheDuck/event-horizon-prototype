@@ -4,9 +4,11 @@
 
 /* ---- SCRIPT DATA ----------------------------------------- */
 
+const CHARACTER_NAMES = { ester: "Ester", astro: "Astro", nina: "Nina" };
+
 const INTRO_CARDS = [
   "The universe has gotten a lot busier these days. It barely takes any time to get anywhere, as long as you've got the equipment for it.",
-  "Unfortunately for you, Ester, you're stuck where you are.",
+  "Unfortunately for you, {NAME}, you're stuck where you are.",
   "While fifty years ago, people would have fought tooth and nail to be in your research organization, it’s been exiled to an abandoned space station locked in orbit around a black hole.",
   "This is no situation any reasonable scientist wants to operate in. You don’t really have a choice, though. Your old university decided you were \"uncooperative and a hazard to the scientific community.\”",
   "It seems your only hope is to get this failing research station back to its glory days by fixing the transport ship.",
@@ -494,7 +496,202 @@ const SCENE_SCRIPT = [
   {id:"sc5_cameron8", type:"dialogue", speaker:"CAMERON", text:"And you two. Jerry. Judith. Lamartine is going to be disappointed in you if you don’t get it together.", next:"sc5_cameron9"},
   {id:"sc5_cameron9", type:"dialogue", speaker:"CAMERON", text:"Good on you for mediating it, Ester. I’m drafting a formal proposal as soon as this call ends, and then I’m talking to the Bio head about this.", next:"sc5_cameron10"},
   {id:"sc5_cameron10", type:"dialogue", speaker:"CAMERON", text:"Disconnecting. Bye, Judith.", next:"sc5_recap"},
-  {id:"sc5_recap", type:"recap", text:"The first interdepartmental research project in quite a long time is about to begin: you — the collected engineering departments — and Biology. You have successfully brokered a temporary peace, but will it stay long enough to complete the project?", next:"end"}
+  {id:"sc5_recap", type:"recap", text:"The first interdepartmental research project in quite a long time is about to begin: you — the collected engineering departments — and Biology. You have successfully brokered a temporary peace, but will it stay long enough to complete the project?", next:"end"},
+
+  /* ============================================================
+     ASTRO — Alternate opening (standalone; no further scenes yet)
+     ============================================================ */
+
+  {id:"astro_inner1", type:"inner", text:"I’m approaching someone. Could that be—", next:"astro_choice1"},
+
+  {id:"astro_choice1", type:"choice", choices:[
+    {label:"Attempt to make a good impression by introducing myself first.", next:"astro_opt1_intro"},
+    {label:"Wait for my new supervisor or coworker to take charge.", next:"astro_opt2_wait"}
+  ]},
+
+  {id:"astro_opt1_intro", type:"dialogue", speaker:"ASTRO", text:"I’m Astro! You must be—", next:"astro_sam_intro"},
+  {id:"astro_opt2_wait", type:"dialogue", speaker:"SAM", text:"Alright. Your name is Astro?", next:"astro_sam_intro"},
+
+  {id:"astro_sam_intro", type:"dialogue", speaker:"SAM", text:"I’m Sam.", next:"astro_hazard1", showSprites:["sam","ester"]},
+  {id:"astro_hazard1", type:"inner", text:"In the corner of my eye, I see a safety hazard: a galvanic cell dangling from the ceiling and attached to wires.", next:"astro_sam2"},
+  {id:"astro_sam2", type:"dialogue", speaker:"SAM", text:"I’m your supervisor because technically, I’m your senior here. But don’t come to me with complaints later, because I can’t help with the higher-ups.", next:"astro_hazard2"},
+  {id:"astro_hazard2", type:"inner", text:"The way it’s set up is very risky.", next:"astro_sam3"},
+  {id:"astro_sam3", type:"dialogue", speaker:"SAM", text:"Oh yeah. You and Jerry are technically “visiting students,” even though you’re still going to be working. Questions?", next:"astro_choice2"},
+
+  {id:"astro_choice2", type:"choice", choices:[
+    {label:"Prioritize the crew’s safety and ask about the galvanic cell.", next:"astro_ask1"},
+    {label:"Ignore what might be a disaster.", next:"astro_crash_cut"}
+  ]},
+
+  {id:"astro_ask1", type:"dialogue", speaker:"ASTRO", text:"Yes. I’m concerned about how the galvanic cell is bolted so close to head-level. Is that this ship’s primary source of power?", next:"astro_ask2"},
+  {id:"astro_ask2", type:"dialogue", speaker:"SAM", text:"… Yes? Don’t worry, the beakers are glazed, so they won’t break. The wire is also fine …", next:"astro_ask3"},
+  {id:"astro_ask3", type:"dialogue", speaker:"ASTRO", text:"It’s not that. The salt bridge is just submerged in the solutions. If someone were to walk in and accidentally bang the cell, the salt bridge would fall over!", next:"astro_ask4"},
+  {id:"astro_ask4", type:"dialogue", speaker:"SAM", text:"And?", next:"astro_ask5"},
+  {id:"astro_ask5", type:"dialogue", speaker:"ASTRO", text:"The cell would have a dead battery, and the ship would have no power!", next:"astro_ask6"},
+  {id:"astro_ask6", type:"dialogue", speaker:"SAM", text:"Relax, rookie! It’s been there for eight months and none of my crew have ever hit their heads.", next:"astro_ask7"},
+  {id:"astro_ask7", type:"dialogue", speaker:"ASTRO", text:"But that doesn’t make this situation any less risky. Besides, you said Jerry was new. Does he know about this?", next:"astro_ask8"},
+  {id:"astro_ask8", type:"dialogue", speaker:"SAM", text:"It’s fine, Astro. He isn’t blind.", next:"astro_crash_cut"},
+
+  // crash_cut is a control node — Jerry walks into frame, same as Ester's opening
+  {id:"astro_crash_cut", type:"control", action:"jerry_enter", next:"astro_pb1"},
+
+  {id:"astro_pb1", type:"dialogue", speaker:"SAM", text:"Oh, Jerry’s here. Hey, Jerry, can you grab the—JERRY!", next:"astro_pb1b", showSprites:["sam","jerry","ester"]},
+  {id:"astro_pb1b", type:"narration", text:"The salt bridge falls to the ground and immediately shatters.", next:"astro_pb1c"},
+  {id:"astro_pb1c", type:"dialogue", speaker:"JERRY", text:"My goodness!", next:"astro_pb1d"},
+  {id:"astro_pb1d", type:"dialogue", speaker:"SAM", text:"What did you do?", next:"astro_pb2"},
+  {id:"astro_pb2", type:"inner", text:"What happened? I’ve had accidents before when I was still in my old lab. No matter how many times it happens, I always get nervous. I really want to help Jerry, but with the salt bridge shattering and everyone screaming, the environment is too overstimulating for me to be able to properly focus.", next:"astro_pb3"},
+  {id:"astro_pb3", type:"dialogue", speaker:"JERRY", text:"I’m sorry — it wasn’t— I turned around and banged into it, it was right on the edge, I didn’t—", next:"astro_pb4"},
+  {id:"astro_pb4", type:"dialogue", speaker:"SAM", text:"Oh, God.", next:"astro_pa1"},
+
+  {id:"astro_pa1", type:"inner", text:"It’s just like that lab I ran in my general chemistry course. Assuming the electrons will flow very quickly, the cell and the ship will lose power in about 45 minutes.", next:"astro_pa2"},
+  {id:"astro_pa2", type:"dialogue", speaker:"ASTRO", text:"Everyone, stop walking. Could you cordon the area, Sam, so that no one else can enter the lab?", next:"astro_minigame"},
+
+  // The galvanic-cell scenario reuses the shared sensory-overload minigame, with its explain text swapped to match
+  {id:"astro_minigame", type:"control", action:"sensory_minigame", scenario:"cell", next:"astro_pa2b"},
+
+  {id:"astro_pa2b", type:"dialogue", speaker:"ASTRO", text:"I’ll write the incident report. Jerry, what’s your surname? I’m putting your name down as the person responsible. I don’t think any of us want to be in a space station with no power. And — this was an accident, correct?", next:"astro_pa3"},
+  {id:"astro_pa3", type:"dialogue", speaker:"JERRY", text:"Of course it was an accident. That’s what I just said.", next:"astro_pa4"},
+  {id:"astro_pa4", type:"inner", text:"Nobody has moved. Sam is looking at the floor.", next:"astro_choice1_inner"},
+  {id:"astro_choice1_inner", type:"inner", text:"You asked a yes-or-no question. He said yes. But he froze, and his voice went tight. People don’t react like that to answering a question correctly.", next:"astro_choice3"},
+
+  {id:"astro_choice3", type:"choice", choices:[
+    {label:"Take a deep breath and find out why Jerry reacted that way: “What’s wrong?”", next:"astro_ba1"},
+    {label:"Prioritize what could be a disaster: “The electrons are flowing quickly! We need to construct a new salt bridge as soon as possible!”", next:"astro_bb1"}
+  ]},
+
+  // Branch A — "What's wrong?"
+  {id:"astro_ba1", type:"dialogue", speaker:"ASTRO", text:"What’s wrong?", next:"astro_ba1b"},
+  {id:"astro_ba1b", type:"dialogue", speaker:"JERRY", text:"Are you serious? I barely even know who you are! All you want to do is accuse me! And you’re trying to get me in trouble by writing me up in the incident report!", next:"astro_ba2"},
+  {id:"astro_ba2", type:"dialogue", speaker:"ASTRO", text:"Ugh… it’s too much to focus on. Anyways, I don’t know you very well either. I’m not trying to get you in trouble.", next:"astro_ba3"},
+  {id:"astro_ba3", type:"dialogue", speaker:"JERRY", text:"Then why are you singling me out??", next:"astro_ba4"},
+  {id:"astro_ba4", type:"dialogue", speaker:"ASTRO", text:"I’m sorry for shouting. However, your sleeve got caught on the salt bridge. That’s the truth. The incident form has a field labelled “person responsible” and it doesn’t have a field for anything else.", next:"astro_ba5"},
+  {id:"astro_ba5", type:"dialogue", speaker:"JERRY", text:"It’s the way you said it — “what’s your surname, I’m putting you down as responsible.” Like you were reading a sentence.", next:"astro_ba6"},
+  {id:"astro_ba6", type:"dialogue", speaker:"ASTRO", text:"I wasn’t trying to sentence you. I say things in the order I think of them, and the salt bridge was all I could think about. I’m sorry.", next:"astro_ba7"},
+  {id:"astro_ba7", type:"dialogue", speaker:"JERRY", text:"…Yeah, okay. I get it. Sorry for snapping.", next:"astro_ba8"},
+  {id:"astro_ba8", type:"dialogue", speaker:"ASTRO", text:"But—again about the salt bridge, can we get a new one assembled? Quickly!", next:"astro_ba9"},
+  {id:"astro_ba9", type:"dialogue", speaker:"JERRY", text:"OK, OK. Sam! Done with the door? Come here!", next:"astro_ba10"},
+  {id:"astro_ba10", type:"dialogue", speaker:"ASTRO", text:"Jerry, do you know how to build a salt bridge, and do we have the resources on board to do so?", next:"astro_ba11"},
+  {id:"astro_ba11", type:"dialogue", speaker:"JERRY", text:"Yes, and I think there is some more KCl solution and more U-tubes in my chamber. I’ll start now, but it will take 55 minutes…", next:"astro_ba12"},
+  {id:"astro_ba12", type:"dialogue", speaker:"ASTRO", text:"Dang it. We have less than 45 minutes until the space station loses power. Wait… I just remembered, I have kits for DNA gel electrophoresis labs in my backpack.", next:"astro_ba13"},
+  {id:"astro_ba13", type:"dialogue", speaker:"JERRY", text:"How are tools for a biology lab going to help?", next:"astro_ba14"},
+  {id:"astro_ba14", type:"dialogue", speaker:"ASTRO", text:"One of the components is agarose gel — a poor electrical conductor. If I mix the gel with the solution at the anode, electrons will not be able to flow through the wire as quickly. Jerry, do you have enough chemicals to create another redox reaction for the cell?", next:"astro_ba15"},
+  {id:"astro_ba15", type:"dialogue", speaker:"JERRY", text:"Yes. Astro, this is a crazy idea, but do what you need to do!", next:"astro_ba16"},
+  {id:"astro_ba16", type:"inner", text:"I added 100 ml of agarose gel to the solution at the anode, my hands shaking and my forehead dripping with sweat as I anxiously stared at the voltage indicator. Jerry worked diligently to construct another salt bridge.", next:"astro_ba17"},
+  {id:"astro_ba17", type:"dialogue", speaker:"JERRY", text:"It’s been 45 minutes since the accident, and the lights are dimmed, but not out. I don’t know how, but your idea worked. You are quite creative! I’ve almost finished the salt bridge, and I can install it very quickly.", next:"astro_ba18"},
+  {id:"astro_ba18", type:"inner", text:"In the end, Jerry installed the salt bridge just as the lights were about to turn off.", next:"astro_ba19"},
+  {id:"astro_ba19", type:"inner", text:"I completed the report, in the end, only with a dash in the place where “Person Responsible” was supposed to be. The room had to be sealed off though. It’s frightening how close we were to a power outage, but we managed to solve the problem…", next:"astro_ba_recap"},
+  {id:"astro_ba_recap", type:"recap", text:"The accident was an unexpected way for Jerry and I to meet, but what’s important is that we got ourselves together and saved the crew from spending several days in darkness.", next:"end"},
+
+  // Branch B — prioritizing the disaster over comforting Jerry
+  {id:"astro_bb1", type:"dialogue", speaker:"JERRY", text:"Right. Yes. Sorry, sorry. . .", next:"astro_bb2"},
+  {id:"astro_bb2", type:"inner", text:"He went to get some U-tubes and KCl from his chamber as fast as possible, and I still couldn’t tell what that expression on his face was supposed to mean. Did I make the correct decision? “I’m putting your name down as the person responsible.” Was I too frantic when talking to him? I could never tell during that moment. This sort of mistake — the one only I couldn’t see — was happening again.", next:"astro_bb3"},
+  {id:"astro_bb3", type:"dialogue", speaker:"JERRY", text:"Alright, Astro, I can construct a new salt bridge, but it is going to take a bit less than an hour.", next:"astro_bb4"},
+  {id:"astro_bb4", type:"dialogue", speaker:"ASTRO", text:"Dang it, we don’t have that long. You know what, just give the materials for making the salt bridge to me. I’ll assemble it myself, I have an idea of how to slow the electrons down.", next:"astro_bb5"},
+  {id:"astro_bb5", type:"dialogue", speaker:"JERRY", text:"Are you sure you can do it alo…", next:"astro_bb6"},
+  {id:"astro_bb6", type:"dialogue", speaker:"ASTRO", text:"No, but since you are responsible for the accident, as indicated by my observation and this paper, I don’t know if it would be safe to allow you to fix it. As for the rest of the crew, I don’t know what their skill levels are, and I don’t have time to ask them. You do want to have power, right?", next:"astro_bb7"},
+  {id:"astro_bb7", type:"dialogue", speaker:"JERRY", text:"Yes, but you didn’t have to express yourself so harshly. Geez…", next:"astro_bb8"},
+  {id:"astro_bb8", type:"inner", text:"He handed the materials to me and went back to his chamber with a look of either disappointment or shame (I couldn’t tell), and I stood there confused. He, just like me, would want to be on a station with power. Therefore, wasn’t I acting in our best interest by keeping the person who caused the accident away from the amendment process? You don’t extinguish a forest fire with lit matches!", next:"astro_bb9"},
+  {id:"astro_bb9", type:"inner", text:"Anyways, I don’t want myself, him, or anyone on board to be in a pitch-black spaceship, so I guess I’ll get to work…", next:"astro_bb10"},
+  {id:"astro_bb10", type:"narration", text:"One second after the lights turned off.", next:"astro_bb11"},
+  {id:"astro_bb11", type:"dialogue", speaker:"ASTRO", text:"Sam, Jerry, I just finished the galvanic cell. The lights should turn on now. By the way, Jerry, I’m sorry if I spoke to you harshly earlier. I never meant to make you feel useless.", next:"astro_bb12"},
+  {id:"astro_bb12", type:"dialogue", speaker:"JERRY", text:"I am still a bit taken aback by what you said, but I appreciate your apology.", next:"astro_bb13"},
+  {id:"astro_bb13", type:"dialogue", speaker:"SAM", text:"I, uh— nice work, Astro. Quick thinking. Yeah…", next:"astro_bb14"},
+  {id:"astro_bb14", type:"inner", text:"The words make sense, but what Sam means doesn’t. Sam is making the same face as Jerry. Ignoring what they might think of me, I still go ahead and fill in the form.", next:"astro_bb_recap"},
+  {id:"astro_bb_recap", type:"recap", text:"I successfully ensured the station would have power, even if the lights were off for a second or two. However, a sense of awkwardness has emerged between Jerry and I…", next:"end"},
+
+  /* ============================================================
+     NINA — Alternate opening (standalone; no further scenes yet)
+     ============================================================ */
+
+  {id:"nina_inner1", type:"inner", text:"I’m approaching someone. Could that be—", next:"nina_choice1"},
+
+  {id:"nina_choice1", type:"choice", choices:[
+    {label:"Attempt to make a good impression by introducing myself first.", next:"nina_opt1_intro"},
+    {label:"Wait for my new supervisor or coworker to take charge.", next:"nina_opt2_wait"}
+  ]},
+
+  {id:"nina_opt1_intro", type:"dialogue", speaker:"NINA", text:"I’m Nina! You must be—", next:"nina_sam_intro"},
+  {id:"nina_opt2_wait", type:"dialogue", speaker:"SAM", text:"Alright. Your name is Nina?", next:"nina_sam_intro"},
+
+  {id:"nina_sam_intro", type:"dialogue", speaker:"SAM", text:"I’m Sam.", next:"nina_hazard1", showSprites:["sam","ester"]},
+  {id:"nina_hazard1", type:"inner", text:"In the corner of my eye, I see a safety hazard: the terminal system.", next:"nina_sam2"},
+  {id:"nina_sam2", type:"dialogue", speaker:"SAM", text:"I’m your supervisor because technically, I’m your senior here. But don’t come to me with complaints later, because I can’t help with the higher-ups.", next:"nina_hazard2"},
+  {id:"nina_hazard2", type:"inner", text:"The way it’s set up is a safety hazard.", next:"nina_sam3"},
+  {id:"nina_sam3", type:"dialogue", speaker:"SAM", text:"Oh yeah. You and Jerry are technically “visiting students,” even though you’re still going to be working. Questions?", next:"nina_choice2"},
+
+  {id:"nina_choice2", type:"choice", choices:[
+    {label:"Prioritize the crew’s safety and ask about the terminal system.", next:"nina_ask1"},
+    {label:"Ignore what might be a disaster.", next:"nina_crash_cut"}
+  ]},
+
+  {id:"nina_ask1", type:"dialogue", speaker:"NINA", text:"There shouldn’t be a device with that much mercury haphazardly arranged in this room. It’s a health risk.", next:"nina_ask2"},
+  {id:"nina_ask2", type:"dialogue", speaker:"SAM", text:"It’s fine, Nina. It’s been there for eight months.", next:"nina_crash_cut"},
+
+  // crash_cut is a control node — Jerry walks into frame, same as Ester's opening
+  {id:"nina_crash_cut", type:"control", action:"jerry_enter", next:"nina_pb1"},
+
+  {id:"nina_pb1", type:"dialogue", speaker:"SAM", text:"Oh, Jerry’s here. Hey, Jerry, can you grab the—JERRY!", next:"nina_pb2", showSprites:["sam","jerry","ester"]},
+  {id:"nina_pb2", type:"inner", text:"I’ve heard accidents like that before when I was still in my old lab. No matter how many times it happens, I flinch like a rabbit being chased.", next:"nina_pb3"},
+  {id:"nina_pb3", type:"dialogue", speaker:"JERRY", text:"I’m sorry — it wasn’t— I turned around and my sleeve caught it, it was right on the edge, I didn’t—", next:"nina_pb4"},
+  {id:"nina_pb4", type:"dialogue", speaker:"SAM", text:"Oh, God.", next:"nina_pa1"},
+
+  {id:"nina_pa1", type:"inner", text:"Mercury. Highly toxic. And it’s spreading across the floor right now.", next:"nina_pa2"},
+  {id:"nina_pa2", type:"dialogue", speaker:"NINA", text:"Everyone, stop walking. Could you seal the door, Sam? I’ll fix the mercury leak.", next:"nina_minigame"},
+
+  {id:"nina_minigame", type:"control", action:"sensory_minigame", scenario:"mercury", next:"nina_pa2b"},
+
+  {id:"nina_pa2b", type:"dialogue", speaker:"NINA", text:"I’ll write the incident report. Jerry, what’s your surname? I’m putting your name down as the person responsible. I don’t want us to be in a lab-turned-hazard chamber. And — this was an accident, correct?", next:"nina_pa3"},
+  {id:"nina_pa3", type:"dialogue", speaker:"JERRY", text:"Of course it was an accident. That’s what I just said.", next:"nina_pa4"},
+  {id:"nina_pa4", type:"inner", text:"Nobody has moved. Sam is looking at the floor.", next:"nina_choice1_inner"},
+  {id:"nina_choice1_inner", type:"inner", text:"You asked a yes-or-no question. He said yes. But he froze, and his voice went tight. People don’t react like that to answering a question correctly.", next:"nina_choice3"},
+
+  {id:"nina_choice3", type:"choice", choices:[
+    {label:"Find out why Jerry reacted that way: “What’s wrong?”", next:"nina_ba1"},
+    {label:"Prioritize what could be a disaster: “There’s six ounces of mercury, and the vent is running. We need this contained as soon as possible!”", next:"nina_bb1"}
+  ]},
+
+  // Branch A — "What's wrong?"
+  {id:"nina_ba1", type:"dialogue", speaker:"JERRY", text:"Are you serious? I barely even know who you are! All you want to do is accuse me! And you’re trying to get me in trouble by writing me up in the incident report!", next:"nina_ba2"},
+  {id:"nina_ba2", type:"dialogue", speaker:"NINA", text:"I don’t know you very well either. I’m not trying to get you in trouble.", next:"nina_ba3"},
+  {id:"nina_ba3", type:"dialogue", speaker:"JERRY", text:"Then why are you singling me out??", next:"nina_ba4"},
+  {id:"nina_ba4", type:"dialogue", speaker:"NINA", text:"Your sleeve got caught on the device. That’s the truth. The incident form has a field labelled “person responsible” and it doesn’t have a field for anything else.", next:"nina_ba5"},
+  {id:"nina_ba5", type:"dialogue", speaker:"JERRY", text:"It’s the way you said it — “what’s your surname, I’m putting you down as responsible.” Like you were reading a sentence.", next:"nina_ba6"},
+  {id:"nina_ba6", type:"dialogue", speaker:"NINA", text:"I wasn’t trying to sentence you. I say things in the order I think of them, and the mercury was all I could think about. I’m sorry.", next:"nina_ba7"},
+  {id:"nina_ba7", type:"dialogue", speaker:"JERRY", text:"…Yeah, okay. I get it. Sorry for snapping.", next:"nina_ba8"},
+  {id:"nina_ba8", type:"dialogue", speaker:"NINA", text:"But—again about the mercury, can we all get this cleaned up together? Quickly!", next:"nina_ba9"},
+  {id:"nina_ba9", type:"dialogue", speaker:"JERRY", text:"OK, OK. Sam! Done with the door? Come here!", next:"nina_ba10"},
+  {id:"nina_ba10", type:"dialogue", speaker:"NINA", text:"Okay, how are we supposed to clean the mercury quickly?", next:"nina_ba11"},
+  {id:"nina_ba11", type:"dialogue", speaker:"JERRY", text:"I know the typical way to clean up such spills is with a massive eyedropper, but we have no eyedroppers on board.", next:"nina_ba12"},
+  {id:"nina_ba12", type:"dialogue", speaker:"NINA", text:"What do we have then?", next:"nina_ba13"},
+  {id:"nina_ba13", type:"dialogue", speaker:"JERRY", text:"Sam told me we have 5 cardboard boxes with shipments from Earth. Apparently, they contain brooms and washing machines.", next:"nina_ba14"},
+  {id:"nina_ba14", type:"dialogue", speaker:"NINA", text:"No, brooms and washing machines will remain contaminated once we use them, and we have no way to dispose of them safely. It’s not worth the risk. What el— wait: did you say the cleaning supplies were in cardboard boxes?", next:"nina_ba15"},
+  {id:"nina_ba15", type:"dialogue", speaker:"JERRY", text:"Yeah, they’re stiff cardboard boxes, why?", next:"nina_ba16"},
+  {id:"nina_ba16", type:"dialogue", speaker:"NINA", text:"That’s it! Stiff cardboard quickly soaks up mercury. If we emptied the boxes and then flattened them in a way that ensures maximum surface area coverage, we can lay them on the floor and they should soak up the mercury. Also, they should fit in our onboard disposal bin.", next:"nina_ba17"},
+  {id:"nina_ba17", type:"dialogue", speaker:"JERRY", text:"Okay, then, let’s open up the boxes!", next:"nina_ba18"},
+  {id:"nina_ba18", type:"narration", text:"Jerry opens up the boxes, and Nina cuts them and flattens them out.", next:"nina_ba19"},
+  {id:"nina_ba19", type:"dialogue", speaker:"NINA", text:"Let’s put some nitrile gloves on and put the cardboard on the ground.", next:"nina_ba20"},
+  {id:"nina_ba20", type:"dialogue", speaker:"JERRY", text:"Alright!", next:"nina_ba21"},
+  {id:"nina_ba21", type:"narration", text:"Five minutes later.", next:"nina_ba22"},
+  {id:"nina_ba22", type:"dialogue", speaker:"JERRY", text:"Nina, it worked! I’ll put the cardboard in the disposal bin.", next:"nina_ba23"},
+  {id:"nina_ba23", type:"dialogue", speaker:"NINA", text:"We won’t have to seal off the lab!", next:"nina_ba24"},
+  {id:"nina_ba24", type:"dialogue", speaker:"JERRY", text:"True! I’m surprised at how you managed to come up with the idea of using the cardboard, especially since I didn’t put much focus on it myself. I and most people I know would have likely just focused on what was in the boxes rather than the boxes themselves. You have great attention to detail!", next:"nina_ba25"},
+  {id:"nina_ba25", type:"dialogue", speaker:"NINA", text:"Thank you!", next:"nina_ba26"},
+  {id:"nina_ba26", type:"inner", text:"In the end, we managed to dispose of the mercury before the situation got too hazardous. I completed the report, in the end, only with a dash in the place where “Person Responsible” was supposed to be. Objectively a scary situation, but Jerry and I dodged the potentially fatal consequences…", next:"nina_ba_recap"},
+  {id:"nina_ba_recap", type:"recap", text:"The accident has created a major fright, but at least you’ve repaired your relationship with Jerry and stayed safe.", next:"end"},
+
+  // Branch B — prioritizing the disaster over comforting Jerry
+  {id:"nina_bb1", type:"dialogue", speaker:"JERRY", text:"Right. Yes. Sorry, sorry. . .", next:"nina_bb2"},
+  {id:"nina_bb2", type:"inner", text:"He went for some boxes in the corner of the room, as fast as possible, and I still couldn’t tell what that expression on his face was supposed to mean. Did I make the correct decision? “I’m putting your name down as the person responsible.” Was that too harsh? I can’t tell. This sort of mistake — the one only I couldn’t see — was happening again.", next:"nina_bb3"},
+  {id:"nina_bb3", type:"dialogue", speaker:"JERRY", text:"Here are some boxes we have received from Earth with brooms and washing machines.", next:"nina_bb4"},
+  {id:"nina_bb4", type:"dialogue", speaker:"NINA", text:"Those would get contaminated with mercury and we have no way to dispose of them, but I notice that the boxes are made of stiff cardboard, so we can lay them on the floor to absorb the mercury and put them in the disposal bin.", next:"nina_bb5"},
+  {id:"nina_bb5", type:"dialogue", speaker:"JERRY", text:"If you think it will work, let’s put on some nitrile gloves and go ahead.", next:"nina_bb6"},
+  {id:"nina_bb6", type:"narration", text:"Nina and Jerry open, cut, and flatten the boxes before laying them on the lab floor.", next:"nina_bb7"},
+  {id:"nina_bb7", type:"dialogue", speaker:"NINA", text:"Done! I’ve just put the cardboard in the bin. The lab is no longer hazardous!", next:"nina_bb8"},
+  {id:"nina_bb8", type:"dialogue", speaker:"JERRY", text:"Yeah, I guess so…", next:"nina_bb9"},
+  {id:"nina_bb9", type:"narration", text:"Jerry walks away with a flat expression.", next:"nina_bb10"},
+  {id:"nina_bb10", type:"dialogue", speaker:"SAM", text:"I, uh— nice work, Nina. Quick thinking. Yeah…", next:"nina_bb11"},
+  {id:"nina_bb11", type:"inner", text:"The words make sense, but what Sam means doesn’t. Sam is making the same face as Jerry. Ignoring what they might think of me, I still go ahead and fill in the form.", next:"nina_bb_recap"},
+  {id:"nina_bb_recap", type:"recap", text:"I successfully resolved the toxic spill in the lab. However, a sense of awkwardness has emerged between Jerry and I…", next:"end"}
 ];
 
 const REFLECTION_TEXT = "END OF SCENARIO";
@@ -506,6 +703,7 @@ SCENE_SCRIPT.forEach(n => { if(n.id) NODE_MAP[n.id] = n; });
 /* ---- STATE ---- */
 const S = {
   screen: "title",
+  character: "ester",
   introIdx: 0,
   currentNode: null,
   typing: false,
@@ -589,10 +787,27 @@ function completeType(el) {
 
 /* ---- TITLE SCREEN ---- */
 function initTitle() {
-  $("#btn-start").addEventListener("click", e => { e.stopPropagation(); startIntro(); });
+  $("#btn-start").addEventListener("click", e => { e.stopPropagation(); showCharacterSelect(); });
   setTimeout(() => {
     $("#title-text").classList.add("visible");
   }, 100);
+}
+
+/* ---- CHARACTER SELECT ---- */
+function showCharacterSelect() {
+  showScreen("characters");
+}
+
+function chooseCharacter(character) {
+  S.character = character;
+  startIntro();
+}
+
+function initCharacterSelect() {
+  $$(".character-btn").forEach(btn => {
+    if (btn.disabled) return;
+    btn.addEventListener("click", e => { e.stopPropagation(); chooseCharacter(btn.dataset.character); });
+  });
 }
 
 /* ---- TITLE ANIMATION LOOP ---- */
@@ -623,7 +838,8 @@ function startIntro() {
 function showIntroCard() {
   const el = $("#intro-text");
   $("#intro-counter").textContent = `${S.introIdx + 1}/${INTRO_CARDS.length}`;
-  typeText(el, INTRO_CARDS[S.introIdx]);
+  const name = CHARACTER_NAMES[S.character] || "Ester";
+  typeText(el, INTRO_CARDS[S.introIdx].replace("{NAME}", name));
 }
 
 function advanceIntro() {
@@ -631,8 +847,14 @@ function advanceIntro() {
   if (S.typing) { completeType(el); return; }
   S.introIdx++;
   if (S.introIdx >= INTRO_CARDS.length) {
-    S.unlockedScene = 1;
-    showSceneSelect();
+    if (S.character === "astro") {
+      startAstroScene();
+    } else if (S.character === "nina") {
+      startNinaScene();
+    } else {
+      S.unlockedScene = 1;
+      showSceneSelect();
+    }
   } else {
     showIntroCard();
   }
@@ -705,6 +927,31 @@ function startScene() {
   requestAnimationFrame(sceneAnimLoop);
 }
 
+// Astro's route is a standalone opening scene (his own take on the mercury/
+// terminal-hazard opening), reusing the same sprite slot/art as Ester's
+// walk-to-Sam intro since he has no art of his own yet.
+function startAstroScene() {
+  showScreen("scene");
+  startFreeRoam(PLAYER_START_X, LAB_MIN_X, LAB_MAX_X, SAM_LAB_X, "astro_inner1", true);
+  $("#scene-sprite-sam").style.left = SAM_LAB_X + "px";
+  $("#scene-sprite-jerry").classList.add("hidden");
+
+  sceneAnimTs = performance.now();
+  requestAnimationFrame(sceneAnimLoop);
+}
+
+// Nina's route, same structure as Astro's — a standalone opening scene, also
+// reusing the shared sprite slot/art since she has no art of her own yet.
+function startNinaScene() {
+  showScreen("scene");
+  startFreeRoam(PLAYER_START_X, LAB_MIN_X, LAB_MAX_X, SAM_LAB_X, "nina_inner1", true);
+  $("#scene-sprite-sam").style.left = SAM_LAB_X + "px";
+  $("#scene-sprite-jerry").classList.add("hidden");
+
+  sceneAnimTs = performance.now();
+  requestAnimationFrame(sceneAnimLoop);
+}
+
 let jerryWalkInterval = null;
 
 function jerryEnter(nextNodeId) {
@@ -757,18 +1004,19 @@ function sensoryMinigameMessage(e) {
 
 let sensoryMinigameNext = null;
 
-function startSensoryMinigame(nextNodeId) {
-  // The mercury-cleanup beat hands off to the standalone sensory-overload
-  // minigame (its own document/globals, loaded in an iframe so it can't
-  // collide with this page's own `S`/`$`). It posts a "complete" message
-  // back via postMessage when the player finishes, which resumes the script.
+function startSensoryMinigame(nextNodeId, scenario) {
+  // The mercury-cleanup beat (or, for Astro's route, the galvanic-cell
+  // short-circuit) hands off to the standalone sensory-overload minigame
+  // (its own document/globals, loaded in an iframe so it can't collide with
+  // this page's own `S`/`$`). It posts a "complete" message back via
+  // postMessage when the player finishes, which resumes the script.
   S.transitioning = true;
   sensoryMinigameNext = nextNodeId;
   $("#dialogue-row").classList.add("hidden");
   const frame = $("#minigame-frame");
   const dyslexia = S.settings.dyslexia ? "1" : "0";
   const reducedFx = S.settings.reduceFlashing ? "1" : "0";
-  frame.src = "./sensory-minigame.html?t=" + Date.now() + "&dyslexia=" + dyslexia + "&reducedFx=" + reducedFx; // force a fresh load every time
+  frame.src = "./sensory-minigame.html?t=" + Date.now() + "&dyslexia=" + dyslexia + "&reducedFx=" + reducedFx + "&scenario=" + (scenario || "mercury"); // force a fresh load every time
   showScreen("minigame");
   window.removeEventListener("message", sensoryMinigameMessage);
   window.addEventListener("message", sensoryMinigameMessage);
@@ -842,7 +1090,7 @@ function runNode(nodeId) {
 
   if (node.type === "control") {
     if (node.action === "jerry_enter") { jerryEnter(node.next); return; }
-    if (node.action === "sensory_minigame") { startSensoryMinigame(node.next); return; }
+    if (node.action === "sensory_minigame") { startSensoryMinigame(node.next, node.scenario); return; }
     if (node.action === "free_roam") { startFreeRoam(node.startX, node.minX, node.maxX, node.targetX, node.next, node.facingRight); return; }
   }
 
@@ -1061,6 +1309,7 @@ function showEnd() {
 /* ---- RESTART ---- */
 function initRestart() {
   $("#btn-restart").addEventListener("click", () => {
+    S.character = "ester";
     S.introIdx = 0;
     S.currentNode = null;
     S.typing = false;
@@ -1202,6 +1451,7 @@ function initSettings() {
 function init() {
   applyScale();
   initTitle();
+  initCharacterSelect();
   initRestart();
   initInput();
   initSettings();
