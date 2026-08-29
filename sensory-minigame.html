@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Sensory Overload Mini-Game</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Karla:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 :root{
@@ -11,14 +13,14 @@
   --navy:#10067a;--purple:#6b05ab;
   --sx:0px;--sy:0px;--bx:0px;--by:0px;
 }
-html,body{width:100%;height:100%;overflow:hidden;background:#000;font-family:'Arial',monospace;}
+html,body{width:100%;height:100%;overflow:hidden;background:#000;font-family:'Karla',Arial,sans-serif;}
 @font-face{
   font-family:'OpenDyslexic';
   src:url('./OpenDyslexic-Bold.otf') format('opentype');
   font-display:swap;
 }
 body.dyslexia-font,body.dyslexia-font *{
-  font-family:'OpenDyslexic',Arial,sans-serif!important;
+  font-family:'OpenDyslexic','Karla',Arial,sans-serif!important;
 }
 
 #game-wrapper{display:flex;align-items:center;justify-content:center;width:100%;height:100%;}
@@ -64,9 +66,9 @@ body.dyslexia-font,body.dyslexia-font *{
   opacity:1;transition:opacity .3s;
 }
 .soverlay-box.hidden{opacity:0;pointer-events:none;display:flex!important;}
-.soverlay-header{font-family:'Arial',monospace;font-size:8px;color:var(--yellow);letter-spacing:1px;text-align:center;}
-.soverlay-body{font-family:'Arial',monospace;font-size:7px;color:#ddd;line-height:1.5;white-space:pre-wrap;}
-.soverlay-hint{font-family:'Arial',monospace;font-size:6px;color:var(--yellow);display:flex;align-items:center;justify-content:center;gap:5px;opacity:0;transition:opacity .4s;}
+.soverlay-header{font-family:'Karla',Arial,sans-serif;font-size:8px;color:var(--yellow);letter-spacing:1px;text-align:center;}
+.soverlay-body{font-family:'Karla',Arial,sans-serif;font-size:7px;color:#ddd;line-height:1.5;white-space:pre-wrap;}
+.soverlay-hint{font-family:'Karla',Arial,sans-serif;font-size:6px;color:var(--yellow);display:flex;align-items:center;justify-content:center;gap:5px;opacity:0;transition:opacity .4s;}
 .soverlay-hint.visible{opacity:1;}
 
 /* Warning overlay */
@@ -84,7 +86,7 @@ body.dyslexia-font,body.dyslexia-font *{
 .skg-diagram{display:flex;flex-direction:column;gap:2px;}
 .skg-diagram+.skg-diagram{border-top:1px solid rgba(255,196,33,.12);padding-top:2px;}
 .skg-diag-inner{border:1px solid rgba(255,196,33,.6);padding:2px 4px;display:flex;flex-direction:column;gap:1px;}
-.skg-diag-name{font-family:'Arial',monospace;font-size:4px;color:var(--purple);}
+.skg-diag-name{font-family:'Karla',Arial,sans-serif;font-size:4px;color:var(--purple);}
 .skg-diag-track{position:relative;width:100%;height:6px;background:var(--purple);}
 .skg-diag-zone{position:absolute;height:100%;width:32%;left:36%;background:rgba(0,180,0,.25);border-left:1px solid #0a0;border-right:1px solid #0a0;}
 .skg-zone-hit{background:rgba(0,200,0,.45);border-color:#4d4;}
@@ -97,20 +99,20 @@ body.dyslexia-font,body.dyslexia-font *{
 }
 .skg-handle-slide{animation:slideIntoZone 2.8s ease-in-out infinite;}
 .skg-caption{display:flex;align-items:center;gap:3px;flex-wrap:wrap;}
-.skg-caption-text{font-family:'Arial',monospace;font-size:5px;color:rgba(255,255,255,.7);}
+.skg-caption-text{font-family:'Karla',Arial,sans-serif;font-size:5px;color:rgba(255,255,255,.7);}
 .skey{
   width:13px;height:13px;
   border:1px solid rgba(255,196,33,.65);
   background:rgba(255,196,33,.08);
   box-shadow:0 1px 0 rgba(255,196,33,.35);
-  font-family:'Arial',monospace;font-size:7px;color:var(--yellow);
+  font-family:'Karla',Arial,sans-serif;font-size:7px;color:var(--yellow);
   display:flex;align-items:center;justify-content:center;
   border-radius:1px;
 }
 .skey-space{width:80px;height:10px;font-size:6px;}
 .skey-dim{opacity:0.28;}
-.skg-or{font-family:'Arial',monospace;font-size:6px;color:rgba(255,255,255,.4);flex-shrink:0;}
-.skg-label{font-family:'Arial',monospace;font-size:6px;color:rgba(255,255,255,.65);}
+.skg-or{font-family:'Karla',Arial,sans-serif;font-size:6px;color:rgba(255,255,255,.4);flex-shrink:0;}
+.skg-label{font-family:'Karla',Arial,sans-serif;font-size:6px;color:rgba(255,255,255,.65);}
 
 /* Interject */
 #sensory-interject{z-index:50;top:44%;transform:translate(-50%,0);transition:box-shadow .8s ease,border-color .8s ease;}
@@ -130,13 +132,13 @@ body.dyslexia-font,body.dyslexia-font *{
   opacity:0;transition:opacity .45s;pointer-events:none;
 }
 #sensory-panel.visible{opacity:1;pointer-events:auto;}
-#sensory-header{font-family:'Arial',monospace;font-size:9px;color:var(--yellow);}
-#sensory-db{font-family:'Arial',monospace;font-size:15px;color:var(--lyellow);}
+#sensory-header{font-family:'Karla',Arial,sans-serif;font-size:9px;color:var(--yellow);}
+#sensory-db{font-family:'Karla',Arial,sans-serif;font-size:15px;color:var(--lyellow);}
 #sensory-instructions{font-size:6px;color:var(--yellow);text-align:center;max-width:240px;line-height:1.5;}
 
 /* Stress bar */
 #stress-row{width:100%;display:flex;flex-direction:column;gap:3px;padding:3px 4px;}
-#stress-label{font-family:'Arial',monospace;font-size:6px;color:#f55;display:flex;justify-content:space-between;}
+#stress-label{font-family:'Karla',Arial,sans-serif;font-size:6px;color:#f55;display:flex;justify-content:space-between;}
 #stress-track{width:200px;height:9px;background:rgba(100,0,0,.4);border:1px solid #600;align-self:center;overflow:hidden;}
 #stress-fill{height:100%;width:0%;background:linear-gradient(90deg,#4c4 0%,#fa0 50%,#f44 100%);background-size:200px 100%;}
 
@@ -147,12 +149,12 @@ body.dyslexia-font,body.dyslexia-font *{
 .sensory-control.locked .ctrl-label,.sensory-control.locked .ctrl-val{color:#4c4;}
 .sensory-control.in-range .ctrl-label{color:#4c4;}
 .sensory-control.in-range .ctrl-handle{background:#4c4;}
-.ctrl-label{font-family:'Arial',monospace;font-size:6px;color:var(--purple);}
+.ctrl-label{font-family:'Karla',Arial,sans-serif;font-size:6px;color:var(--purple);}
 .ctrl-track{position:relative;width:200px;height:8px;background:var(--purple);align-self:center;}
 .ctrl-zone{position:absolute;height:100%;background:rgba(0,180,0,.25);border-left:1px solid #0a0;border-right:1px solid #0a0;transition:left .1s linear,width .1s linear;}
 .ctrl-handle{position:absolute;width:6px;height:12px;top:-2px;background:var(--yellow);}
-.ctrl-val{font-family:'Arial',monospace;font-size:6px;color:var(--lyellow);text-align:right;width:200px;align-self:center;}
-#sensory-status{font-family:'Arial',monospace;font-size:7px;color:#4c4;min-height:8px;text-align:center;}
+.ctrl-val{font-family:'Karla',Arial,sans-serif;font-size:6px;color:var(--lyellow);text-align:right;width:200px;align-self:center;}
+#sensory-status{font-family:'Karla',Arial,sans-serif;font-size:7px;color:#4c4;min-height:8px;text-align:center;}
 #sensory-status.warning{color:#f55;}
 </style>
 </head>
@@ -247,10 +249,10 @@ body.dyslexia-font,body.dyslexia-font *{
 const $ = s => document.querySelector(s);
 
 document.body.classList.toggle("dyslexia-font", new URLSearchParams(location.search).get("dyslexia") === "1");
+const REDUCED_FX = new URLSearchParams(location.search).get("reducedFx") === "1"; // caps flash speed and disables screen shake
 
 /* ---- State ---- */
 const S = {
-  screen: "sensory",
   sensoryNoise: 0, sensoryLight: 100,
   sensoryPhase: 0, sensoryDone: false,
   sensoryState: "idle",
@@ -259,7 +261,6 @@ const S = {
   sensoryInterjectActive: false,
   sensoryHasDampeners: false,
   sensoryUiReady: false,
-  sensoryCalmMode: false,
 };
 
 /* ---- Constants ---- */
@@ -268,11 +269,20 @@ const SENSORY_STEP    = 6;
 const NOISE_CENTER = 65, NOISE_HALF = 15, NOISE_SWING = 24, NOISE_FREQ = 0.50;
 const LIGHT_CENTER = 50, LIGHT_HALF = 10, LIGHT_SWING = 20, LIGHT_FREQ = 0.44;
 
-const SENSORY_EXPLAIN_TEXT =
-  "A device containing elemental mercury has overturned near the ventilation intake. " +
-  "The atmospheric alarm triggered automatically.\n\n" +
-  "Noise and light readings are approaching hazardous levels. " +
-  "The environmental systems need manual calibration before conditions become unmanageable.";
+const SENSORY_SCENARIO = new URLSearchParams(location.search).get("scenario") || "mercury";
+const SENSORY_EXPLAIN_TEXTS = {
+  mercury:
+    "A device containing elemental mercury has overturned near the ventilation intake. " +
+    "The atmospheric alarm triggered automatically.\n\n" +
+    "Noise and light readings are approaching hazardous levels. " +
+    "The environmental systems need manual calibration before conditions become unmanageable.",
+  cell:
+    "A galvanic cell has short-circuited after its salt bridge shattered near the ventilation intake. " +
+    "The atmospheric alarm triggered automatically.\n\n" +
+    "Noise and light readings are approaching hazardous levels. " +
+    "The environmental systems need manual calibration before conditions become unmanageable.",
+};
+const SENSORY_EXPLAIN_TEXT = SENSORY_EXPLAIN_TEXTS[SENSORY_SCENARIO] || SENSORY_EXPLAIN_TEXTS.mercury;
 
 const SENSORY_INTERJECT_TEXT =
   "The alarm is deafening.\n\n" +
@@ -311,7 +321,6 @@ function startSensoryGame() {
   S.sensoryInterjectActive = false;
   S.sensoryHasDampeners = false;
   S.sensoryUiReady = false;
-  S.sensoryCalmMode = false;
   sensoryGameActive = false;
   sensoryCurrentFlashDur = 3;
   noiseDodge = 0;
@@ -367,9 +376,8 @@ function startSensoryCalibration() {
   S.sensoryUiReady = false;
   $("#sensory-explain").classList.add("hidden");
 
-  sensoryCurrentFlashDur = 1.4;
-  const onsetFlash = S.sensoryCalmMode ? "bgFlashCalm" : "bgFlash";
-  $("#sensory-bg").style.animation = `${onsetFlash} ${sensoryCurrentFlashDur}s infinite`;
+  sensoryCurrentFlashDur = REDUCED_FX ? 2.4 : 1.4;
+  $("#sensory-bg").style.animation = `${REDUCED_FX ? "bgFlashCalm" : "bgFlash"} ${sensoryCurrentFlashDur}s infinite`;
 
   setTimeout(() => { $("#sensory-panel").classList.add("visible"); }, 180);
 
@@ -498,9 +506,7 @@ function sensoryGameLoop(ts) {
   }
 
   if (!S.sensoryInterjectActive) {
-    const baseRate = S.sensoryCalmMode
-      ? (S.sensoryPhase >= 1 ? 2.5 : 4)
-      : (S.sensoryPhase >= 1 ? 5.5 : 9);
+    const baseRate = S.sensoryPhase >= 1 ? 5.5 : 9;
     const rate = S.sensoryHasDampeners ? 0.8 : baseRate;
     const cap  = S.sensoryInterjectShown ? 100 : 80;
     S.sensoryStress = Math.min(cap, S.sensoryStress + rate * dt);
@@ -563,24 +569,15 @@ function applyStressEffects() {
   const screen = $("#screen-sensory");
   const bg     = $("#sensory-bg");
 
-  if (S.sensoryCalmMode) {
-    const d = +(2.5 - (s / 100) * 1.5).toFixed(2);
-    root.style.setProperty("--sx","0px"); root.style.setProperty("--sy","0px");
-    root.style.setProperty("--bx","0px"); root.style.setProperty("--by","0px");
-    screen.style.animation = "none";
-    bg.style.animation = `bgFlashCalm ${d}s infinite`;
-    return;
-  }
-
-  const flashMin = hasDamp ? 0.55 : 0.16;
-  const flashMax = hasDamp ? 2.2  : 1.40;
+  const flashMin = REDUCED_FX ? 1.4 : (hasDamp ? 0.55 : 0.16);
+  const flashMax = REDUCED_FX ? 3.2 : (hasDamp ? 2.2  : 1.40);
   sensoryCurrentFlashDur = +(flashMax - (s / 100) * (flashMax - flashMin)).toFixed(2);
 
   const threshold = hasDamp ? 42 : 20;
-  const maxPx     = hasDamp ? 1.8 : 4.5;
-  const anim      = hasDamp ? "bgFlashCalm" : "bgFlash";
+  const maxPx     = REDUCED_FX ? 0 : (hasDamp ? 1.8 : 4.5); // 0 disables screen shake entirely
+  const anim      = (REDUCED_FX || hasDamp) ? "bgFlashCalm" : "bgFlash";
 
-  if (s < threshold) {
+  if (s < threshold || maxPx === 0) {
     root.style.setProperty("--sx","0px"); root.style.setProperty("--sy","0px");
     root.style.setProperty("--bx","0px"); root.style.setProperty("--by","0px");
     screen.style.animation = "none";
@@ -614,14 +611,6 @@ function sensoryResetShake() {
   }
 }
 
-/* ---- Mode picker ---- */
-function sensorySetMode(calm) {
-  S.sensoryCalmMode = calm;
-  const std = $("#smode-standard"), clm = $("#smode-calm");
-  if (std) std.classList.toggle("selected", !calm);
-  if (clm) clm.classList.toggle("selected", calm);
-}
-
 /* ---- Input ---- */
 function sensoryKeyDown(e) {
   if (["a","A","d","D"," ","ArrowLeft","ArrowRight"].includes(e.key)) e.preventDefault();
@@ -638,7 +627,6 @@ function sensoryKeyDown(e) {
     if (S.sensoryState === "explain" && S.sensoryUiReady) {
       $("#sensory-explain").classList.add("hidden");
       $("#sensory-warning").classList.remove("hidden");
-      sensorySetMode(false);
       S.sensoryState = "warn";
       S.sensoryUiReady = true;
       return;
@@ -720,26 +708,28 @@ function triggerSensoryFail() {
   sensoryGameActive = false;
   clearTimeout(sensoryWarningTimer);
   $("#sensory-interject").classList.add("hidden");
-  if (S.sensoryCalmMode) {
+  const el = $("#sensory-status");
+
+  if (REDUCED_FX) {
+    // Skip the rapid shake/flash burst entirely — go straight to a slow, static-shake-free flash.
     sensoryResetShake();
-    $("#sensory-bg").style.animation = "bgFlashCalm 1.4s infinite";
-    const el = $("#sensory-status");
+    $("#sensory-bg").style.animation = "bgFlashCalm 2.4s infinite";
     el.textContent = "SENSORY OVERLOAD — SPACE to retry";
     el.className = "warning";
-  } else {
-    const root = document.documentElement;
-    root.style.setProperty("--sx","2px"); root.style.setProperty("--sy","1.1px");
-    root.style.setProperty("--bx","4px"); root.style.setProperty("--by","2.2px");
-    $("#screen-sensory").style.animation = "shake 55ms linear infinite";
-    $("#sensory-bg").style.animation     = "bgFlash .1s infinite, shake-bg 55ms linear infinite";
-    setTimeout(() => {
-      sensoryResetShake();
-      $("#sensory-bg").style.animation = "bgFlash 1.4s infinite";
-      const el = $("#sensory-status");
-      el.textContent = "SENSORY OVERLOAD — SPACE to retry";
-      el.className = "warning";
-    }, 650);
+    return;
   }
+
+  const root = document.documentElement;
+  root.style.setProperty("--sx","2px"); root.style.setProperty("--sy","1.1px");
+  root.style.setProperty("--bx","4px"); root.style.setProperty("--by","2.2px");
+  $("#screen-sensory").style.animation = "shake 55ms linear infinite";
+  $("#sensory-bg").style.animation     = "bgFlash .1s infinite, shake-bg 55ms linear infinite";
+  setTimeout(() => {
+    sensoryResetShake();
+    $("#sensory-bg").style.animation = "bgFlash 1.4s infinite";
+    el.textContent = "SENSORY OVERLOAD — SPACE to retry";
+    el.className = "warning";
+  }, 650);
 }
 
 function sensoryRetry() {
@@ -753,14 +743,13 @@ function sensoryRetry() {
   breathTargetIdx = 0;
   breathHoldActive = false;
   noiseDodge = 0;
-  sensoryCurrentFlashDur = 1.4;
+  sensoryCurrentFlashDur = REDUCED_FX ? 2.4 : 1.4;
   sensoryCurrentNoiseMin = NOISE_CENTER - NOISE_HALF;
   sensoryCurrentNoiseMax = NOISE_CENTER + NOISE_HALF;
   sensoryCurrentLightMin = LIGHT_CENTER - LIGHT_HALF;
   sensoryCurrentLightMax = LIGHT_CENTER + LIGHT_HALF;
   $("#sensory-interject").classList.add("hidden");
-  const flashAnim = S.sensoryCalmMode ? "bgFlashCalm" : "bgFlash";
-  $("#sensory-bg").style.animation = `${flashAnim} ${sensoryCurrentFlashDur}s infinite`;
+  $("#sensory-bg").style.animation = `${REDUCED_FX ? "bgFlashCalm" : "bgFlash"} ${sensoryCurrentFlashDur}s infinite`;
   resetSensoryUI();
   sensoryResetShake();
   sensoryStartTime = performance.now();
