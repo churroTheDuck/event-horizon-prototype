@@ -1424,6 +1424,24 @@ function initSettings() {
   $("#btn-settings").addEventListener("click", openSettings);
   $("#btn-pause").addEventListener("click", openSettings);
   $("#btn-settings-close").addEventListener("click", closeSettings);
+  $("#btn-back-to-menu").addEventListener("click", () => {
+    closeSettings();
+    S.character = "ester";
+    S.introIdx = 0;
+    S.currentNode = null;
+    S.typing = false;
+    S.starsOffset = 0;
+    S.stationX = -50;
+    S.unlockedScene = 1;
+    $("#choice-panel").classList.add("hidden");
+    $("#dialogue-row").classList.add("hidden");
+    $("#end-reflection").classList.remove("visible");
+    $("#end-reflection").classList.add("hidden");
+    $("#end-buttons").classList.add("hidden");
+    showScreen("title");
+    lastTime = performance.now();
+    requestAnimationFrame(titleLoop);
+  });
   $("#btn-instructions").addEventListener("click", openInstructions);
   $("#btn-settings-instructions").addEventListener("click", openInstructions);
   $("#btn-instructions-close").addEventListener("click", closeInstructions);
