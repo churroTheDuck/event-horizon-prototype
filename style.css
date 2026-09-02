@@ -325,12 +325,21 @@ button:focus-visible{outline:2px solid var(--yellow);}
 #screen-scene.active{display:block;}
 #scene-world{
   position:absolute;
-  width:960px;height:180px; /* +320px west of the lab for the Scene 4 aerospace-engineering area */
+  width:1845px;height:180px; /* aerospace (0-320) + main room (320-1205) + lab/nuclear (1205-1845) */
   top:0;left:0;
   overflow:hidden;
 }
+#scene-main-bg{
+  /* The art is a two-level room — the "aerospace room" door sits up a
+     staircase on a mezzanine. Ground level (where the sprites walk) is the
+     lower band with the radiation crate/desk/stairs, so the crop is shifted
+     up to that floor line rather than the mezzanine door's threshold. */
+  position:absolute;top:-185px;left:320px;
+  width:885px;height:370px; /* scale kept consistent with the mezzanine door's height against the character sprites */
+  image-rendering:auto;
+}
 #scene-bg{
-  position:absolute;top:-60px;left:320px; /* shifted right so world x 0–320 (the aerospace area) has no lab art behind it */
+  position:absolute;top:-60px;left:1205px; /* right after the main room, so world x 1205+ (nuclear/lab) has no main-room art behind it */
   width:853.33px;height:240px; /* 1.33x zoom, undistorted; shifted up so only the bottom 75% shows */
   image-rendering:auto;
 }

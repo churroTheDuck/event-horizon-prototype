@@ -324,8 +324,8 @@ const SCENE_SCRIPT = [
   {id:"sc4_jerry_night", type:"dialogue", speaker:"JERRY", text:"Alright. Goodnight, Ester.", next:"sc4_ester_night"},
   {id:"sc4_ester_night", type:"dialogue", speaker:"ESTER", text:"Goodnight.", next:"sc4_walk_to_aerospace"},
 
-  // free_roam control node — the player walks Ester left, out of the lab and into the aerospace department
-  {id:"sc4_walk_to_aerospace", type:"control", action:"free_roam", minX:20, maxX:720, targetX:160, next:"sc4_arrive_aerospace", showSprites:["ester"], reveal:["aerospace-placeholder"]},
+  // free_roam control node — the player walks Ester left, out of the lab, through the main room, and into the aerospace department
+  {id:"sc4_walk_to_aerospace", type:"control", action:"free_roam", minX:20, maxX:1605, targetX:160, next:"sc4_arrive_aerospace", showSprites:["ester"], reveal:["aerospace-placeholder"]},
 
   {id:"sc4_arrive_aerospace", type:"narration", text:"The aerospace engineering department is cluttered and full of half-finished projects, with a few enthusiastic scientists staying up late to add finishing touches to their work.", next:"sc4_ester_intro1", showSprites:["ester","cameron"], positions:{cameron:200}},
   {id:"sc4_ester_intro1", type:"dialogue", speaker:"ESTER", text:"Um, hello. I’m Ester, a recent addition to the nuclear engineering department. It’s nice to meet you. Seeing as we’re all engineers, I hope we can cooperate well together.", next:"sc4_cameron1"},
@@ -863,16 +863,20 @@ function advanceIntro() {
 /* ---- SCENE ---- */
 let walkAnimTimer = 0;
 
-// Free-roam bounds within the lab. World x 0–320 is the aerospace-engineering
-// placeholder area added for Scene 4, west of the lab; everything lab-related
-// below is shifted +320 to make room for it.
+// Free-roam bounds across the station. World x 0–320 is the aerospace-
+// engineering placeholder area (revealed in Scene 4), 320–1205 is the main
+// room (every scene now opens here), and 1205+ is the nuclear lab —
+// everything lab-related below is shifted accordingly to make room for it.
 const VIEWPORT_WIDTH = 320;
-const WORLD_WIDTH = 960;
+const WORLD_WIDTH = 1845;
 const CAM_MAX_SCROLL = WORLD_WIDTH - VIEWPORT_WIDTH;
-const LAB_MIN_X = 332;
-const LAB_MAX_X = 720;
-const SAM_LAB_X = 700; // Sam waits further into the lab, out of the starting frame
-const PLAYER_START_X = 350;
+const MAIN_ROOM_X = 320; // world x where the main room begins (aerospace boundary)
+const MAIN_MIN_X = 340; // a little inset from the aerospace-side wall
+const MAIN_MAX_X = 1185; // a little inset from the lab-side wall
+const MAIN_START_X = 650; // every scene spawns Ester here, in the main room
+const LAB_MIN_X = 1217;
+const LAB_MAX_X = 1605;
+const SAM_LAB_X = 1585; // Sam waits further into the lab, out of the starting frame
 const PROXIMITY_DIST = 45; // how close Ester must get to a target to trigger the next node
 const PLAYER_MOVE_SPEED = 60; // px/sec
 const JERRY_ENTER_X = SAM_LAB_X + 140; // where Jerry starts, further down the room
@@ -882,17 +886,17 @@ const WALK_FRAME_MS = 130; // ms per leg-cycle frame while Ester is moving
 const moveKeys = { left: false, right: false };
 
 // Until the aerospace-engineering area (Scene 4) is revealed, don't let the
-// camera scroll past the lab's west wall — otherwise that still-empty,
+// camera scroll past the main room's west wall — otherwise that still-empty,
 // not-yet-revealed area shows as dead space on the left of the screen.
 function minSceneScroll() {
   const aerospaceRevealed = !$("#aerospace-placeholder").classList.contains("hidden");
-  return aerospaceRevealed ? 0 : LAB_MIN_X;
+  return aerospaceRevealed ? 0 : MAIN_ROOM_X;
 }
 
 // Generic free-roam config — which bounds/target/next-node the current
 // walk segment uses. Defaults match the Scene 1 walk to Sam; other scenes
 // override these via startFreeRoam() before setting S.freeRoam = true.
-let freeRoamMinX = LAB_MIN_X, freeRoamMaxX = LAB_MAX_X, freeRoamTargetX = SAM_LAB_X, freeRoamNextNode = "s1";
+let freeRoamMinX = MAIN_MIN_X, freeRoamMaxX = LAB_MAX_X, freeRoamTargetX = SAM_LAB_X, freeRoamNextNode = "s1";
 
 function startFreeRoam(startX, minX, maxX, targetX, nextNode, facingRight) {
   // startX/facingRight are optional — omit them to have Ester continue
@@ -918,9 +922,9 @@ function startScene() {
   showScreen("scene");
   $("#scene-sprite-ester").style.backgroundImage = "url('./assets/player.png')";
 
-  // Opening: camera follows Ester from the left edge of the lab. Sam
+  // Opening: Ester starts in the main room and walks east into the lab. Sam
   // waits further in, out of frame, until she walks over to him.
-  startFreeRoam(PLAYER_START_X, LAB_MIN_X, LAB_MAX_X, SAM_LAB_X, "s1", true);
+  startFreeRoam(MAIN_START_X, MAIN_MIN_X, LAB_MAX_X, SAM_LAB_X, "s1", true);
   $("#scene-sprite-sam").style.left = SAM_LAB_X + "px";
   $("#scene-sprite-jerry").classList.add("hidden");
 
@@ -935,7 +939,7 @@ function startScene() {
 function startAstroScene() {
   showScreen("scene");
   $("#scene-sprite-ester").style.backgroundImage = "url('./assets/astro.png')";
-  startFreeRoam(PLAYER_START_X, LAB_MIN_X, LAB_MAX_X, SAM_LAB_X, "astro_inner1", true);
+  startFreeRoam(MAIN_START_X, MAIN_MIN_X, LAB_MAX_X, SAM_LAB_X, "astro_inner1", true);
   $("#scene-sprite-sam").style.left = SAM_LAB_X + "px";
   $("#scene-sprite-jerry").classList.add("hidden");
 
@@ -948,7 +952,7 @@ function startAstroScene() {
 function startNinaScene() {
   showScreen("scene");
   $("#scene-sprite-ester").style.backgroundImage = "url('./assets/nina.png')";
-  startFreeRoam(PLAYER_START_X, LAB_MIN_X, LAB_MAX_X, SAM_LAB_X, "nina_inner1", true);
+  startFreeRoam(MAIN_START_X, MAIN_MIN_X, LAB_MAX_X, SAM_LAB_X, "nina_inner1", true);
   $("#scene-sprite-sam").style.left = SAM_LAB_X + "px";
   $("#scene-sprite-jerry").classList.add("hidden");
 
@@ -1074,12 +1078,7 @@ function runNode(nodeId) {
   if (!node) { showEnd(); return; }
   S.currentNode = node;
 
-  if (node.showSprites) {
-    $("#scene-sprite-sam").classList.toggle("hidden", !node.showSprites.includes("sam"));
-    $("#scene-sprite-jerry").classList.toggle("hidden", !node.showSprites.includes("jerry"));
-    $("#scene-sprite-ester").classList.toggle("hidden", !node.showSprites.includes("ester"));
-    $("#scene-sprite-cameron").classList.toggle("hidden", !node.showSprites.includes("cameron"));
-  }
+  if (node.showSprites) showOnlySprites(node.showSprites);
 
   // Reveals background elements that are hidden by default (e.g. placeholder
   // rooms for areas without art yet), so they can't peek into view via the
@@ -1163,6 +1162,15 @@ function advanceScene() {
 }
 
 /* ---- SCENE SELECT ---- */
+// Shows exactly the listed sprites and hides the rest — shared by dialogue
+// nodes (via node.showSprites) and scene start() staging.
+function showOnlySprites(names) {
+  $("#scene-sprite-sam").classList.toggle("hidden", !names.includes("sam"));
+  $("#scene-sprite-jerry").classList.toggle("hidden", !names.includes("jerry"));
+  $("#scene-sprite-ester").classList.toggle("hidden", !names.includes("ester"));
+  $("#scene-sprite-cameron").classList.toggle("hidden", !names.includes("cameron"));
+}
+
 // Puts characters at their correct starting spot for a scene entered from
 // the hub, rather than relying on wherever they happened to be left.
 function resetSceneStage({ sam, jerry, ester, cameraX }) {
@@ -1189,31 +1197,34 @@ function resetSceneStage({ sam, jerry, ester, cameraX }) {
 }
 
 // Each playable scene's entry node and a start() that stages the scene
-// (camera + character positions) before running that node. Scene 1 handles
-// its own staging via startScene(), since it opens on a free-roam walk
-// rather than a fixed starting pose.
+// (NPC positions/visibility) before free-roaming Ester in from the main
+// room to the entry node's target. Scene 1 handles its own staging via
+// startScene(), since Sam is visible in the lab from the very start.
 const SCENES = [
   { num:1, entry:"s1", start() { startScene(); } },
   { num:2, entry:"sc2_open_inner", start() {
     showScreen("scene");
-    resetSceneStage({ sam:{x:SAM_LAB_X}, jerry:{x:JERRY_JOIN_X}, ester:{x:SAM_LAB_X - 30}, cameraX:SAM_LAB_X });
+    resetSceneStage({ sam:{x:SAM_LAB_X}, jerry:{x:JERRY_JOIN_X}, cameraX:MAIN_START_X });
+    showOnlySprites(["sam", "jerry", "ester"]); // matches sc2_open_inner's showSprites
     sceneAnimTs = performance.now();
     requestAnimationFrame(sceneAnimLoop);
-    runNode("sc2_open_inner");
+    startFreeRoam(MAIN_START_X, MAIN_MIN_X, LAB_MAX_X, SAM_LAB_X - 30, "sc2_open_inner", true);
   }},
   { num:3, entry:"sc3_open", start() {
     showScreen("scene");
-    resetSceneStage({ ester:{x:SAM_LAB_X - 30}, cameraX:SAM_LAB_X });
+    resetSceneStage({ cameraX:MAIN_START_X });
+    showOnlySprites(["ester"]); // matches sc3_open's showSprites — Sam/Jerry aren't here yet
     sceneAnimTs = performance.now();
     requestAnimationFrame(sceneAnimLoop);
-    runNode("sc3_open");
+    startFreeRoam(MAIN_START_X, MAIN_MIN_X, LAB_MAX_X, SAM_LAB_X - 30, "sc3_open", true);
   }},
   { num:4, entry:"sc4_open_inner1", start() {
     showScreen("scene");
-    resetSceneStage({ jerry:{x:SAM_LAB_X - 30}, ester:{x:SAM_LAB_X - 60}, cameraX:SAM_LAB_X });
+    resetSceneStage({ jerry:{x:SAM_LAB_X - 30}, cameraX:MAIN_START_X });
+    showOnlySprites(["jerry", "ester"]); // matches sc4_open_inner1's showSprites
     sceneAnimTs = performance.now();
     requestAnimationFrame(sceneAnimLoop);
-    runNode("sc4_open_inner1");
+    startFreeRoam(MAIN_START_X, MAIN_MIN_X, LAB_MAX_X, SAM_LAB_X - 60, "sc4_open_inner1", true);
   }},
   { num:5, entry:"sc5_open", start() {
     showScreen("scene");
