@@ -116,6 +116,33 @@ button:focus-visible{outline:2px solid var(--yellow);}
 
 /* === HUD BUTTONS (pause / map) === */
 #hud-buttons{
+/* === AUTH CORNER === */
+#auth-corner{
+  position:absolute;top:4px;right:4px;
+  z-index:10;
+  display:flex;align-items:center;gap:3px;
+}
+#auth-corner .btn{font-size:3px;padding:2px 4px;}
+#user-info{
+  display:flex;align-items:center;gap:3px;
+}
+#user-avatar{
+  width:10px;height:10px;
+  border-radius:50%;
+  border:1px solid var(--purple);
+}
+#user-name{
+  font-family:'Karla',Arial,sans-serif;
+  font-size:3px;
+  color:var(--lyellow);
+  max-width:50px;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+
+/* === PAUSE BUTTON === */
+#btn-pause{
   position:absolute;top:4px;right:4px;
   z-index:80;
   display:flex;gap:3px;

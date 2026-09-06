@@ -17,6 +17,10 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Karla:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
+  <!-- Firebase SDK (compat) -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
   <!-- These are only used as CSS background-images on elements inside the
      initially-hidden #screen-scene, so browsers won't fetch them until that
      screen becomes active. Preload them up front so they're already cached
@@ -44,6 +48,15 @@
             <button class="btn btn-purple" id="btn-start" tabindex="0">START</button>
             <button class="btn btn-purple" id="btn-settings" tabindex="0">SETTINGS</button>
             <button class="btn btn-purple" id="btn-instructions" tabindex="0">HOW TO PLAY</button>
+          </div>
+        </div>
+        <!-- Auth UI (top-right corner) -->
+        <div id="auth-corner">
+          <button class="btn btn-purple" id="btn-sign-in" tabindex="0">SIGN IN</button>
+          <div id="user-info" class="hidden">
+            <img id="user-avatar" alt="">
+            <span id="user-name"></span>
+            <button class="btn btn-purple" id="btn-sign-out" tabindex="0">SIGN OUT</button>
           </div>
         </div>
       </div>
@@ -162,6 +175,7 @@
           <button class="btn btn-purple" id="btn-settings-instructions">HOW TO PLAY</button>
           <button class="btn btn-purple" id="btn-settings-close">CLOSE</button>
           <button class="btn btn-purple" id="btn-back-to-menu">BACK TO MENU</button>
+          <button class="btn btn-purple" id="btn-pause-restart">RESTART</button>
         </div>
       </div>
 
@@ -191,6 +205,7 @@
     </div>
   </div>
   <script src="script.js"></script>
+  <script src="auth.js"></script>
 </body>
 
 </html>
