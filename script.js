@@ -712,6 +712,7 @@ const S = {
   settings: {dyslexia:true, textSpeed:"normal", reduceFlashing:false, largeText:false},
   settingsOpen: false,
   instructionsOpen: false,
+  mapOpen: false,
   // scene
   sceneScrollX: 0,
   freeRoam: false,
@@ -752,7 +753,8 @@ function showScreen(name) {
   $$(".screen").forEach(s => s.classList.remove("active"));
   $(`#screen-${name}`).classList.add("active");
   S.screen = name;
-  $("#btn-pause").classList.toggle("hidden", name !== "intro" && name !== "scene" && name !== "scenes");
+  $("#hud-buttons").classList.toggle("hidden", name !== "intro" && name !== "scene" && name !== "scenes");
+  $("#btn-map").classList.toggle("hidden", name !== "scene");
 }
 
 /* ---- TYPEWRITER ---- */
@@ -1037,7 +1039,7 @@ function sceneAnimLoop(ts) {
   const dt = ts - sceneAnimTs;
   sceneAnimTs = ts;
 
-  if (S.freeRoam && !S.settingsOpen && !S.instructionsOpen) {
+  if (S.freeRoam && !S.settingsOpen && !S.instructionsOpen && !S.mapOpen) {
     let dx = 0;
     if (moveKeys.left) dx -= 1;
     if (moveKeys.right) dx += 1;
@@ -1345,13 +1347,18 @@ function initRestart() {
 /* ---- GLOBAL INPUT ---- */
 function initInput() {
   document.addEventListener("click", e => {
-    if (S.settingsOpen || S.instructionsOpen) return;
+    if (S.settingsOpen || S.instructionsOpen || S.mapOpen) return;
     if (S.screen === "intro") advanceIntro();
     if (S.screen === "recap") advanceRecap();
   });
   document.addEventListener("keydown", e => {
-    if (S.settingsOpen || S.instructionsOpen) {
-      if (e.key === "Escape") { closeSettings(); closeInstructions(); }
+    if (S.settingsOpen || S.instructionsOpen || S.mapOpen) {
+      if (e.key === "Escape") { closeSettings(); closeInstructions(); closeMap(); }
+      else if ((e.key === "m" || e.key === "M") && S.mapOpen && !S.settingsOpen && !S.instructionsOpen) { closeMap(); }
+      return;
+    }
+    if ((e.key === "m" || e.key === "M") && S.screen === "scene") {
+      openMap();
       return;
     }
     if (S.screen === "intro" && (e.key === " " || e.key === "Enter")) {
@@ -1377,7 +1384,7 @@ function initInput() {
     if (e.key === "ArrowRight" || e.key === "d" || e.key === "D") moveKeys.right = false;
   });
   $("#dialogue-row").addEventListener("click", () => {
-    if (S.settingsOpen || S.instructionsOpen) return;
+    if (S.settingsOpen || S.instructionsOpen || S.mapOpen) return;
     if (S.screen === "scene") advanceScene();
   });
 }
@@ -1428,6 +1435,17 @@ function closeInstructions() {
   $("#instructions-overlay").classList.add("hidden");
 }
 
+function openMap() {
+  closeSettings(); // don't stack overlays
+  S.mapOpen = true;
+  $("#map-overlay").classList.remove("hidden");
+}
+
+function closeMap() {
+  S.mapOpen = false;
+  $("#map-overlay").classList.add("hidden");
+}
+
 function initSettings() {
   loadSettings();
   applySettingsToDOM();
@@ -1453,6 +1471,8 @@ function initSettings() {
     lastTime = performance.now();
     requestAnimationFrame(titleLoop);
   });
+  $("#btn-map").addEventListener("click", openMap);
+  $("#btn-map-close").addEventListener("click", closeMap);
   $("#btn-instructions").addEventListener("click", openInstructions);
   $("#btn-settings-instructions").addEventListener("click", openInstructions);
   $("#btn-instructions-close").addEventListener("click", closeInstructions);

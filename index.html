@@ -93,8 +93,11 @@
         <div id="scenes-list"></div>
       </div>
 
-      <!-- PAUSE BUTTON (visible during intro / scene) -->
-      <button id="btn-pause" class="btn btn-purple hidden" tabindex="0" aria-label="Pause / Settings">II</button>
+      <!-- HUD BUTTONS (visible during intro / scene) -->
+      <div id="hud-buttons" class="hidden">
+        <button id="btn-map" class="btn btn-purple" tabindex="0" aria-label="Station Map">MAP</button>
+        <button id="btn-pause" class="btn btn-purple" tabindex="0" aria-label="Pause / Settings">II</button>
+      </div>
 
       <!-- SCREEN: SCENE -->
       <div id="screen-scene" class="screen">
@@ -162,6 +165,15 @@
         </div>
       </div>
 
+      <!-- MAP OVERLAY -->
+      <div id="map-overlay" class="overlay hidden">
+        <div id="map-panel">
+          <div class="settings-title">STATION MAP</div>
+          <img id="map-image" src="./assets/map.png" alt="Map of the research station">
+          <button class="btn btn-purple" id="btn-map-close">CLOSE</button>
+        </div>
+      </div>
+
       <!-- INSTRUCTIONS OVERLAY -->
       <div id="instructions-overlay" class="overlay hidden">
         <div id="instructions-panel">
@@ -171,6 +183,7 @@
               click)</span></div>
           <div class="instructions-row"><span class="instructions-keys">CLICK</span><span>Choose an option</span></div>
           <div class="instructions-row"><span class="instructions-keys">II</span><span>Pause / settings</span></div>
+          <div class="instructions-row"><span class="instructions-keys">M</span><span>Open station map</span></div>
           <button class="btn btn-purple" id="btn-instructions-close">CLOSE</button>
         </div>
       </div>
