@@ -214,7 +214,6 @@ button:focus-visible{outline:2px solid var(--yellow);}
 }
 #btn-settings-close{
   align-self:center;
-  margin-top:4px;
 }
 #btn-back-to-menu{
   align-self:center;
