@@ -114,8 +114,6 @@ button:focus-visible{outline:2px solid var(--yellow);}
   display:flex;gap:6px;
 }
 
-/* === HUD BUTTONS (pause / map) === */
-#hud-buttons{
 /* === AUTH CORNER === */
 #auth-corner{
   position:absolute;top:4px;right:4px;
@@ -214,7 +212,6 @@ button:focus-visible{outline:2px solid var(--yellow);}
 }
 #btn-settings-close{
   align-self:center;
-  margin-top:4px;
 }
 #btn-back-to-menu{
   align-self:center;
