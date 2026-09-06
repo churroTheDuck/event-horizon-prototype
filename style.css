@@ -189,6 +189,9 @@ button:focus-visible{outline:2px solid var(--yellow);}
   align-self:center;
   margin-top:4px;
 }
+#btn-back-to-menu{
+  align-self:center;
+}
 
 /* === INSTRUCTIONS OVERLAY === */
 #instructions-overlay{

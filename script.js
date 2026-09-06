@@ -1355,10 +1355,15 @@ function initInput() {
     if (S.settingsOpen || S.instructionsOpen || S.mapOpen) {
       if (e.key === "Escape") { closeSettings(); closeInstructions(); closeMap(); }
       else if ((e.key === "m" || e.key === "M") && S.mapOpen && !S.settingsOpen && !S.instructionsOpen) { closeMap(); }
+      else if ((e.key === "p" || e.key === "P") && S.settingsOpen && !S.instructionsOpen && !S.mapOpen) { closeSettings(); }
       return;
     }
     if ((e.key === "m" || e.key === "M") && S.screen === "scene") {
       openMap();
+      return;
+    }
+    if ((e.key === "p" || e.key === "P") && (S.screen === "intro" || S.screen === "scene" || S.screen === "scenes")) {
+      openSettings();
       return;
     }
     if (S.screen === "intro" && (e.key === " " || e.key === "Enter")) {
