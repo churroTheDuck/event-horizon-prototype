@@ -325,7 +325,7 @@ const SCENE_SCRIPT = [
   {id:"sc4_ester_night", type:"dialogue", speaker:"ESTER", text:"Goodnight.", next:"sc4_walk_to_aerospace"},
 
   // free_roam control node — the player walks Ester left, out of the lab, through the main room, and into the aerospace department
-  {id:"sc4_walk_to_aerospace", type:"control", action:"free_roam", minX:20, maxX:1605, targetX:160, next:"sc4_arrive_aerospace", showSprites:["ester"], reveal:["aerospace-placeholder"]},
+  {id:"sc4_walk_to_aerospace", type:"control", action:"free_roam", minX:20, maxX:1605, targetX:160, next:"sc4_arrive_aerospace", showSprites:["ester"], reveal:["aerospace-placeholder"], find:"Cameron"},
 
   {id:"sc4_arrive_aerospace", type:"narration", text:"The aerospace engineering department is cluttered and full of half-finished projects, with a few enthusiastic scientists staying up late to add finishing touches to their work.", next:"sc4_ester_intro1", showSprites:["ester","cameron"], positions:{cameron:200}},
   {id:"sc4_ester_intro1", type:"dialogue", speaker:"ESTER", text:"Um, hello. I’m Ester, a recent addition to the nuclear engineering department. It’s nice to meet you. Seeing as we’re all engineers, I hope we can cooperate well together.", next:"sc4_cameron1"},
@@ -916,17 +916,43 @@ function minSceneScroll() {
 // Generic free-roam config — which bounds/target/next-node the current
 // walk segment uses. Defaults match the Scene 1 walk to Sam; other scenes
 // override these via startFreeRoam() before setting S.freeRoam = true.
-let freeRoamMinX = MAIN_MIN_X, freeRoamMaxX = LAB_MAX_X, freeRoamTargetX = SAM_LAB_X, freeRoamNextNode = "s1";
+// freeRoamFind names who's waiting at the destination (shown in the walk
+// hint below, e.g. "to find Sam") — null when nobody's there yet to find.
+let freeRoamMinX = MAIN_MIN_X, freeRoamMaxX = LAB_MAX_X, freeRoamTargetX = SAM_LAB_X, freeRoamNextNode = "s1", freeRoamFind = "Sam";
 
-function startFreeRoam(startX, minX, maxX, targetX, nextNode, facingRight) {
+// Which of the station's three named areas a world-x position falls in —
+// used to label the walk hint below.
+function zoneNameForX(x) {
+  if (x < MAIN_ROOM_X) return "Aerospace Engineering";
+  if (x < LAB_MIN_X) return "the Main Room";
+  return "the Nuclear Lab";
+}
+
+// Shows a small directional callout ("→ Go to Aerospace Engineering to find
+// Cameron") while free-roaming toward a destination in a different room than
+// the one Ester's currently standing in — hidden the rest of the time (e.g.
+// walking a few steps to an NPC already in the same room doesn't need one).
+function updateWalkHint() {
+  const hint = $("#walk-hint");
+  if (!S.freeRoam) { hint.classList.add("hidden"); return; }
+  const destZone = zoneNameForX(freeRoamTargetX);
+  if (zoneNameForX(S.playerX) === destZone) { hint.classList.add("hidden"); return; }
+  hint.classList.remove("hidden");
+  $("#walk-hint-arrow").textContent = freeRoamTargetX > S.playerX ? "→" : "←";
+  $("#walk-hint-text").textContent = "Go to " + destZone + (freeRoamFind ? " to find " + freeRoamFind : "");
+}
+
+function startFreeRoam(startX, minX, maxX, targetX, nextNode, facingRight, find) {
   // startX/facingRight are optional — omit them to have Ester continue
   // walking from wherever she currently stands and however she's already
-  // facing, instead of snapping to a fixed spot/direction.
+  // facing, instead of snapping to a fixed spot/direction. find is also
+  // optional — omit it when nobody's actually waiting at the destination yet.
   if (startX != null) S.playerX = startX;
   freeRoamMinX = minX;
   freeRoamMaxX = maxX;
   freeRoamTargetX = targetX;
   freeRoamNextNode = nextNode;
+  freeRoamFind = find || null;
   S.freeRoam = true;
   S.sceneScrollX = Math.max(minSceneScroll(), Math.min(CAM_MAX_SCROLL, S.playerX - VIEWPORT_WIDTH / 2));
   $("#scene-world").style.left = -S.sceneScrollX + "px";
@@ -936,6 +962,7 @@ function startFreeRoam(startX, minX, maxX, targetX, nextNode, facingRight) {
   S.walkFrame = 0;
   moveKeys.left = false;
   moveKeys.right = false;
+  updateWalkHint();
 }
 
 function startScene() {
@@ -947,7 +974,7 @@ function startScene() {
 
   // Opening: Ester starts in the main room and walks east into the lab. Sam
   // waits further in, out of frame, until she walks over to him.
-  startFreeRoam(MAIN_START_X, MAIN_MIN_X, LAB_MAX_X, SAM_LAB_X, "s1", true);
+  startFreeRoam(MAIN_START_X, MAIN_MIN_X, LAB_MAX_X, SAM_LAB_X, "s1", true, "Sam");
   $("#scene-sprite-sam").style.left = SAM_LAB_X + "px";
 
   sceneAnimTs = performance.now();
@@ -964,7 +991,7 @@ function startAstroScene() {
   $("#choice-panel").classList.add("hidden");
   $("#scene-sprite-ester").style.backgroundImage = "url('./assets/astro.png')";
   showOnlySprites(["sam", "ester"]);
-  startFreeRoam(MAIN_START_X, MAIN_MIN_X, LAB_MAX_X, SAM_LAB_X, "astro_inner1", true);
+  startFreeRoam(MAIN_START_X, MAIN_MIN_X, LAB_MAX_X, SAM_LAB_X, "astro_inner1", true, "Sam");
   $("#scene-sprite-sam").style.left = SAM_LAB_X + "px";
 
   sceneAnimTs = performance.now();
@@ -979,7 +1006,7 @@ function startNinaScene() {
   $("#choice-panel").classList.add("hidden");
   $("#scene-sprite-ester").style.backgroundImage = "url('./assets/nina.png')";
   showOnlySprites(["sam", "ester"]);
-  startFreeRoam(MAIN_START_X, MAIN_MIN_X, LAB_MAX_X, SAM_LAB_X, "nina_inner1", true);
+  startFreeRoam(MAIN_START_X, MAIN_MIN_X, LAB_MAX_X, SAM_LAB_X, "nina_inner1", true, "Sam");
   $("#scene-sprite-sam").style.left = SAM_LAB_X + "px";
 
   sceneAnimTs = performance.now();
@@ -1080,6 +1107,7 @@ function sceneAnimLoop(ts) {
         S.walkFrame = (S.walkFrame + 1) % 4;
       }
       $("#scene-sprite-ester").style.backgroundPosition = `-${S.walkFrame * 36}px 0`;
+      updateWalkHint();
     } else if (S.walkFrame !== 0) {
       S.walkFrame = 0;
       walkAnimTimer = 0;
@@ -1092,6 +1120,7 @@ function sceneAnimLoop(ts) {
       S.walkFrame = 0;
       walkAnimTimer = 0;
       $("#scene-sprite-ester").style.backgroundPosition = "0 0";
+      updateWalkHint();
       runNode(freeRoamNextNode);
     }
   }
@@ -1122,7 +1151,7 @@ function runNode(nodeId) {
   if (node.type === "control") {
     if (node.action === "jerry_enter") { jerryEnter(node.next); return; }
     if (node.action === "sensory_minigame") { startSensoryMinigame(node.next, node.scenario); return; }
-    if (node.action === "free_roam") { startFreeRoam(node.startX, node.minX, node.maxX, node.targetX, node.next, node.facingRight); return; }
+    if (node.action === "free_roam") { startFreeRoam(node.startX, node.minX, node.maxX, node.targetX, node.next, node.facingRight, node.find); return; }
   }
 
   // Choices
@@ -1203,6 +1232,7 @@ function showOnlySprites(names) {
 // the hub, rather than relying on wherever they happened to be left.
 function resetSceneStage({ sam, jerry, ester, cameraX }) {
   S.freeRoam = false;
+  updateWalkHint();
   moveKeys.left = false;
   moveKeys.right = false;
   S.walkFrame = 0;
@@ -1236,7 +1266,7 @@ const SCENES = [
     showOnlySprites(["sam", "jerry", "ester"]); // matches sc2_open_inner's showSprites
     sceneAnimTs = performance.now();
     requestAnimationFrame(sceneAnimLoop);
-    startFreeRoam(MAIN_START_X, MAIN_MIN_X, LAB_MAX_X, SAM_LAB_X - 30, "sc2_open_inner", true);
+    startFreeRoam(MAIN_START_X, MAIN_MIN_X, LAB_MAX_X, SAM_LAB_X - 30, "sc2_open_inner", true, "Sam and Jerry");
   }},
   { num:3, entry:"sc3_open", start() {
     showScreen("scene");
@@ -1244,6 +1274,8 @@ const SCENES = [
     showOnlySprites(["ester"]); // matches sc3_open's showSprites — Sam/Jerry aren't here yet
     sceneAnimTs = performance.now();
     requestAnimationFrame(sceneAnimLoop);
+    // No "find" name here — Ester is heading back to the lab itself
+    // (Jerry's whereabouts is literally the open question sc3_open asks).
     startFreeRoam(MAIN_START_X, MAIN_MIN_X, LAB_MAX_X, SAM_LAB_X - 30, "sc3_open", true);
   }},
   { num:4, entry:"sc4_open_inner1", start() {
@@ -1252,7 +1284,7 @@ const SCENES = [
     showOnlySprites(["jerry", "ester"]); // matches sc4_open_inner1's showSprites
     sceneAnimTs = performance.now();
     requestAnimationFrame(sceneAnimLoop);
-    startFreeRoam(MAIN_START_X, MAIN_MIN_X, LAB_MAX_X, SAM_LAB_X - 60, "sc4_open_inner1", true);
+    startFreeRoam(MAIN_START_X, MAIN_MIN_X, LAB_MAX_X, SAM_LAB_X - 60, "sc4_open_inner1", true, "Jerry");
   }},
   { num:5, entry:"sc5_open", start() {
     showScreen("scene");
