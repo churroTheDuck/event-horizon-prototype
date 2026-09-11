@@ -810,7 +810,12 @@ function resetInMemoryProgress() {
   S.currentNode = null;
   S.activeScene = null;
   S.unlockedScene = 1;
+  S.character = "ester";
+  if (typeof progressRestarted !== "undefined") progressRestarted = false;
   if (typeof savedPerCharacter !== "undefined") window.savedPerCharacter = {};
+  // Reset sprite back to Ester so a previous character's sprite doesn't linger
+  var sprite = document.querySelector("#scene-sprite-ester");
+  if (sprite) sprite.style.backgroundImage = "url('./assets/player.png')";
 }
 
 function chooseCharacter(character) {
@@ -1349,6 +1354,10 @@ function showSceneSelect() {
           runNode(paused.nodeId);
         // Resume from localStorage (after page refresh)
         } else if (localSaved && localSaved.activeScene === s.num && NODE_MAP[localSaved.nodeId]) {
+          savedNodeId = localSaved.nodeId;
+          savedActiveScene = localSaved.activeScene;
+          savedCharacter = "ester";
+          delete savedPerCharacter.ester;
           resumeFromCloudSave();
         // Resume from cloud save (after page refresh)
         } else if (typeof resumeFromCloudSave === "function" && savedNodeId && savedActiveScene === s.num) {
@@ -1441,15 +1450,15 @@ function initRestart() {
     S.starsOffset = 0;
     S.stationX = -50;
     S.unlockedScene = 1;
-    if (typeof savedNodeId !== "undefined") { savedNodeId = null; savedActiveScene = null; }
+    if (typeof savedNodeId !== "undefined") { savedNodeId = null; savedActiveScene = null; savedCharacter = null; }
     pausedState = {};
+    if (typeof savedPerCharacter !== "undefined") window.savedPerCharacter = {};
     $("#choice-panel").classList.add("hidden");
     $("#dialogue-row").classList.add("hidden");
     $("#end-reflection").classList.remove("visible");
     $("#end-reflection").classList.add("hidden");
     $("#end-buttons").classList.add("hidden");
-    if (typeof saveProgress === "function") saveProgress();
-  saveLocalProgress();
+    clearAllSaves();
     showScreen("title");
     lastTime = performance.now();
     requestAnimationFrame(titleLoop);
@@ -1527,6 +1536,23 @@ function saveSettings() {
   } catch (e) {}
   if (typeof saveProgress === "function") saveProgress();
   saveLocalProgress();
+}
+
+var progressRestarted = false;
+
+function clearAllSaves() {
+  progressRestarted = true;
+  // Clear localStorage progress for this user
+  try { localStorage.removeItem(getProgressKey()); } catch (e) {}
+  // Overwrite Firestore save with empty progress
+  if (typeof currentUser !== "undefined" && currentUser && typeof db !== "undefined") {
+    db.collection("saves").doc(currentUser.uid).set({
+      characters: {},
+      lastCharacter: "ester",
+      settings: S.settings,
+      updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+    }).catch(function(err) { console.error("Clear save error:", err); });
+  }
 }
 
 function saveLocalProgress() {
@@ -1644,15 +1670,15 @@ function initSettings() {
     S.starsOffset = 0;
     S.stationX = -50;
     S.unlockedScene = 1;
-    if (typeof savedNodeId !== "undefined") { savedNodeId = null; savedActiveScene = null; }
+    if (typeof savedNodeId !== "undefined") { savedNodeId = null; savedActiveScene = null; savedCharacter = null; }
     pausedState = {};
+    if (typeof savedPerCharacter !== "undefined") window.savedPerCharacter = {};
     $("#choice-panel").classList.add("hidden");
     $("#dialogue-row").classList.add("hidden");
     $("#end-reflection").classList.remove("visible");
     $("#end-reflection").classList.add("hidden");
     $("#end-buttons").classList.add("hidden");
-    if (typeof saveProgress === "function") saveProgress();
-  saveLocalProgress();
+    clearAllSaves();
     showScreen("title");
     lastTime = performance.now();
     requestAnimationFrame(titleLoop);

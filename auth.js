@@ -99,6 +99,7 @@ function loadProgress() {
 function applyLoadedProgress(data) {
   if (!data) return;
   if (S.screen !== "title") return;
+  if (typeof progressRestarted !== "undefined" && progressRestarted) { progressRestarted = false; return; }
   if (data.settings) {
     Object.assign(S.settings, data.settings);
     applySettingsToDOM();
@@ -146,7 +147,6 @@ function resumeFromCloudSave() {
   // Set the correct character sprite
   const spriteMap = { ester: "player.png", astro: "astro.png", nina: "nina.png" };
   const spriteFile = spriteMap[S.character] || "player.png";
-  document.querySelector("#scene-sprite-ester").style.backgroundImage = "url('./assets/" + spriteFile + "')";
 
   // Start the scene (sets up sprites, camera, backgrounds)
   scene.start();
@@ -156,6 +156,9 @@ function resumeFromCloudSave() {
     S.freeRoam = false;
     moveKeys.left = false;
     moveKeys.right = false;
+
+    // Set sprite AFTER scene.start() so it doesn't get overridden
+    document.querySelector("#scene-sprite-ester").style.backgroundImage = "url('./assets/" + spriteFile + "')";
 
     const ester = document.querySelector("#scene-sprite-ester");
     S.playerX = freeRoamTargetX - 60;
