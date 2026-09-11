@@ -688,7 +688,7 @@ const SCENE_SCRIPT = [
   {id:"nina_bb6", type:"narration", text:"Nina and Jerry open, cut, and flatten the boxes before laying them on the lab floor.", next:"nina_bb7"},
   {id:"nina_bb7", type:"dialogue", speaker:"NINA", text:"Done! I’ve just put the cardboard in the bin. The lab is no longer hazardous!", next:"nina_bb8"},
   {id:"nina_bb8", type:"dialogue", speaker:"JERRY", text:"Yeah, I guess so…", next:"nina_bb9"},
-  {id:"nina_bb9", type:"narration", text:"Jerry walks away with a flat expression.", next:"nina_bb10"},
+  {id:"nina_bb9", type:"narration", text:"Jerry walks away with a flat expression.", next:"nina_bb10", showSprites:["sam","ester"]},
   {id:"nina_bb10", type:"dialogue", speaker:"SAM", text:"I, uh— nice work, Nina. Quick thinking. Yeah…", next:"nina_bb11"},
   {id:"nina_bb11", type:"inner", text:"The words make sense, but what Sam means doesn’t. Sam is making the same face as Jerry. Ignoring what they might think of me, I still go ahead and fill in the form.", next:"nina_bb_recap"},
   {id:"nina_bb_recap", type:"recap", text:"I successfully resolved the toxic spill in the lab. However, a sense of awkwardness has emerged between Jerry and I…", next:"end"}
@@ -801,83 +801,26 @@ function showCharacterSelect() {
   showScreen("characters");
 }
 
-// Per-character paused state (for back-to-menu resume)
-var pausedState = {}; // { ester: { nodeId, scene }, astro: { nodeId }, nina: { nodeId } }
-
 // Called from auth.js when user signs in/out to reset in-memory progress
 function resetInMemoryProgress() {
-  pausedState = {};
   S.currentNode = null;
   S.activeScene = null;
   S.unlockedScene = 1;
-  if (typeof savedPerCharacter !== "undefined") window.savedPerCharacter = {};
 }
 
+// Leaving a character mid-scene (switching characters, backing out to the
+// title screen, reloading) never resumes — reselecting a character always
+// restarts fresh: Ester goes to her scene select (or the intro cards if she
+// hasn't unlocked scene 2 yet), Astro/Nina always replay their own intro.
 function chooseCharacter(character) {
-  // Save current character's state before switching
-  if (S.character && S.currentNode) {
-    pausedState[S.character] = {
-      nodeId: S.currentNode.id,
-      scene: S.activeScene
-    };
-  }
-
   S.currentNode = null;
   S.activeScene = null;
   S.character = character;
 
-  // Check for saved progress for this character
-  var paused = pausedState[character];
-  var localSaved = (typeof savedPerCharacter !== "undefined" && savedPerCharacter[character]) || null;
-  var cloudSaved = (typeof savedNodeId !== "undefined" && savedNodeId && savedCharacter === character);
-
-  var hasProgress = paused || localSaved || cloudSaved;
-
-  if (character === "ester") {
-    if (S.unlockedScene > 1 || hasProgress) {
-      showSceneSelect();
-    } else {
-      startIntro();
-    }
+  if (character === "ester" && S.unlockedScene > 1) {
+    showSceneSelect();
   } else {
-    // Astro/Nina: resume if they have progress, otherwise start fresh
-    if (paused && paused.nodeId && NODE_MAP[paused.nodeId]) {
-      showScreen("scene");
-      sceneAnimTs = performance.now();
-      requestAnimationFrame(sceneAnimLoop);
-      // Set correct character sprite
-      var spriteMap = { astro: "astro.png", nina: "nina.png" };
-      var spriteFile = spriteMap[character] || "player.png";
-      document.querySelector("#scene-sprite-ester").style.backgroundImage = "url('./assets/" + spriteFile + "')";
-      S.currentNode = NODE_MAP[paused.nodeId];
-      runNode(paused.nodeId);
-    } else if (localSaved && localSaved.nodeId && NODE_MAP[localSaved.nodeId]) {
-      // Resume from localStorage after page refresh
-      var scene = SCENES.find(s => s.num === 1);
-      if (scene) {
-        scene.start();
-        var nodeId = localSaved.nodeId;
-        var spriteMap = { astro: "astro.png", nina: "nina.png" };
-        var spriteFile = spriteMap[character] || "player.png";
-        delete savedPerCharacter[character];
-        setTimeout(() => {
-          S.freeRoam = false;
-          moveKeys.left = false;
-          moveKeys.right = false;
-          document.querySelector("#scene-sprite-ester").style.backgroundImage = "url('./assets/" + spriteFile + "')";
-          S.playerX = freeRoamTargetX - 60;
-          document.querySelector("#scene-sprite-ester").style.left = S.playerX + "px";
-          document.querySelector("#scene-sprite-ester").style.backgroundPosition = "0 0";
-          S.sceneScrollX = Math.max(minSceneScroll(), Math.min(CAM_MAX_SCROLL, S.playerX - VIEWPORT_WIDTH / 2));
-          document.querySelector("#scene-world").style.left = -S.sceneScrollX + "px";
-          runNode(nodeId);
-        }, 50);
-      } else {
-        startIntro();
-      }
-    } else {
-      startIntro();
-    }
+    startIntro();
   }
 }
 
@@ -1313,6 +1256,11 @@ const SCENES = [
   }},
   { num:5, entry:"sc5_open", start() {
     showScreen("scene");
+    // Scene 5 always opens in the aerospace department, but the "hidden" class
+    // on #aerospace-placeholder is only removed at runtime when sc4_walk_to_aerospace
+    // actually plays — it isn't restored on reload/resume. Force it revealed here
+    // so minSceneScroll() doesn't clamp the camera back to the main room.
+    $("#aerospace-placeholder").classList.remove("hidden");
     resetSceneStage({ cameraX:160 }); // nobody's on screen yet — sc5_cut_aerospace places Ester/Jerry itself
     sceneAnimTs = performance.now();
     requestAnimationFrame(sceneAnimLoop);
@@ -1335,28 +1283,11 @@ function showSceneSelect() {
       btn.classList.add("completed");
       btn.disabled = true;
     } else if (s.num === S.unlockedScene) {
+      // Always restart the scene from its entry node — leaving mid-scene
+      // (back to menu, switching characters, reloading) never resumes.
       btn.addEventListener("click", () => {
-        var paused = pausedState.ester;
-        var localSaved = (typeof savedPerCharacter !== "undefined" && savedPerCharacter.ester) || null;
-
-        // Resume in-memory (back to menu → scene select)
-        if (paused && paused.nodeId && paused.scene === s.num && NODE_MAP[paused.nodeId]) {
-          S.activeScene = s.num;
-          delete pausedState.ester;
-          showScreen("scene");
-          sceneAnimTs = performance.now();
-          requestAnimationFrame(sceneAnimLoop);
-          runNode(paused.nodeId);
-        // Resume from localStorage (after page refresh)
-        } else if (localSaved && localSaved.activeScene === s.num && NODE_MAP[localSaved.nodeId]) {
-          resumeFromCloudSave();
-        // Resume from cloud save (after page refresh)
-        } else if (typeof resumeFromCloudSave === "function" && savedNodeId && savedActiveScene === s.num) {
-          resumeFromCloudSave();
-        } else {
-          S.activeScene = s.num;
-          s.start();
-        }
+        S.activeScene = s.num;
+        s.start();
       });
     } else {
       btn.classList.add("locked");
@@ -1441,8 +1372,6 @@ function initRestart() {
     S.starsOffset = 0;
     S.stationX = -50;
     S.unlockedScene = 1;
-    if (typeof savedNodeId !== "undefined") { savedNodeId = null; savedActiveScene = null; }
-    pausedState = {};
     $("#choice-panel").classList.add("hidden");
     $("#dialogue-row").classList.add("hidden");
     $("#end-reflection").classList.remove("visible");
@@ -1529,6 +1458,9 @@ function saveSettings() {
   saveLocalProgress();
 }
 
+// Scenes always restart from their entry node when reselected, so the only
+// progress worth persisting locally is which scenes Ester has unlocked —
+// no mid-scene node/position tracking needed.
 function saveLocalProgress() {
   if (typeof currentUser === "undefined" || !currentUser) return;
   try {
@@ -1537,8 +1469,6 @@ function saveLocalProgress() {
     if (raw) all = JSON.parse(raw);
 
     var charData = all[S.character] || {};
-    charData.currentNodeId = S.currentNode ? S.currentNode.id : null;
-    charData.activeScene = S.activeScene || null;
     if (S.character === "ester") {
       charData.unlockedScene = Math.max(charData.unlockedScene || 1, S.unlockedScene);
     }
@@ -1559,16 +1489,6 @@ function loadLocalProgress() {
     if (all.ester && all.ester.unlockedScene) {
       S.unlockedScene = all.ester.unlockedScene;
     }
-
-    // Load per-character mid-scene resume data for all characters
-    // (will be used when the player picks a character)
-    if (typeof savedPerCharacter === "undefined") window.savedPerCharacter = {};
-    ["ester", "astro", "nina"].forEach(c => {
-      var d = all[c];
-      if (d && d.currentNodeId && NODE_MAP[d.currentNodeId]) {
-        window.savedPerCharacter[c] = { nodeId: d.currentNodeId, activeScene: d.activeScene };
-      }
-    });
   } catch (e) {}
 }
 
@@ -1644,8 +1564,6 @@ function initSettings() {
     S.starsOffset = 0;
     S.stationX = -50;
     S.unlockedScene = 1;
-    if (typeof savedNodeId !== "undefined") { savedNodeId = null; savedActiveScene = null; }
-    pausedState = {};
     $("#choice-panel").classList.add("hidden");
     $("#dialogue-row").classList.add("hidden");
     $("#end-reflection").classList.remove("visible");

@@ -16,9 +16,6 @@ const auth = firebase.auth();
 const db = firebase.firestore();
 
 let currentUser = null;
-let savedNodeId = null;
-let savedActiveScene = null;
-let savedCharacter = null;
 let saveTimer = null;
 
 /* ---- UI HELPERS ---- */
@@ -54,7 +51,10 @@ function signOut() {
   });
 }
 
-/* ---- CLOUD SAVE / LOAD ---- */
+/* ---- CLOUD SAVE / LOAD ----
+   Scenes always restart from their entry node when reselected, so the only
+   progress worth persisting is which scenes Ester has unlocked (plus
+   settings) — no mid-scene node/position tracking needed. */
 function saveProgressNow() {
   if (!currentUser) return;
   db.collection("saves").doc(currentUser.uid).get().then(doc => {
@@ -62,8 +62,6 @@ function saveProgressNow() {
     var characters = existing.characters || {};
     var charData = characters[S.character] || {};
 
-    charData.currentNodeId = S.currentNode ? S.currentNode.id : null;
-    charData.activeScene = S.activeScene || null;
     if (S.character === "ester") {
       charData.unlockedScene = Math.max(charData.unlockedScene || 1, S.unlockedScene);
     }
@@ -109,69 +107,6 @@ function applyLoadedProgress(data) {
   if (characters.ester && characters.ester.unlockedScene) {
     S.unlockedScene = characters.ester.unlockedScene;
   }
-
-  // Load per-character mid-scene resume data
-  if (typeof savedPerCharacter === "undefined") window.savedPerCharacter = {};
-  ["ester", "astro", "nina"].forEach(c => {
-    var d = characters[c];
-    if (d && d.currentNodeId && NODE_MAP[d.currentNodeId]) {
-      window.savedPerCharacter[c] = { nodeId: d.currentNodeId, activeScene: d.activeScene };
-    }
-  });
-
-  // Set cloud resume vars for Ester (used by resumeFromCloudSave)
-  if (characters.ester && characters.ester.currentNodeId && characters.ester.activeScene && NODE_MAP[characters.ester.currentNodeId]) {
-    savedNodeId = characters.ester.currentNodeId;
-    savedActiveScene = characters.ester.activeScene;
-    savedCharacter = "ester";
-  }
-}
-
-/* Called from scene select when a cloud save has mid-scene progress.
-   Sets up the scene stage, positions the player near the NPCs,
-   and jumps to the saved dialogue node. */
-function resumeFromCloudSave() {
-  if (!savedNodeId || !savedActiveScene) return false;
-
-  const scene = SCENES.find(s => s.num === savedActiveScene);
-  if (!scene) return false;
-
-  const nodeId = savedNodeId;
-  savedNodeId = null;
-  savedActiveScene = null;
-  savedCharacter = null;
-
-  S.activeScene = scene.num;
-
-  // Set the correct character sprite
-  const spriteMap = { ester: "player.png", astro: "astro.png", nina: "nina.png" };
-  const spriteFile = spriteMap[S.character] || "player.png";
-  document.querySelector("#scene-sprite-ester").style.backgroundImage = "url('./assets/" + spriteFile + "')";
-
-  // Start the scene (sets up sprites, camera, backgrounds)
-  scene.start();
-
-  // Skip the free-roam walk and jump to the saved node
-  setTimeout(() => {
-    S.freeRoam = false;
-    moveKeys.left = false;
-    moveKeys.right = false;
-
-    const ester = document.querySelector("#scene-sprite-ester");
-    S.playerX = freeRoamTargetX - 60;
-    ester.style.left = S.playerX + "px";
-    ester.style.backgroundPosition = "0 0";
-
-    S.sceneScrollX = Math.max(
-      minSceneScroll(),
-      Math.min(CAM_MAX_SCROLL, S.playerX - VIEWPORT_WIDTH / 2)
-    );
-    document.querySelector("#scene-world").style.left = -S.sceneScrollX + "px";
-
-    runNode(nodeId);
-  }, 50);
-
-  return true;
 }
 
 /* ---- SAVE ON PAGE LEAVE ---- */
@@ -188,9 +123,6 @@ auth.onAuthStateChanged(user => {
 
   // Always reset in-memory progress when auth state changes
   if (typeof resetInMemoryProgress === "function") resetInMemoryProgress();
-  savedNodeId = null;
-  savedActiveScene = null;
-  savedCharacter = null;
 
   // Go back to title screen if user changed
   if (previousUser && typeof showScreen === "function") {
