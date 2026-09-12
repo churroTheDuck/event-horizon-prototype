@@ -325,7 +325,7 @@ const SCENE_SCRIPT = [
   {id:"sc4_ester_night", type:"dialogue", speaker:"ESTER", text:"Goodnight.", next:"sc4_walk_to_aerospace"},
 
   // free_roam control node — the player walks Ester left, out of the lab, through the main room, and into the aerospace department
-  {id:"sc4_walk_to_aerospace", type:"control", action:"free_roam", minX:20, maxX:1605, targetX:160, next:"sc4_arrive_aerospace", showSprites:["ester"], reveal:["aerospace-placeholder"]},
+  {id:"sc4_walk_to_aerospace", type:"control", action:"free_roam", minX:20, maxX:1605, targetX:160, next:"sc4_arrive_aerospace", showSprites:["ester"], reveal:["aerospace-placeholder"], find:"Cameron"},
 
   {id:"sc4_arrive_aerospace", type:"narration", text:"The aerospace engineering department is cluttered and full of half-finished projects, with a few enthusiastic scientists staying up late to add finishing touches to their work.", next:"sc4_ester_intro1", showSprites:["ester","cameron"], positions:{cameron:200}},
   {id:"sc4_ester_intro1", type:"dialogue", speaker:"ESTER", text:"Um, hello. I’m Ester, a recent addition to the nuclear engineering department. It’s nice to meet you. Seeing as we’re all engineers, I hope we can cooperate well together.", next:"sc4_cameron1"},
@@ -688,7 +688,7 @@ const SCENE_SCRIPT = [
   {id:"nina_bb6", type:"narration", text:"Nina and Jerry open, cut, and flatten the boxes before laying them on the lab floor.", next:"nina_bb7"},
   {id:"nina_bb7", type:"dialogue", speaker:"NINA", text:"Done! I’ve just put the cardboard in the bin. The lab is no longer hazardous!", next:"nina_bb8"},
   {id:"nina_bb8", type:"dialogue", speaker:"JERRY", text:"Yeah, I guess so…", next:"nina_bb9"},
-  {id:"nina_bb9", type:"narration", text:"Jerry walks away with a flat expression.", next:"nina_bb10"},
+  {id:"nina_bb9", type:"narration", text:"Jerry walks away with a flat expression.", next:"nina_bb10", showSprites:["sam","ester"]},
   {id:"nina_bb10", type:"dialogue", speaker:"SAM", text:"I, uh— nice work, Nina. Quick thinking. Yeah…", next:"nina_bb11"},
   {id:"nina_bb11", type:"inner", text:"The words make sense, but what Sam means doesn’t. Sam is making the same face as Jerry. Ignoring what they might think of me, I still go ahead and fill in the form.", next:"nina_bb_recap"},
   {id:"nina_bb_recap", type:"recap", text:"I successfully resolved the toxic spill in the lab. However, a sense of awkwardness has emerged between Jerry and I…", next:"end"}
@@ -801,88 +801,26 @@ function showCharacterSelect() {
   showScreen("characters");
 }
 
-// Per-character paused state (for back-to-menu resume)
-var pausedState = {}; // { ester: { nodeId, scene }, astro: { nodeId }, nina: { nodeId } }
-
 // Called from auth.js when user signs in/out to reset in-memory progress
 function resetInMemoryProgress() {
-  pausedState = {};
   S.currentNode = null;
   S.activeScene = null;
   S.unlockedScene = 1;
-  S.character = "ester";
-  if (typeof progressRestarted !== "undefined") progressRestarted = false;
-  if (typeof savedPerCharacter !== "undefined") window.savedPerCharacter = {};
-  // Reset sprite back to Ester so a previous character's sprite doesn't linger
-  var sprite = document.querySelector("#scene-sprite-ester");
-  if (sprite) sprite.style.backgroundImage = "url('./assets/player.png')";
 }
 
+// Leaving a character mid-scene (switching characters, backing out to the
+// title screen, reloading) never resumes — reselecting a character always
+// restarts fresh: Ester goes to her scene select (or the intro cards if she
+// hasn't unlocked scene 2 yet), Astro/Nina always replay their own intro.
 function chooseCharacter(character) {
-  // Save current character's state before switching
-  if (S.character && S.currentNode) {
-    pausedState[S.character] = {
-      nodeId: S.currentNode.id,
-      scene: S.activeScene
-    };
-  }
-
   S.currentNode = null;
   S.activeScene = null;
   S.character = character;
 
-  // Check for saved progress for this character
-  var paused = pausedState[character];
-  var localSaved = (typeof savedPerCharacter !== "undefined" && savedPerCharacter[character]) || null;
-  var cloudSaved = (typeof savedNodeId !== "undefined" && savedNodeId && savedCharacter === character);
-
-  var hasProgress = paused || localSaved || cloudSaved;
-
-  if (character === "ester") {
-    if (S.unlockedScene > 1 || hasProgress) {
-      showSceneSelect();
-    } else {
-      startIntro();
-    }
+  if (character === "ester" && S.unlockedScene > 1) {
+    showSceneSelect();
   } else {
-    // Astro/Nina: resume if they have progress, otherwise start fresh
-    if (paused && paused.nodeId && NODE_MAP[paused.nodeId]) {
-      showScreen("scene");
-      sceneAnimTs = performance.now();
-      requestAnimationFrame(sceneAnimLoop);
-      // Set correct character sprite
-      var spriteMap = { astro: "astro.png", nina: "nina.png" };
-      var spriteFile = spriteMap[character] || "player.png";
-      document.querySelector("#scene-sprite-ester").style.backgroundImage = "url('./assets/" + spriteFile + "')";
-      S.currentNode = NODE_MAP[paused.nodeId];
-      runNode(paused.nodeId);
-    } else if (localSaved && localSaved.nodeId && NODE_MAP[localSaved.nodeId]) {
-      // Resume from localStorage after page refresh
-      var scene = SCENES.find(s => s.num === 1);
-      if (scene) {
-        scene.start();
-        var nodeId = localSaved.nodeId;
-        var spriteMap = { astro: "astro.png", nina: "nina.png" };
-        var spriteFile = spriteMap[character] || "player.png";
-        delete savedPerCharacter[character];
-        setTimeout(() => {
-          S.freeRoam = false;
-          moveKeys.left = false;
-          moveKeys.right = false;
-          document.querySelector("#scene-sprite-ester").style.backgroundImage = "url('./assets/" + spriteFile + "')";
-          S.playerX = freeRoamTargetX - 60;
-          document.querySelector("#scene-sprite-ester").style.left = S.playerX + "px";
-          document.querySelector("#scene-sprite-ester").style.backgroundPosition = "0 0";
-          S.sceneScrollX = Math.max(minSceneScroll(), Math.min(CAM_MAX_SCROLL, S.playerX - VIEWPORT_WIDTH / 2));
-          document.querySelector("#scene-world").style.left = -S.sceneScrollX + "px";
-          runNode(nodeId);
-        }, 50);
-      } else {
-        startIntro();
-      }
-    } else {
-      startIntro();
-    }
+    startIntro();
   }
 }
 
@@ -978,17 +916,43 @@ function minSceneScroll() {
 // Generic free-roam config — which bounds/target/next-node the current
 // walk segment uses. Defaults match the Scene 1 walk to Sam; other scenes
 // override these via startFreeRoam() before setting S.freeRoam = true.
-let freeRoamMinX = MAIN_MIN_X, freeRoamMaxX = LAB_MAX_X, freeRoamTargetX = SAM_LAB_X, freeRoamNextNode = "s1";
+// freeRoamFind names who's waiting at the destination (shown in the walk
+// hint below, e.g. "to find Sam") — null when nobody's there yet to find.
+let freeRoamMinX = MAIN_MIN_X, freeRoamMaxX = LAB_MAX_X, freeRoamTargetX = SAM_LAB_X, freeRoamNextNode = "s1", freeRoamFind = "Sam";
 
-function startFreeRoam(startX, minX, maxX, targetX, nextNode, facingRight) {
+// Which of the station's three named areas a world-x position falls in —
+// used to label the walk hint below.
+function zoneNameForX(x) {
+  if (x < MAIN_ROOM_X) return "Aerospace Engineering";
+  if (x < LAB_MIN_X) return "the Main Room";
+  return "the Nuclear Lab";
+}
+
+// Shows a small directional callout ("→ Go to Aerospace Engineering to find
+// Cameron") while free-roaming toward a destination in a different room than
+// the one Ester's currently standing in — hidden the rest of the time (e.g.
+// walking a few steps to an NPC already in the same room doesn't need one).
+function updateWalkHint() {
+  const hint = $("#walk-hint");
+  if (!S.freeRoam) { hint.classList.add("hidden"); return; }
+  const destZone = zoneNameForX(freeRoamTargetX);
+  if (zoneNameForX(S.playerX) === destZone) { hint.classList.add("hidden"); return; }
+  hint.classList.remove("hidden");
+  $("#walk-hint-arrow").textContent = freeRoamTargetX > S.playerX ? "→" : "←";
+  $("#walk-hint-text").textContent = "Go to " + destZone + (freeRoamFind ? " to find " + freeRoamFind : "");
+}
+
+function startFreeRoam(startX, minX, maxX, targetX, nextNode, facingRight, find) {
   // startX/facingRight are optional — omit them to have Ester continue
   // walking from wherever she currently stands and however she's already
-  // facing, instead of snapping to a fixed spot/direction.
+  // facing, instead of snapping to a fixed spot/direction. find is also
+  // optional — omit it when nobody's actually waiting at the destination yet.
   if (startX != null) S.playerX = startX;
   freeRoamMinX = minX;
   freeRoamMaxX = maxX;
   freeRoamTargetX = targetX;
   freeRoamNextNode = nextNode;
+  freeRoamFind = find || null;
   S.freeRoam = true;
   S.sceneScrollX = Math.max(minSceneScroll(), Math.min(CAM_MAX_SCROLL, S.playerX - VIEWPORT_WIDTH / 2));
   $("#scene-world").style.left = -S.sceneScrollX + "px";
@@ -998,6 +962,7 @@ function startFreeRoam(startX, minX, maxX, targetX, nextNode, facingRight) {
   S.walkFrame = 0;
   moveKeys.left = false;
   moveKeys.right = false;
+  updateWalkHint();
 }
 
 function startScene() {
@@ -1009,7 +974,7 @@ function startScene() {
 
   // Opening: Ester starts in the main room and walks east into the lab. Sam
   // waits further in, out of frame, until she walks over to him.
-  startFreeRoam(MAIN_START_X, MAIN_MIN_X, LAB_MAX_X, SAM_LAB_X, "s1", true);
+  startFreeRoam(MAIN_START_X, MAIN_MIN_X, LAB_MAX_X, SAM_LAB_X, "s1", true, "Sam");
   $("#scene-sprite-sam").style.left = SAM_LAB_X + "px";
 
   sceneAnimTs = performance.now();
@@ -1026,7 +991,7 @@ function startAstroScene() {
   $("#choice-panel").classList.add("hidden");
   $("#scene-sprite-ester").style.backgroundImage = "url('./assets/astro.png')";
   showOnlySprites(["sam", "ester"]);
-  startFreeRoam(MAIN_START_X, MAIN_MIN_X, LAB_MAX_X, SAM_LAB_X, "astro_inner1", true);
+  startFreeRoam(MAIN_START_X, MAIN_MIN_X, LAB_MAX_X, SAM_LAB_X, "astro_inner1", true, "Sam");
   $("#scene-sprite-sam").style.left = SAM_LAB_X + "px";
 
   sceneAnimTs = performance.now();
@@ -1041,7 +1006,7 @@ function startNinaScene() {
   $("#choice-panel").classList.add("hidden");
   $("#scene-sprite-ester").style.backgroundImage = "url('./assets/nina.png')";
   showOnlySprites(["sam", "ester"]);
-  startFreeRoam(MAIN_START_X, MAIN_MIN_X, LAB_MAX_X, SAM_LAB_X, "nina_inner1", true);
+  startFreeRoam(MAIN_START_X, MAIN_MIN_X, LAB_MAX_X, SAM_LAB_X, "nina_inner1", true, "Sam");
   $("#scene-sprite-sam").style.left = SAM_LAB_X + "px";
 
   sceneAnimTs = performance.now();
@@ -1142,6 +1107,7 @@ function sceneAnimLoop(ts) {
         S.walkFrame = (S.walkFrame + 1) % 4;
       }
       $("#scene-sprite-ester").style.backgroundPosition = `-${S.walkFrame * 36}px 0`;
+      updateWalkHint();
     } else if (S.walkFrame !== 0) {
       S.walkFrame = 0;
       walkAnimTimer = 0;
@@ -1154,6 +1120,7 @@ function sceneAnimLoop(ts) {
       S.walkFrame = 0;
       walkAnimTimer = 0;
       $("#scene-sprite-ester").style.backgroundPosition = "0 0";
+      updateWalkHint();
       runNode(freeRoamNextNode);
     }
   }
@@ -1184,7 +1151,7 @@ function runNode(nodeId) {
   if (node.type === "control") {
     if (node.action === "jerry_enter") { jerryEnter(node.next); return; }
     if (node.action === "sensory_minigame") { startSensoryMinigame(node.next, node.scenario); return; }
-    if (node.action === "free_roam") { startFreeRoam(node.startX, node.minX, node.maxX, node.targetX, node.next, node.facingRight); return; }
+    if (node.action === "free_roam") { startFreeRoam(node.startX, node.minX, node.maxX, node.targetX, node.next, node.facingRight, node.find); return; }
   }
 
   // Choices
@@ -1265,6 +1232,7 @@ function showOnlySprites(names) {
 // the hub, rather than relying on wherever they happened to be left.
 function resetSceneStage({ sam, jerry, ester, cameraX }) {
   S.freeRoam = false;
+  updateWalkHint();
   moveKeys.left = false;
   moveKeys.right = false;
   S.walkFrame = 0;
@@ -1298,7 +1266,7 @@ const SCENES = [
     showOnlySprites(["sam", "jerry", "ester"]); // matches sc2_open_inner's showSprites
     sceneAnimTs = performance.now();
     requestAnimationFrame(sceneAnimLoop);
-    startFreeRoam(MAIN_START_X, MAIN_MIN_X, LAB_MAX_X, SAM_LAB_X - 30, "sc2_open_inner", true);
+    startFreeRoam(MAIN_START_X, MAIN_MIN_X, LAB_MAX_X, SAM_LAB_X - 30, "sc2_open_inner", true, "Sam and Jerry");
   }},
   { num:3, entry:"sc3_open", start() {
     showScreen("scene");
@@ -1306,6 +1274,8 @@ const SCENES = [
     showOnlySprites(["ester"]); // matches sc3_open's showSprites — Sam/Jerry aren't here yet
     sceneAnimTs = performance.now();
     requestAnimationFrame(sceneAnimLoop);
+    // No "find" name here — Ester is heading back to the lab itself
+    // (Jerry's whereabouts is literally the open question sc3_open asks).
     startFreeRoam(MAIN_START_X, MAIN_MIN_X, LAB_MAX_X, SAM_LAB_X - 30, "sc3_open", true);
   }},
   { num:4, entry:"sc4_open_inner1", start() {
@@ -1314,10 +1284,15 @@ const SCENES = [
     showOnlySprites(["jerry", "ester"]); // matches sc4_open_inner1's showSprites
     sceneAnimTs = performance.now();
     requestAnimationFrame(sceneAnimLoop);
-    startFreeRoam(MAIN_START_X, MAIN_MIN_X, LAB_MAX_X, SAM_LAB_X - 60, "sc4_open_inner1", true);
+    startFreeRoam(MAIN_START_X, MAIN_MIN_X, LAB_MAX_X, SAM_LAB_X - 60, "sc4_open_inner1", true, "Jerry");
   }},
   { num:5, entry:"sc5_open", start() {
     showScreen("scene");
+    // Scene 5 always opens in the aerospace department, but the "hidden" class
+    // on #aerospace-placeholder is only removed at runtime when sc4_walk_to_aerospace
+    // actually plays — it isn't restored on reload/resume. Force it revealed here
+    // so minSceneScroll() doesn't clamp the camera back to the main room.
+    $("#aerospace-placeholder").classList.remove("hidden");
     resetSceneStage({ cameraX:160 }); // nobody's on screen yet — sc5_cut_aerospace places Ester/Jerry itself
     sceneAnimTs = performance.now();
     requestAnimationFrame(sceneAnimLoop);
@@ -1340,32 +1315,11 @@ function showSceneSelect() {
       btn.classList.add("completed");
       btn.disabled = true;
     } else if (s.num === S.unlockedScene) {
+      // Always restart the scene from its entry node — leaving mid-scene
+      // (back to menu, switching characters, reloading) never resumes.
       btn.addEventListener("click", () => {
-        var paused = pausedState.ester;
-        var localSaved = (typeof savedPerCharacter !== "undefined" && savedPerCharacter.ester) || null;
-
-        // Resume in-memory (back to menu → scene select)
-        if (paused && paused.nodeId && paused.scene === s.num && NODE_MAP[paused.nodeId]) {
-          S.activeScene = s.num;
-          delete pausedState.ester;
-          showScreen("scene");
-          sceneAnimTs = performance.now();
-          requestAnimationFrame(sceneAnimLoop);
-          runNode(paused.nodeId);
-        // Resume from localStorage (after page refresh)
-        } else if (localSaved && localSaved.activeScene === s.num && NODE_MAP[localSaved.nodeId]) {
-          savedNodeId = localSaved.nodeId;
-          savedActiveScene = localSaved.activeScene;
-          savedCharacter = "ester";
-          delete savedPerCharacter.ester;
-          resumeFromCloudSave();
-        // Resume from cloud save (after page refresh)
-        } else if (typeof resumeFromCloudSave === "function" && savedNodeId && savedActiveScene === s.num) {
-          resumeFromCloudSave();
-        } else {
-          S.activeScene = s.num;
-          s.start();
-        }
+        S.activeScene = s.num;
+        s.start();
       });
     } else {
       btn.classList.add("locked");
@@ -1450,9 +1404,6 @@ function initRestart() {
     S.starsOffset = 0;
     S.stationX = -50;
     S.unlockedScene = 1;
-    if (typeof savedNodeId !== "undefined") { savedNodeId = null; savedActiveScene = null; savedCharacter = null; }
-    pausedState = {};
-    if (typeof savedPerCharacter !== "undefined") window.savedPerCharacter = {};
     $("#choice-panel").classList.add("hidden");
     $("#dialogue-row").classList.add("hidden");
     $("#end-reflection").classList.remove("visible");
@@ -1538,23 +1489,9 @@ function saveSettings() {
   saveLocalProgress();
 }
 
-var progressRestarted = false;
-
-function clearAllSaves() {
-  progressRestarted = true;
-  // Clear localStorage progress for this user
-  try { localStorage.removeItem(getProgressKey()); } catch (e) {}
-  // Overwrite Firestore save with empty progress
-  if (typeof currentUser !== "undefined" && currentUser && typeof db !== "undefined") {
-    db.collection("saves").doc(currentUser.uid).set({
-      characters: {},
-      lastCharacter: "ester",
-      settings: S.settings,
-      updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-    }).catch(function(err) { console.error("Clear save error:", err); });
-  }
-}
-
+// Scenes always restart from their entry node when reselected, so the only
+// progress worth persisting locally is which scenes Ester has unlocked —
+// no mid-scene node/position tracking needed.
 function saveLocalProgress() {
   if (typeof currentUser === "undefined" || !currentUser) return;
   try {
@@ -1563,8 +1500,6 @@ function saveLocalProgress() {
     if (raw) all = JSON.parse(raw);
 
     var charData = all[S.character] || {};
-    charData.currentNodeId = S.currentNode ? S.currentNode.id : null;
-    charData.activeScene = S.activeScene || null;
     if (S.character === "ester") {
       charData.unlockedScene = Math.max(charData.unlockedScene || 1, S.unlockedScene);
     }
@@ -1585,16 +1520,6 @@ function loadLocalProgress() {
     if (all.ester && all.ester.unlockedScene) {
       S.unlockedScene = all.ester.unlockedScene;
     }
-
-    // Load per-character mid-scene resume data for all characters
-    // (will be used when the player picks a character)
-    if (typeof savedPerCharacter === "undefined") window.savedPerCharacter = {};
-    ["ester", "astro", "nina"].forEach(c => {
-      var d = all[c];
-      if (d && d.currentNodeId && NODE_MAP[d.currentNodeId]) {
-        window.savedPerCharacter[c] = { nodeId: d.currentNodeId, activeScene: d.activeScene };
-      }
-    });
   } catch (e) {}
 }
 
@@ -1670,9 +1595,6 @@ function initSettings() {
     S.starsOffset = 0;
     S.stationX = -50;
     S.unlockedScene = 1;
-    if (typeof savedNodeId !== "undefined") { savedNodeId = null; savedActiveScene = null; savedCharacter = null; }
-    pausedState = {};
-    if (typeof savedPerCharacter !== "undefined") window.savedPerCharacter = {};
     $("#choice-panel").classList.add("hidden");
     $("#dialogue-row").classList.add("hidden");
     $("#end-reflection").classList.remove("visible");
