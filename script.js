@@ -1409,8 +1409,7 @@ function initRestart() {
     $("#end-reflection").classList.remove("visible");
     $("#end-reflection").classList.add("hidden");
     $("#end-buttons").classList.add("hidden");
-    if (typeof saveProgress === "function") saveProgress();
-  saveLocalProgress();
+    clearAllSaves();
     showScreen("title");
     lastTime = performance.now();
     requestAnimationFrame(titleLoop);
@@ -1601,8 +1600,7 @@ function initSettings() {
     $("#end-reflection").classList.remove("visible");
     $("#end-reflection").classList.add("hidden");
     $("#end-buttons").classList.add("hidden");
-    if (typeof saveProgress === "function") saveProgress();
-  saveLocalProgress();
+    clearAllSaves();
     showScreen("title");
     lastTime = performance.now();
     requestAnimationFrame(titleLoop);
