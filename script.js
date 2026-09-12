@@ -6,6 +6,11 @@
 
 const CHARACTER_NAMES = { ester: "Ester", astro: "Astro", nina: "Nina" };
 
+// TEMPORARY DEV/TESTING AID — remove before shipping. Add ?unlockall to the
+// page URL to skip the intro and land straight on the scene-select hub with
+// every scene clickable, regardless of actual progress.
+const DEV_UNLOCK_ALL = new URLSearchParams(location.search).has("unlockall");
+
 const INTRO_CARDS = [
   "The universe has gotten a lot busier these days. It barely takes any time to get anywhere, as long as you've got the equipment for it.",
   "Unfortunately for you, {NAME}, you're stuck where you are.",
@@ -728,6 +733,8 @@ const S = {
   activeScene: null, // which scene number is currently being played
   sceneScrollX: 0,
   freeRoam: false,
+  currentRoom: 1, // index into ROOMS — which room Ester is currently standing in
+  roomTransitioning: false, // true while the fade between two rooms is playing
   walkFrame: 0,
   playerX: 0,
   unlockedScene: 1, // highest scene number the player is allowed to start from the scene-select hub
@@ -835,7 +842,7 @@ function chooseCharacter(character) {
   S.activeScene = null;
   S.character = character;
 
-  if (character === "ester" && S.unlockedScene > 1) {
+  if (character === "ester" && (S.unlockedScene > 1 || DEV_UNLOCK_ALL)) {
     showSceneSelect();
   } else {
     startIntro();
@@ -907,8 +914,8 @@ let walkAnimTimer = 0;
 // everything lab-related below is shifted accordingly to make room for it.
 const VIEWPORT_WIDTH = 320;
 const WORLD_WIDTH = 1845;
-const CAM_MAX_SCROLL = WORLD_WIDTH - VIEWPORT_WIDTH;
 const MAIN_ROOM_X = 320; // world x where the main room begins (aerospace boundary)
+const LAB_ROOM_X = 1205; // world x where the lab/nuclear room's background begins
 const MAIN_MIN_X = 340; // a little inset from the aerospace-side wall
 const MAIN_MAX_X = 1185; // a little inset from the lab-side wall
 const MAIN_START_X = 650; // every scene spawns Ester here, in the main room
@@ -923,12 +930,32 @@ const JERRY_WALK_MS = 1300;
 const WALK_FRAME_MS = 130; // ms per leg-cycle frame while Ester is moving
 const moveKeys = { left: false, right: false };
 
-// Until the aerospace-engineering area (Scene 4) is revealed, don't let the
-// camera scroll past the main room's west wall — otherwise that still-empty,
-// not-yet-revealed area shows as dead space on the left of the screen.
-function minSceneScroll() {
-  const aerospaceRevealed = !$("#aerospace-placeholder").classList.contains("hidden");
-  return aerospaceRevealed ? 0 : MAIN_ROOM_X;
+// The station's three rooms, as world-x spans matching where each room's
+// background art actually sits in #scene-world. Rooms are discrete: the
+// camera clamps to whichever one Ester is currently in, so it only ever
+// shows that room's own art. Crossing an edge into the next room is handled
+// as a room transition (see beginRoomTransition) rather than the camera
+// panning continuously across the seam.
+const ROOMS = [
+  { name: "aerospace", min: 0, max: MAIN_ROOM_X },
+  { name: "main", min: MAIN_ROOM_X, max: LAB_ROOM_X },
+  { name: "lab", min: LAB_ROOM_X, max: WORLD_WIDTH },
+];
+const ROOM_FADE_MS = 180; // one-way fade duration; a full crossing fades out then back in
+
+function roomIndexForX(x) {
+  for (let i = ROOMS.length - 1; i >= 0; i--) if (x >= ROOMS[i].min) return i;
+  return 0;
+}
+
+// Clamps the camera to stay within one room's own span so it never shows
+// two rooms' art at once. Rooms no wider than the viewport (e.g. aerospace)
+// simply don't scroll.
+function clampScrollForRoom(roomIdx, x) {
+  const room = ROOMS[roomIdx];
+  const roomWidth = room.max - room.min;
+  if (roomWidth <= VIEWPORT_WIDTH) return room.min;
+  return Math.max(room.min, Math.min(room.max - VIEWPORT_WIDTH, x - VIEWPORT_WIDTH / 2));
 }
 
 // Generic free-roam config — which bounds/target/next-node the current
@@ -972,7 +999,17 @@ function startFreeRoam(startX, minX, maxX, targetX, nextNode, facingRight, find)
   freeRoamNextNode = nextNode;
   freeRoamFind = find || null;
   S.freeRoam = true;
-  S.sceneScrollX = Math.max(minSceneScroll(), Math.min(CAM_MAX_SCROLL, S.playerX - VIEWPORT_WIDTH / 2));
+  // Hide any leftover dialogue box from the line that led into this walk —
+  // otherwise it (and its click-to-advance handler) stays sitting on screen
+  // for the whole free-roam, and a click meant to just walk instead skips
+  // straight to freeRoamNextNode before Ester's actually arrived. The other
+  // two control actions (jerry_enter, sensory_minigame) already do this
+  // themselves; free_roam didn't, since scene start()s that call it happened
+  // to already hide it a step earlier — but a free_roam reached mid-scene via
+  // a node's `next` (e.g. sc4_walk_to_aerospace) had nothing else hiding it.
+  $("#dialogue-row").classList.add("hidden");
+  S.currentRoom = roomIndexForX(S.playerX);
+  S.sceneScrollX = clampScrollForRoom(S.currentRoom, S.playerX);
   $("#scene-world").style.left = -S.sceneScrollX + "px";
   $("#scene-sprite-ester").style.left = S.playerX + "px";
   if (facingRight != null) $("#scene-sprite-ester").classList.toggle("facing-left", !facingRight); // art faces right natively
@@ -1108,15 +1145,22 @@ function sceneAnimLoop(ts) {
   const dt = ts - sceneAnimTs;
   sceneAnimTs = ts;
 
-  if (S.freeRoam && !S.settingsOpen && !S.instructionsOpen && !S.mapOpen) {
+  if (S.freeRoam && !S.roomTransitioning && !S.settingsOpen && !S.instructionsOpen && !S.mapOpen) {
     let dx = 0;
     if (moveKeys.left) dx -= 1;
     if (moveKeys.right) dx += 1;
     if (dx !== 0) {
-      S.playerX = Math.max(freeRoamMinX, Math.min(freeRoamMaxX, S.playerX + dx * PLAYER_MOVE_SPEED * dt / 1000));
+      const newX = Math.max(freeRoamMinX, Math.min(freeRoamMaxX, S.playerX + dx * PLAYER_MOVE_SPEED * dt / 1000));
+      const newRoom = roomIndexForX(newX);
+      if (newRoom !== S.currentRoom) {
+        beginRoomTransition(newX, newRoom, dx < 0);
+        requestAnimationFrame(sceneAnimLoop);
+        return; // room fade owns the next update; skip this frame's normal movement/proximity logic
+      }
+      S.playerX = newX;
       $("#scene-sprite-ester").style.left = S.playerX + "px";
       $("#scene-sprite-ester").classList.toggle("facing-left", dx < 0); // art faces right natively
-      S.sceneScrollX = Math.max(minSceneScroll(), Math.min(CAM_MAX_SCROLL, S.playerX - VIEWPORT_WIDTH / 2));
+      S.sceneScrollX = clampScrollForRoom(S.currentRoom, S.playerX);
       $("#scene-world").style.left = -S.sceneScrollX + "px";
 
       walkAnimTimer += dt;
@@ -1144,6 +1188,31 @@ function sceneAnimLoop(ts) {
   }
 
   requestAnimationFrame(sceneAnimLoop);
+}
+
+// Crossing from one room into the next: fade to black, swap the camera to
+// the new room's own clamp range and snap Ester to her new position while
+// the screen is fully black, then fade back in. Movement is frozen for the
+// duration (S.roomTransitioning) so a held direction key doesn't keep
+// walking mid-fade.
+function beginRoomTransition(newX, newRoom, facingLeft) {
+  S.roomTransitioning = true;
+  S.walkFrame = 0;
+  walkAnimTimer = 0;
+  $("#scene-sprite-ester").style.backgroundPosition = "0 0";
+  const fade = $("#room-fade");
+  fade.classList.add("visible");
+  setTimeout(() => {
+    S.currentRoom = newRoom;
+    S.playerX = newX;
+    $("#scene-sprite-ester").style.left = S.playerX + "px";
+    $("#scene-sprite-ester").classList.toggle("facing-left", facingLeft); // art faces right natively
+    S.sceneScrollX = clampScrollForRoom(S.currentRoom, S.playerX);
+    $("#scene-world").style.left = -S.sceneScrollX + "px";
+    updateWalkHint();
+    fade.classList.remove("visible");
+    setTimeout(() => { S.roomTransitioning = false; }, ROOM_FADE_MS);
+  }, ROOM_FADE_MS);
 }
 
 function runNode(nodeId) {
@@ -1271,12 +1340,15 @@ function showOnlySprites(names) {
 // the hub, rather than relying on wherever they happened to be left.
 function resetSceneStage({ sam, jerry, ester, cameraX }) {
   S.freeRoam = false;
+  S.roomTransitioning = false;
+  $("#room-fade").classList.remove("visible");
   updateWalkHint();
   moveKeys.left = false;
   moveKeys.right = false;
   S.walkFrame = 0;
   walkAnimTimer = 0;
-  S.sceneScrollX = Math.max(minSceneScroll(), Math.min(CAM_MAX_SCROLL, cameraX - VIEWPORT_WIDTH / 2));
+  S.currentRoom = roomIndexForX(cameraX);
+  S.sceneScrollX = clampScrollForRoom(S.currentRoom, cameraX);
   $("#scene-world").style.left = -S.sceneScrollX + "px";
   if (sam) {
     $("#scene-sprite-sam").style.left = sam.x + "px";
@@ -1334,7 +1406,7 @@ const SCENES = [
     // Scene 5 always opens in the aerospace department, but the "hidden" class
     // on #aerospace-placeholder is only removed at runtime when sc4_walk_to_aerospace
     // actually plays — it isn't restored on reload/resume. Force it revealed here
-    // so minSceneScroll() doesn't clamp the camera back to the main room.
+    // so it's actually visible in the aerospace room rather than an empty box.
     $("#aerospace-placeholder").classList.remove("hidden");
     resetSceneStage({ cameraX:160 }); // nobody's on screen yet — sc5_cut_aerospace places Ester/Jerry itself
     sceneAnimTs = performance.now();
@@ -1354,16 +1426,20 @@ function showSceneSelect() {
     const btn = document.createElement("button");
     btn.className = "btn btn-purple scene-btn";
     btn.textContent = "SCENE " + s.num;
-    if (s.num < S.unlockedScene) {
-      btn.classList.add("completed");
-      btn.disabled = true;
-    } else if (s.num === S.unlockedScene) {
+    // DEV_UNLOCK_ALL (temporary, see its definition): every scene is
+    // playable on demand, bypassing the normal one-at-a-time unlock gate.
+    if (DEV_UNLOCK_ALL || s.num === S.unlockedScene) {
       // Always restart the scene from its entry node — leaving mid-scene
       // (back to menu, switching characters, reloading) never resumes.
       btn.addEventListener("click", () => {
         S.activeScene = s.num;
         s.start();
       });
+      // .completed carries pointer-events:none, so don't tag already-played
+      // scenes with it here — that would silently make them unclickable again.
+    } else if (s.num < S.unlockedScene) {
+      btn.classList.add("completed");
+      btn.disabled = true;
     } else {
       btn.classList.add("locked");
       btn.disabled = true;
