@@ -97,6 +97,7 @@ function loadProgress() {
 function applyLoadedProgress(data) {
   if (!data) return;
   if (S.screen !== "title") return;
+  if (typeof progressRestarted !== "undefined" && progressRestarted) { progressRestarted = false; return; }
   if (data.settings) {
     Object.assign(S.settings, data.settings);
     applySettingsToDOM();
