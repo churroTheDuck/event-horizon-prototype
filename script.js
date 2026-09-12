@@ -324,10 +324,18 @@ const SCENE_SCRIPT = [
   {id:"sc4_jerry_night", type:"dialogue", speaker:"JERRY", text:"Alright. Goodnight, Ester.", next:"sc4_ester_night"},
   {id:"sc4_ester_night", type:"dialogue", speaker:"ESTER", text:"Goodnight.", next:"sc4_walk_to_aerospace"},
 
-  // free_roam control node — the player walks Ester left, out of the lab, through the main room, and into the aerospace department
-  {id:"sc4_walk_to_aerospace", type:"control", action:"free_roam", minX:20, maxX:1605, targetX:160, next:"sc4_arrive_aerospace", showSprites:["ester"], reveal:["aerospace-placeholder"], find:"Cameron"},
+  // free_roam control node — the player walks Ester left, out of the lab, through the main room, and into the aerospace department.
+  // Cameron is shown here (not just on arrival) and snapped to her spot up front, so she's visible the whole walk in —
+  // matching how Sam/Jerry are already standing on screen before Ester reaches them. Ester is walking toward decreasing
+  // x here, so the free-roam loop's proximity check first fires at targetX + PROXIMITY_DIST (the near edge coming from
+  // the higher-x side) — matching targetX to Cameron's actual x:200 spot means Ester stops PROXIMITY_DIST (45px) short
+  // of her, the same gap Sam gets by default in scene 1, rather than the old targetX:160 which put that stopping edge
+  // at just 205 — 5px from Cameron, i.e. basically on top of her.
+  {id:"sc4_walk_to_aerospace", type:"control", action:"free_roam", minX:20, maxX:1605, targetX:200, next:"sc4_arrive_aerospace", showSprites:["ester","cameron"], positions:{cameron:200}, reveal:["aerospace-placeholder"], find:"Cameron"},
 
-  {id:"sc4_arrive_aerospace", type:"narration", text:"The aerospace engineering department is cluttered and full of half-finished projects, with a few enthusiastic scientists staying up late to add finishing touches to their work.", next:"sc4_ester_intro1", showSprites:["ester","cameron"], positions:{cameron:200}},
+  // autoAdvanceMs: Ester's greeting plays on its own once she's close enough to Cameron, instead of needing an extra
+  // space/click right after the walk-up.
+  {id:"sc4_arrive_aerospace", type:"narration", text:"The aerospace engineering department is cluttered and full of half-finished projects, with a few enthusiastic scientists staying up late to add finishing touches to their work.", next:"sc4_ester_intro1", showSprites:["ester","cameron"], positions:{cameron:200}, autoAdvanceMs:900},
   {id:"sc4_ester_intro1", type:"dialogue", speaker:"ESTER", text:"Um, hello. I’m Ester, a recent addition to the nuclear engineering department. It’s nice to meet you. Seeing as we’re all engineers, I hope we can cooperate well together.", next:"sc4_cameron1"},
   {id:"sc4_cameron1", type:"dialogue", speaker:"CAMERON", text:"Hello Ester, I’m Cameron! I hope we can cooperate too. Graveyard shift tonight?", next:"sc4_inner_graveyard"},
   {id:"sc4_inner_graveyard", type:"inner", text:"“Graveyard shift” is a funny way to put it, but Jerry likes this phrase.", next:"sc4_ester_yes"},
@@ -765,10 +773,16 @@ function charsPerSec() {
 }
 
 let typeTimer = null;
+// Fires once the full line is showing, whether it got there by finishing the
+// typewriter naturally or by the player clicking to skip ahead (completeType)
+// — used by runNode's autoAdvanceMs to know when it's safe to schedule the
+// automatic advance.
+let typeCb = null;
 function typeText(el, text, cb) {
   clearTimeout(typeTimer);
+  typeCb = cb || null;
   const cps = charsPerSec();
-  if (cps >= 99999) { el.textContent = text; S.typing = false; if (cb) cb(); return; }
+  if (cps >= 99999) { el.textContent = text; S.typing = false; const done = typeCb; typeCb = null; if (done) done(); return; }
   S.typing = true;
   S.fullText = text;
   let i = 0;
@@ -776,7 +790,7 @@ function typeText(el, text, cb) {
   function tick() {
     i++;
     el.textContent = text.substring(0, i);
-    if (i >= text.length) { S.typing = false; if (cb) cb(); return; }
+    if (i >= text.length) { S.typing = false; const done = typeCb; typeCb = null; if (done) done(); return; }
     typeTimer = setTimeout(tick, 1000 / cps);
   }
   tick();
@@ -786,6 +800,7 @@ function completeType(el) {
   clearTimeout(typeTimer);
   el.textContent = S.fullText;
   S.typing = false;
+  const done = typeCb; typeCb = null; if (done) done();
 }
 
 /* ---- TITLE SCREEN ---- */
@@ -1189,7 +1204,20 @@ function runNode(nodeId) {
   }
 
   fitDialogueBoxToText(node.text);
-  typeText($("#dialogue-text"), node.text);
+  // autoAdvanceMs (optional): once this line is fully shown, wait that many ms
+  // then move on by itself instead of waiting for a click/space — used for
+  // beats that should play out automatically (e.g. Ester's greeting firing as
+  // soon as she reaches an NPC, rather than needing an extra press right after
+  // arriving). A manual click before the timer fires still just advances
+  // immediately as normal; the check below stops the timer from also firing
+  // afterward and double-advancing.
+  typeText($("#dialogue-text"), node.text, () => {
+    if (node.autoAdvanceMs != null) {
+      setTimeout(() => {
+        if (S.currentNode === node && !S.typing) advanceScene();
+      }, node.autoAdvanceMs);
+    }
+  });
 }
 
 /* Size the box to this line's full text before the typewriter starts,
