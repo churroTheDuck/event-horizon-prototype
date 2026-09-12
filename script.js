@@ -426,7 +426,10 @@ const SCENE_SCRIPT = [
   {id:"sc5_noor3", type:"dialogue", speaker:"NOOR", text:"Just wanted to say!", next:"sc5_judith3"},
   {id:"sc5_judith3", type:"dialogue", speaker:"JUDITH", text:"Mhm. . . passing off to Nuclear now.", next:"sc5_cut_aerospace"},
 
-  {id:"sc5_cut_aerospace", type:"narration", text:"The call patches through to the aerospace engineering department, where Ester, Cameron, and Jerry are gathered around the telecom.", next:"sc5_jerry1", showSprites:["jerry","ester","cameron"], positions:{jerry:200, ester:170, cameron:230}},
+  // facings: Ester(170) is leftmost, Jerry(200) in the middle, Cameron(230) rightmost — Jerry/Cameron face left
+  // toward Ester and the group, and Ester's own facing is forced right since she last walked in facing left
+  // (toward Cameron) at the end of scene 4, which would otherwise carry over and leave her facing away here.
+  {id:"sc5_cut_aerospace", type:"narration", text:"The call patches through to the aerospace engineering department, where Ester, Cameron, and Jerry are gathered around the telecom.", next:"sc5_jerry1", showSprites:["jerry","ester","cameron"], positions:{jerry:200, ester:170, cameron:230}, facings:{jerry:true, cameron:true, ester:false}},
 
   {id:"sc5_jerry1", type:"dialogue", speaker:"JERRY", text:"Hi Noor, this is Jerry. How far away from the radio receivers are you? I’d really love it if you don’t get sick out there because Judith keeps complaining in your ear.", next:"sc5_judith4"},
   {id:"sc5_judith4", type:"dialogue", speaker:"JUDITH", text:"Shut up, Jerry.", next:"sc5_jerry2"},
@@ -1163,6 +1166,14 @@ function runNode(nodeId) {
     $("#scene-sprite-" + charName).style.left = x + "px";
   });
 
+  // Sets which way a snapped-in sprite faces (true = facing left) — needed
+  // alongside node.positions since a position snap alone leaves whatever
+  // facing class the sprite last had, which is often wrong (e.g. left over
+  // from walking the opposite direction in an earlier scene).
+  if (node.facings) Object.entries(node.facings).forEach(([charName, facingLeft]) => {
+    $("#scene-sprite-" + charName).classList.toggle("facing-left", !!facingLeft);
+  });
+
   if (node.type === "control") {
     if (node.action === "jerry_enter") { jerryEnter(node.next); return; }
     if (node.action === "sensory_minigame") { startSensoryMinigame(node.next, node.scenario); return; }
@@ -1290,7 +1301,9 @@ const SCENES = [
   { num:1, entry:"s1", start() { S.activeScene = 1; startScene(); } },
   { num:2, entry:"sc2_open_inner", start() {
     showScreen("scene");
-    resetSceneStage({ sam:{x:SAM_LAB_X}, jerry:{x:JERRY_JOIN_X}, cameraX:MAIN_START_X });
+    // facingLeft:true on both — Ester walks in from the main room (lower x), so Sam/Jerry
+    // need to face left toward her instead of resetSceneStage's default facing-right.
+    resetSceneStage({ sam:{x:SAM_LAB_X, facingLeft:true}, jerry:{x:JERRY_JOIN_X, facingLeft:true}, cameraX:MAIN_START_X });
     showOnlySprites(["sam", "jerry", "ester"]); // matches sc2_open_inner's showSprites
     sceneAnimTs = performance.now();
     requestAnimationFrame(sceneAnimLoop);
@@ -1308,7 +1321,9 @@ const SCENES = [
   }},
   { num:4, entry:"sc4_open_inner1", start() {
     showScreen("scene");
-    resetSceneStage({ jerry:{x:SAM_LAB_X - 30}, cameraX:MAIN_START_X });
+    // facingLeft:true — Ester walks in from the main room (lower x), so Jerry needs
+    // to face left toward her instead of resetSceneStage's default facing-right.
+    resetSceneStage({ jerry:{x:SAM_LAB_X - 30, facingLeft:true}, cameraX:MAIN_START_X });
     showOnlySprites(["jerry", "ester"]); // matches sc4_open_inner1's showSprites
     sceneAnimTs = performance.now();
     requestAnimationFrame(sceneAnimLoop);
