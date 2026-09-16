@@ -1041,6 +1041,12 @@ const aeroDoorUnlockedEl = $("#aero-door-unlocked"); // never rendered — a pla
   el.style.width = AERO_DOOR_WIDTH + "px";
   el.style.height = AERO_DOOR_HEIGHT + "px";
 });
+// aero_door_closed.png bakes in a 68px transparent margin under the door
+// itself (out of its own 1120px height) — its own art doesn't reach the
+// bottom of the image the way aero_door_open.png's does — so bottom:0 alone
+// leaves it floating just above the floor line. Nudge it down by that same
+// fraction of AERO_DOOR_HEIGHT to compensate.
+$("#aero-door-closed").style.bottom = -(68 / 1120 * AERO_DOOR_HEIGHT) + "px";
 
 // Going through the aerospace door is an explicit action (E), exactly like
 // the lift, from either side. Unlike the lift, it's a room change — see
