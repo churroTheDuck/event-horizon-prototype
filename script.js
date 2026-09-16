@@ -1069,6 +1069,27 @@ function tryUseAeroDoor() {
   }
 }
 
+// Starting a conversation with whoever the current free-roam segment is
+// walking Ester toward is an explicit action too, same as the lift/door —
+// see the "Press E to talk to ..." hint in updateInteractables. Only
+// applies when someone's actually waiting there (freeRoamFind set); a
+// free-roam with no one to find (e.g. sc3_open) still continues on arrival
+// on its own, in sceneAnimLoop.
+function tryTalkToNPC() {
+  if (!S.freeRoam || S.roomTransitioning) return;
+  if (!freeRoamFind || S.mainFloor !== 0) return;
+  if (Math.abs(S.playerX - freeRoamTargetX) > PROXIMITY_DIST) return;
+  S.freeRoam = false;
+  moveKeys.left = false;
+  moveKeys.right = false;
+  S.walkFrame = 0;
+  walkAnimTimer = 0;
+  $("#scene-sprite-ester").style.backgroundPosition = "0 0";
+  updateWalkHint();
+  updateInteractables();
+  runNode(freeRoamNextNode);
+}
+
 // Checks whether Ester (moving in direction dx, currently in room
 // S.currentRoom) has reached the edge of her current room at x. Returns
 // {room, x} to transition to if so — landing a little past the new room's
@@ -1160,11 +1181,13 @@ function updateInteractables() {
   const onLift = S.currentRoom === MAIN_ROOM_INDEX && S.playerX >= LIFT_MIN_X && S.playerX <= LIFT_MAX_X;
   const onAeroDoor = showOpenDoor;
   const onAeroReturn = doorUnlocked && S.currentRoom === 0 && Math.abs(S.playerX - AERO_ENTRY_X) <= AERO_DOOR_DIST;
+  const onNPC = !!freeRoamFind && S.mainFloor === 0 && Math.abs(S.playerX - freeRoamTargetX) <= PROXIMITY_DIST;
 
-  hint.classList.toggle("hidden", !(onLift || onAeroDoor || onAeroReturn));
+  hint.classList.toggle("hidden", !(onLift || onAeroDoor || onAeroReturn || onNPC));
   if (onLift) $("#interact-hint-text").textContent = "to use the lift";
   else if (onAeroDoor) $("#interact-hint-text").textContent = "to enter the Aerospace Room";
   else if (onAeroReturn) $("#interact-hint-text").textContent = "to return to the Main Room";
+  else if (onNPC) $("#interact-hint-text").textContent = "to talk to " + freeRoamFind;
 }
 
 function startFreeRoam(startX, minX, maxX, targetX, nextNode, facingRight, find) {
@@ -1399,7 +1422,12 @@ function sceneAnimLoop(ts) {
       walkAnimTimer = 0;
       $("#scene-sprite-ester").style.backgroundPosition = "0 0";
     }
-    if (S.mainFloor === 0 && Math.abs(S.playerX - freeRoamTargetX) <= PROXIMITY_DIST) {
+    // Reaching a target with nobody waiting there (freeRoamFind unset, e.g.
+    // sc3_open — Ester heads back to the lab to find it empty) still
+    // continues the story on its own. Reaching one where an NPC IS waiting
+    // no longer does — see tryTalkToNPC, which requires pressing E instead
+    // (the same "Press E to ..." hint/gate as the lift and the aero door).
+    if (S.mainFloor === 0 && !freeRoamFind && Math.abs(S.playerX - freeRoamTargetX) <= PROXIMITY_DIST) {
       S.freeRoam = false;
       moveKeys.left = false;
       moveKeys.right = false;
@@ -1849,7 +1877,7 @@ function initInput() {
     if (S.screen === "scene" && S.freeRoam) {
       if (e.key === "ArrowLeft" || e.key === "a" || e.key === "A") { moveKeys.left = true; e.preventDefault(); }
       if (e.key === "ArrowRight" || e.key === "d" || e.key === "D") { moveKeys.right = true; e.preventDefault(); }
-      if ((e.key === "e" || e.key === "E") && !e.repeat) { tryUseLift(); tryUseAeroDoor(); }
+      if ((e.key === "e" || e.key === "E") && !e.repeat) { tryUseLift(); tryUseAeroDoor(); tryTalkToNPC(); }
     }
     if (S.screen === "scene" && !S.freeRoam && (e.key === " " || e.key === "Enter")) {
       e.preventDefault();
